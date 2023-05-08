@@ -6,21 +6,29 @@
 //
 
 import SwiftUI
-
+import FirebaseCore
 struct ContentView: View {
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
+    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        if firebaseAuth.isLoggedIn{
+            Button("Logout"){
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    firebaseAuth.signOut()
+                    
+                }
+            }
         }
-        .padding()
+        else{
+            Button("Login"){
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    firebaseAuth.loginWithEmail("fredrik1@fredrik.se", password: "fredrik1"){_,_ in
+                    }
+                }
+                
+            }
+            
+        }
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+    
 }
