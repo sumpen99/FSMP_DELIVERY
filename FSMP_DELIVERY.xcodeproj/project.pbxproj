@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */; };
 		0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD72A0CCBB500481B9D /* Customer.swift */; };
 		0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD92A0CCBCD00481B9D /* Order.swift */; };
 		0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CDC2A0CD4A500481B9D /* MainView.swift */; };
+		0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */; };
+		0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -30,9 +33,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		0CD28CD72A0CCBB500481B9D /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		0CD28CD92A0CCBCD00481B9D /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		0CD28CDC2A0CD4A500481B9D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle1.swift; sourceTree = "<group>"; };
+		0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle2.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,7 +83,9 @@
 		0CD28CDB2A0CD45800481B9D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7D53026B2A0952D4005EAAD0 /* ContentView.swift */,
 				0CD28CDC2A0CD4A500481B9D /* MainView.swift */,
+				0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -87,6 +95,15 @@
 			children = (
 			);
 			path = RowViews;
+			sourceTree = "<group>";
+		};
+		0CD28CDF2A0D0F9900481B9D /* Styles */ = {
+			isa = PBXGroup;
+			children = (
+				0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */,
+				0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */,
+			);
+			path = Styles;
 			sourceTree = "<group>";
 		};
 		7D53025D2A0952D4005EAAD0 = {
@@ -108,14 +125,14 @@
 		7D5302682A0952D4005EAAD0 /* FSMP_DELIVERY */ = {
 			isa = PBXGroup;
 			children = (
+				7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */,
+				0CD28CDF2A0D0F9900481B9D /* Styles */,
 				0CD28CDE2A0CD50400481B9D /* RowViews */,
 				0CD28CDB2A0CD45800481B9D /* Views */,
 				0CD28CD62A0CCB6B00481B9D /* Models */,
 				7D53029E2A097406005EAAD0 /* Data */,
 				7D5302922A0963AC005EAAD0 /* Observable */,
 				7D5302862A0955C0005EAAD0 /* FSMP-DELIVERY-Info.plist */,
-				7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */,
-				7D53026B2A0952D4005EAAD0 /* ContentView.swift */,
 				7D5302902A095E59005EAAD0 /* GoogleService-Info.plist */,
 				7D53026D2A0952D5005EAAD0 /* Assets.xcassets */,
 				7D53026F2A0952D5005EAAD0 /* Preview Content */,
@@ -236,12 +253,15 @@
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
+				0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */,
 				0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */,
 				0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */,
+				0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */,
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
+				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
