@@ -14,7 +14,6 @@ struct CustomerView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("Customers")
                 TextEditor(text: $choosenCustomerDetails)
                     .disabled(true)
                     .padding()
@@ -36,12 +35,10 @@ struct CustomerView: View {
                     }
                 }
             }
-            .navigationBarItems(trailing: Button {
-                print("add a customer")
-            } label: {
-                Image(systemName: "plus.circle")
-                    .imageScale(.large)
+            .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()) {
+                    Image(systemName: "plus.circle")
             })
+            .navigationTitle("Customers")
         }
         
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */; };
 		0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */; };
+		0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */; };
 		0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD72A0CCBB500481B9D /* Customer.swift */; };
 		0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD92A0CCBCD00481B9D /* Order.swift */; };
 		0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CDC2A0CD4A500481B9D /* MainView.swift */; };
@@ -36,6 +37,7 @@
 /* Begin PBXFileReference section */
 		0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerView.swift; sourceTree = "<group>"; };
+		0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCustomerView.swift; sourceTree = "<group>"; };
 		0CD28CD72A0CCBB500481B9D /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		0CD28CD92A0CCBCD00481B9D /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		0CD28CDC2A0CD4A500481B9D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				0CD28CDC2A0CD4A500481B9D /* MainView.swift */,
 				0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */,
 				0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */,
+				0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
