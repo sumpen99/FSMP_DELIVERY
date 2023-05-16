@@ -17,9 +17,12 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack() {
+                    Color(red: 70/256, green: 89/256, blue: 116/256)
+                        .ignoresSafeArea()
                 VStack {
                     TextEditor(text: $choosenOrderDetails)
                         .disabled(true)
+                        .cornerRadius(16)
                         .padding()
                     HStack{
                         Button {
@@ -45,9 +48,11 @@ struct MainView: View {
                                 Text("Order \(i)")
                             }
                         }
-                    }
+                    }.background(Color(red: 70/256, green: 89/256, blue: 116/256))
+                        .cornerRadius(16)
+                        .padding()
                 }
-                
+
                 GeometryReader { _ in
                     
                     SideMenuView()
@@ -65,13 +70,14 @@ struct MainView: View {
                     withAnimation(.easeInOut){
                         showSideMenu.toggle()
                     }
-                    
-                    
                 } label: {
                     Image(systemName: "text.justify")
                         .foregroundColor(.accentColor)
                 }
             }
+            .navigationBarItems(trailing: NavigationLink(destination: AddOrderView()) {
+                Image(systemName: "plus.circle")
+            })
         }
     }
 }
