@@ -4,16 +4,18 @@
 //
 //  Created by Philip Andersson on 2023-05-11.
 //
-
+import FirebaseFirestoreSwift
+import SwiftUI
 import Foundation
 
-struct order {
+struct Order: Identifiable{
+    
+    @DocumentID var id: String?
     
     var customer : Customer
     // var verificationQrCode : QRCode or Image ?
     // var orderDestination : latLng or smthin
     
-    var orderName : String
     var assignedUser : String = ""
     
     var isActivated : Bool = false
