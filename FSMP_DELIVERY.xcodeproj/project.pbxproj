@@ -15,6 +15,7 @@
 		0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CDC2A0CD4A500481B9D /* MainView.swift */; };
 		0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */; };
 		0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */; };
+		5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE40DAD2A124D2400D5539C /* AddOrderView.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -43,6 +44,7 @@
 		0CD28CDC2A0CD4A500481B9D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle1.swift; sourceTree = "<group>"; };
 		0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle2.swift; sourceTree = "<group>"; };
+		5FE40DAD2A124D2400D5539C /* AddOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOrderView.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,8 +92,11 @@
 				7D53026B2A0952D4005EAAD0 /* ContentView.swift */,
 				0CD28CDC2A0CD4A500481B9D /* MainView.swift */,
 				0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */,
+
+				5FE40DAD2A124D2400D5539C /* AddOrderView.swift */,
 				0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */,
 				0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */,
+
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -271,6 +276,7 @@
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
+				5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

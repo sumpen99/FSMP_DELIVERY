@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct SideMenuView: View {
+    
     var body: some View {
+
         NavigationStack {
+          
             VStack(alignment: .leading) {
                 Text("Menu")
                     .font(.title2)
@@ -18,6 +21,7 @@ struct SideMenuView: View {
                     .padding()
                 
                 Spacer()
+
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
                         Text("Manage Orders")
@@ -53,7 +57,6 @@ struct SideMenuView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
     }
-}
 
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
