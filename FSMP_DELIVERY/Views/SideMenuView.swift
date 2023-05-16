@@ -10,6 +10,9 @@ import SwiftUI
 struct SideMenuView: View {
     
     var body: some View {
+
+        NavigationStack {
+          
             VStack(alignment: .leading) {
                 Text("Menu")
                     .font(.title2)
@@ -18,26 +21,32 @@ struct SideMenuView: View {
                     .padding()
                 
                 Spacer()
-                    Button("Manage orders") {
-                        print("go to manage orders")
+
+                Button(action: {}){
+                    NavigationLink(destination: CustomerView()) {
+                        Text("Manage Orders")
                     }
-                .buttonStyle(CustomButtonStyle1())
-                .padding()
-                
-                Button("Active Orders") {
-                    print("go to manage orders")
                 }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
-                
-                Button("History") {
-                    print("go to manage orders")
+                Button(action: {}){
+                    NavigationLink(destination: CustomerView()) {
+                        Text("Activer Orders")
+                    }
                 }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
-                
-                Button("Customer") {
-                    print("go to manage orders")
+                Button(action: {}){
+                    NavigationLink(destination: CustomerView()) {
+                        Text("History")
+                    }
+                }
+                .buttonStyle(CustomButtonStyle1())
+                .padding()
+                Button(action: {}){
+                    NavigationLink(destination: CustomerView()) {
+                        Text("Customer")
+                    }
                 }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
