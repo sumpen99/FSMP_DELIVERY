@@ -42,5 +42,9 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func uploadSignedForm(){
+        
+    }
+    
 }
 

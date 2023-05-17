@@ -11,34 +11,44 @@ import SwiftUI
 struct SignOfOrderView: View{
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []
-    @State var isDragging = false
     @State var addNewPoint = true
+    @State var qrCode = QrCode()
+    @State var isFormSignedResult:Bool = false
     @State private var renderedImage:Image?
+    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     var body: some View{
         NavigationStack {
-            VStack(spacing:10){
-                VStack{
-                    Text(Date().toISO8601String())
-                    .hCenter()
-                    .font(.largeTitle)
-                    .foregroundColor(.gray)
-                    renderedImage
-                    Spacer()
+            VStack{
+                Form{
+                    Section(header: Text("Datum")){
+                        Text(Date().toISO8601String())
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                    }
+                    Section(header: Text("Verifierad Qr-Kod")){
+                        Text("")
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                    }
+                    Section(header: Text("Signatur (shake device to clear)")){
+                        renderedImage
+                    }
                 }
-                .padding()
-                .hCenter()
                 Spacer()
                 selfSignedCanvas
             }
+            .alert(isPresented: $isFormSignedResult, content: {
+                onResultAlert{ }
+            })
         }
         .toolbar {
             ToolbarItemGroup{
                 Button(action: clearAllDrawnLines) {
                     Image(systemName: "qrcode.viewfinder")
                 }
-                Button(action: saveSelfSignedName) {
-                    Image(systemName: "square.and.arrow.down")
+                Button(action: uploadSignedForm) {
+                    Image(systemName: "square.and.arrow.up")
                 }
             }
         }
@@ -62,7 +72,7 @@ struct SignOfOrderView: View{
                     clearAllDrawnLines()
                 }
                 currentSignaturePath
-                Text(pointsList.isEmpty ? "Signature" : "")
+                Text(pointsList.isEmpty ? "Underskrift" : "")
                     .foregroundColor(.gray)
             }
         }
@@ -74,7 +84,7 @@ struct SignOfOrderView: View{
                 .stroke(Color.gray,lineWidth: 2)
         )
         .onChange(of: addNewPoint, perform: { _ in
-            saveSelfSignedName()
+            renderCurrentSignaturePath()
             
         })
         .padding([.leading,.trailing],10)
@@ -92,20 +102,19 @@ struct SignOfOrderView: View{
         .foregroundColor(.blue)
     }
     
-    private func saveSelfSignedName(){
+    private func uploadSignedForm(){
+        if !qrCode.verified && renderedImage == nil{
+            setFormIsNotSignedResult()
+            return
+        }
+        
+        
+    }
+    
+    private func renderCurrentSignaturePath(){
         if pointsList.isEmpty { return }
         let boundaries = pointsList.getBoundaries()
-        let uiImage =   /*ZStack() {
-                            currentSignaturePath
-                            Text(Date().toISO8601String())
-                            .hCenter()
-                            .vBottom()
-                            .padding(.bottom)
-                            .font(.largeTitle)
-                            .foregroundColor(.gray)
-                        }
-                        .hLeading()*/
-                        currentSignaturePath
+        let uiImage =   currentSignaturePath
                         .frame(width:boundaries.x,height:boundaries.y)
                         .padding([.trailing,.bottom])
                         .snapshot()
@@ -131,6 +140,12 @@ struct SignOfOrderView: View{
     private func insideViewFrame(_ frame:CGRect,newLocation:CGPoint) ->Bool{
         return newLocation.x >= frame.minX+OFFSET && newLocation.x <= frame.minX + frame.width - OFFSET &&
                newLocation.y >= frame.minY+OFFSET && newLocation.y <= frame.minY + frame.height - OFFSET
+    }
+    
+    private func setFormIsNotSignedResult(){
+        ALERT_TITLE = "Saknar info"
+        ALERT_MESSAGE = "Beställningen måste signeras alternativt Qr-koden verifieras"
+        isFormSignedResult.toggle()
     }
     
 }

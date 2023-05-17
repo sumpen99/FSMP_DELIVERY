@@ -6,6 +6,9 @@
 //
 import SwiftUI
 
+var ALERT_TITLE = ""
+var ALERT_MESSAGE = ""
+
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
@@ -96,6 +99,14 @@ extension View {
     
     func onShake(perform action: @escaping () -> Void) -> some View {
         self.modifier(DeviceShakeViewModifier(action: action))
+    }
+    
+    func onResultAlert(action:@escaping (()-> Void)) -> Alert{
+        return Alert(
+                title: Text(ALERT_TITLE),
+                message: Text(ALERT_MESSAGE),
+                dismissButton: .cancel(Text("OK"), action: { action() } )
+        )
     }
     
     func toast(message: String,
