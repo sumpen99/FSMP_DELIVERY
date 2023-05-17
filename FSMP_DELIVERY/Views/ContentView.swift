@@ -20,7 +20,7 @@ struct ContentView: View {
         ZStack{
             Color(red: 70/256, green: 89/256, blue: 116/256)
                 .ignoresSafeArea()
-            if !signedIn {
+            if !firebaseAuth.isLoggedIn {
                 SignInView(signedIn: $signedIn)
             } else {
                 MainView()

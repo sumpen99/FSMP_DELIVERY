@@ -13,6 +13,7 @@ struct MainView: View {
     @State private var choosenOrderDetails = "Here is all information about the highlighted order\n\nCustomer: Janne\nNumber: 0701234567\nAdress: Lugnagatan 1. 242 33 Hörby\n\nDescription: Sesensor utebelysning ur funktion"
     
     @State private var showSideMenu: Bool = false
+    @State private var orderIsActivated: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -28,6 +29,7 @@ struct MainView: View {
                         Button {
                             print("Activate this order")
                             print("and ...")
+                            orderIsActivated.toggle()
                         } label: {
                             Text("Activate")
                         }
@@ -39,6 +41,7 @@ struct MainView: View {
                             Text("View on map")
                         }
                         .buttonStyle(CustomButtonStyle2())
+                        getSignOfOrderBtn()
                         Spacer()
                     }
                     .padding(.leading, 20)
@@ -79,6 +82,17 @@ struct MainView: View {
                 Image(systemName: "plus.circle")
             })
         }
+    }
+    
+    
+    
+    
+    func getSignOfOrderBtn() -> some View{
+        return NavigationLink(destination:SignOfOrderView()) {
+            Text("Sign Of Order")
+        }
+        .buttonStyle(CustomButtonStyleDisabledable())
+        .disabled(orderIsActivated)
     }
 }
 
