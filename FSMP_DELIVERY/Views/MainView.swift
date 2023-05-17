@@ -30,11 +30,9 @@ struct MainView: View {
                         }
                         .buttonStyle(CustomButtonStyle1())
                         
-                        Button {
-                            print("navigate to this order")
-                        } label: {
-                            Text("View on map")
-                        }
+                            NavigationLink("View on map") {
+                                MapView()
+                            }
                         .buttonStyle(CustomButtonStyle2())
                         Spacer()
                     }

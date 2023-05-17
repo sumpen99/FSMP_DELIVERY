@@ -30,6 +30,8 @@
 		7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */; };
 		7D5302A02A097417005EAAD0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029F2A097417005EAAD0 /* User.swift */; };
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
+		AF1D24072A13C6650025A3C9 /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1D24062A13C6650025A3C9 /* Map.swift */; };
+		AF1D24092A13C6790025A3C9 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1D24082A13C6790025A3C9 /* MapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +53,8 @@
 		7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		7D53029F2A097417005EAAD0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
+		AF1D24062A13C6650025A3C9 /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
+		AF1D24082A13C6790025A3C9 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +80,7 @@
 			children = (
 				0CD28CD72A0CCBB500481B9D /* Customer.swift */,
 				0CD28CD92A0CCBCD00481B9D /* Order.swift */,
+				AF1D24062A13C6650025A3C9 /* Map.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -86,6 +91,7 @@
 				7D53026B2A0952D4005EAAD0 /* ContentView.swift */,
 				0CD28CDC2A0CD4A500481B9D /* MainView.swift */,
 				0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */,
+				AF1D24082A13C6790025A3C9 /* MapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,9 +263,11 @@
 				0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */,
 				0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */,
 				0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */,
+				AF1D24092A13C6790025A3C9 /* MapView.swift in Sources */,
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
+				AF1D24072A13C6650025A3C9 /* Map.swift in Sources */,
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
