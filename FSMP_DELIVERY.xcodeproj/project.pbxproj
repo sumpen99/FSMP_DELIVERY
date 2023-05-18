@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C5698952A1620040014450C /* DataHandlerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5698942A1620040014450C /* DataHandlerVM.swift */; };
 		0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */; };
 		0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */; };
 		0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C5698942A1620040014450C /* DataHandlerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHandlerVM.swift; sourceTree = "<group>"; };
 		0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerView.swift; sourceTree = "<group>"; };
 		0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCustomerView.swift; sourceTree = "<group>"; };
@@ -77,6 +79,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C5698932A161FD90014450C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0C5698942A1620040014450C /* DataHandlerVM.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		0CD28CD62A0CCB6B00481B9D /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -92,11 +102,9 @@
 				7D53026B2A0952D4005EAAD0 /* ContentView.swift */,
 				0CD28CDC2A0CD4A500481B9D /* MainView.swift */,
 				0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */,
-
 				5FE40DAD2A124D2400D5539C /* AddOrderView.swift */,
 				0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */,
 				0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */,
-
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -140,6 +148,7 @@
 				0CD28CDF2A0D0F9900481B9D /* Styles */,
 				0CD28CDE2A0CD50400481B9D /* RowViews */,
 				0CD28CDB2A0CD45800481B9D /* Views */,
+				0C5698932A161FD90014450C /* ViewModels */,
 				0CD28CD62A0CCB6B00481B9D /* Models */,
 				7D53029E2A097406005EAAD0 /* Data */,
 				7D5302922A0963AC005EAAD0 /* Observable */,
@@ -270,6 +279,7 @@
 				0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */,
 				0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */,
 				0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */,
+				0C5698952A1620040014450C /* DataHandlerVM.swift in Sources */,
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,

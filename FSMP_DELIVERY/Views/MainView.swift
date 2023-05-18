@@ -17,7 +17,7 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack() {
-                    Color(red: 70/256, green: 89/256, blue: 116/256)
+                Color(red: 70/256, green: 89/256, blue: 116/256).opacity(0.5)
                         .ignoresSafeArea()
                 VStack {
                     TextEditor(text: $choosenOrderDetails)
