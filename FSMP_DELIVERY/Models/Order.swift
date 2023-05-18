@@ -14,6 +14,10 @@ struct Order : Identifiable {
     
     @DocumentID var id: String?
 
+
+//    @DocumentID var id: String?
+//    var id = UUID()
+
     var customer : Customer
     // var verificationQrCode : QRCode or Image ?
     // var orderDestination : latLng or smthin
