@@ -4,13 +4,47 @@
 //
 //  Created by fredrik sundström on 2023-05-08.
 //
-
+import Foundation
 import Firebase
 import SwiftUI
+
 class FirestoreViewModel: ObservableObject{
+    
+    let db = Firestore.firestore()
     let repo = FirestoreRepository()
+    
+    @Published var customers = [Customer]()
     //var listenerCompany: ListenerRegistration?
     //var listenerUser: ListenerRegistration?
+    
+    func listenToFirestore() {
+        
+        let customers = db.collection("customers")
+        
+        customers.addSnapshotListener() {
+            snapshot, err in
+            
+            guard let snapshot = snapshot else {print("1"); return}
+            
+            if let err = err {
+                print("error fetching customers")
+            } else {
+                print("2")
+                self.customers.removeAll()
+                
+                for document in snapshot.documents {
+                    
+                    do{
+                        let customer = try document.data(as : Customer.self)
+                        print("3")
+                        self.customers.append(customer)
+                    } catch {
+                        print("error reading DB")
+                    }
+                }
+            }
+        }
+    }
     
     func initializeCompanyData(_ cmp:Company,completion: @escaping ((Bool,String) -> Void )){
         do{
@@ -41,6 +75,18 @@ class FirestoreViewModel: ObservableObject{
             completion(false,error.localizedDescription)
         }
     }
+    
+    func setCustomerDocument(_ customer : Customer) {
+        
+        let customers = db.collection("customers")
+        
+        do {
+            try customers.addDocument(from: customer)
+        } catch {
+            print("error saving customer to firestore")
+        }
+    }
+    
     /*
      
      
