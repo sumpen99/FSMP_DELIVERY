@@ -6,3 +6,12 @@
 //
 
 import Foundation
+import SwiftUI
+import Firebase
+
+class DataHandlerVM : ObservableObject {
+    
+    let db = Firestore.firestore()
+    let auth = Auth.auth()
+    
+}

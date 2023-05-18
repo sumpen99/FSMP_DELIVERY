@@ -27,6 +27,8 @@ class FirestoreRepository{
             .document(userId)
     }
     
+    
+    
     /*func getSignedOrderImageReference(orderNumber:String) -> StorageReference{
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpg"

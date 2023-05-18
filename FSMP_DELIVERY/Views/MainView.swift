@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MainView: View {
     
+    @EnvironmentObject var firestoreVM: FirestoreViewModel
+    
     // temp State var. remove
     @State private var choosenOrderDetails = "Here is all information about the highlighted order\n\nCustomer: Janne\nNumber: 0701234567\nAdress: Lugnagatan 1. 242 33 Hörby\n\nDescription: Sesensor utebelysning ur funktion"
     
@@ -82,6 +84,10 @@ struct MainView: View {
                 Image(systemName: "plus.circle")
             })
         }
+        .onAppear() {
+            firestoreVM.listenToFirestore()
+        }
+        
     }
     
     

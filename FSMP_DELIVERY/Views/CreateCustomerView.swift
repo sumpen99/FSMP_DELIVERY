@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct CreateCustomerView: View {
+    
+    let firestoreVM = FirestoreViewModel()
+    
     @State var name : String = ""
     @State var email : String = ""
     @State var adress : String = ""
@@ -83,7 +86,12 @@ struct CreateCustomerView: View {
                 }
                 Spacer()
                 Button {
+                    
                     print("Saving customer to firestore")
+                    // Needs if statements to check correct inputs
+                    let newCustomer = Customer(name: name, email: email, phoneNumber: number, description: description, taxnumber: taxNumber)
+                    firestoreVM.setCustomerDocument(newCustomer)
+                    
                     
                 } label: {
                     HStack {
