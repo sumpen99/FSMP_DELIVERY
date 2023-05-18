@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  FSMP_DELIVERY
 //
@@ -10,34 +9,34 @@ import FirebaseCore
 import Firebase
 
 struct ContentView: View {
-    
-    @EnvironmentObject var firebaseAuth: FirebaseAuth
-    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
-    
-    @State var signedIn : Bool = false
-    
-    var body: some View {
-        ZStack{
-            Color(red: 70/256, green: 89/256, blue: 116/256)
-                .ignoresSafeArea()
-            if !signedIn {
-                SignInView(signedIn: $signedIn)
-            } else {
-                MainView()
-            }
-        }
-    }
+ 
+ @EnvironmentObject var firebaseAuth: FirebaseAuth
+ @EnvironmentObject var firestoreViewModel: FirestoreViewModel
+ 
+ @State var signedIn : Bool = false
+ 
+ var body: some View {
+     ZStack{
+         Color(red: 70/256, green: 89/256, blue: 116/256)
+             .ignoresSafeArea()
+         if !signedIn {
+             SignInView(signedIn: $signedIn)
+         } else {
+             MainView()
+         }
+     }
+ }
 
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-           ContentView()
-        }
-    }
-    
+ struct ContentView_Previews: PreviewProvider {
+     static var previews: some View {
+        ContentView()
+     }
+ }
+ 
 }
 
 struct SignInView : View {
-    
+   
     @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     
@@ -112,5 +111,6 @@ struct SignInView : View {
             Spacer()
         }
     }
+
 }
 

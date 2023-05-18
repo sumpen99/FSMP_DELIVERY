@@ -19,7 +19,7 @@ class FirebaseAuth:ObservableObject{
     func listenForAuthDidChange() {
         guard handleAuthState == nil else { return }
         handleAuthState = auth.addStateDidChangeListener { auth, _ in
-            withAnimation(.linear(duration: 5.0)){
+            withAnimation(.linear(duration: 0.5)){
                 self.isLoggedIn = auth.currentUser != nil
             }
         }
