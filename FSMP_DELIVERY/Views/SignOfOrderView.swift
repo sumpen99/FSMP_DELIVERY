@@ -25,7 +25,7 @@ struct SignOfOrderView: View{
         })
         .toolbar {
             ToolbarItemGroup{
-                Button(action: clearAllDrawnLines) {
+                NavigationLink(destination: QrCodeView()) {
                     Image(systemName: "qrcode.viewfinder")
                 }
                 Button(action: uploadSignedForm) {

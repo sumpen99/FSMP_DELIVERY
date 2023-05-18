@@ -23,6 +23,18 @@ extension UIWindow {
      }
 }
 
+extension String{
+    
+    func capitalizingFirstLetter() -> String {
+          return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+    
+    mutating func capitalizeFirst() {
+        if self.isEmpty { return }
+        self = self.capitalizingFirstLetter()
+    }
+}
+
 extension UIImage {
     
     func aspectFittedToHeight(_ newHeight: CGFloat) -> UIImage {

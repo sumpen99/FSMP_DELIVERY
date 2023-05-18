@@ -13,13 +13,13 @@ struct ContentView: View {
  @EnvironmentObject var firebaseAuth: FirebaseAuth
  @EnvironmentObject var firestoreViewModel: FirestoreViewModel
  
- @State var signedIn : Bool = false
+ @State var signedIn : Bool = true
  
  var body: some View {
      ZStack{
          Color(red: 70/256, green: 89/256, blue: 116/256)
              .ignoresSafeArea()
-         if !signedIn {
+         if !firebaseAuth.isLoggedIn {
              SignInView(signedIn: $signedIn)
          } else {
              MainView()

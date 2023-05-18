@@ -6,30 +6,15 @@
 //
 import SwiftUI
 import FirebaseCore
-
-/*class AppDelegate: NSObject, UIApplicationDelegate,UNUserNotificationCenterDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        UNUserNotificationCenter.current().delegate = self
-        return true
-    }
-    
-}*/
-
+import FirebaseMessaging
 
 @main
 struct FSMP_DELIVERYApp: App {
-    //@UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @Environment(\.scenePhase) private var phase
     @StateObject var firebaseAuth = FirebaseAuth()
     @StateObject var firestoreViewModel = FirestoreViewModel()
   
-    init(){
-        FirebaseApp.configure()
-    }
-    
-   
-    
     var body: some Scene {
         WindowGroup {
           NavigationView {

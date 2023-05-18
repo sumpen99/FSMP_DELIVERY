@@ -30,6 +30,7 @@ struct CustomerView: View {
                 List{
                     ForEach(1...10, id: \.self) { i in
                         HStack {
+                            test()
                             Text("Customer \(i)")
                         }
                     }
@@ -41,6 +42,11 @@ struct CustomerView: View {
             .navigationTitle("Customers")
         }
         
+    }
+    
+    func test() -> some View{
+        print("name")
+        return EmptyView()
     }
 }
 
