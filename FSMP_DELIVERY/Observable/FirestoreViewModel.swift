@@ -73,13 +73,13 @@ class FirestoreViewModel: ObservableObject{
     func uploadSignedFormPDf(url:URL,orderNumber:String,completion:@escaping (SignedFormResult) -> Void){
         let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
         fileRef.putFile(from: url, metadata: nil) { metadata, error in
-              guard let metadata = metadata else {
+            guard metadata != nil else {
                   completion(.UPLOAD_FAILED)
                   return
-              }
+            }
             //let size = metadata.size
             fileRef.downloadURL { (url, error) in
-                guard let downloadURL = url else {
+                guard url != nil else {
                     completion(.DOWNLOAD_FAILED)
                     return
                 }
@@ -87,6 +87,32 @@ class FirestoreViewModel: ObservableObject{
             }
         }
      }
+    
+    func downloadFormPdf(localUrl:URL,orderNumber:String){
+        let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
+        fileRef.write(toFile: localUrl) { url, error in
+            if let error = error {
+                print("Error: \(error)")
+            } else {
+                print("PDF downloaded and written to device at path : \(localUrl)")
+                // Local file URL for "images/island.jpg" is returned
+            }
+        }  
+    }
+        
+    
+    /*func downloadFormImage(orderNumber:String){
+        let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
+        fileRef.getData(maxSize: (1 * 1024 * 1024)) { (data, error) in
+                if let err = error {
+                   print(err)
+              } else {
+                if let image  = data {
+                     let myImage: UIImage! = UIImage(data: image)
+                }
+             }
+        }
+    }*/
     
     /*
      let uiImage = signedForm.snapshot()
@@ -97,7 +123,7 @@ class FirestoreViewModel: ObservableObject{
      }
      firestoreViewModel.uploadSignedForm(imageData: imgData,orderNumber:UUID().uuidString)
      func uploadSignedFormImage(imageData:Data,orderNumber:String){
-        let metadata = repo.setMetaDataAsJpg()
+        let metadata = repo.setMetaDataAs("image/jpg")
         repo.getSignedOrderReference(orderNumber: orderNumber)
         .putData(imageData, metadata: metadata) { (metadata, error) in
             if let error = error {

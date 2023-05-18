@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct SignOfOrderView: View{
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []

@@ -37,7 +37,8 @@ class FirestoreRepository{
         return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).pdf")
     }
     
-    func setMetaDataAsJpg() -> StorageMetadata{
+    func setMetaDataAs(_ dataType:String) -> StorageMetadata{
+        // ex. "image/jpg"
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpg"
         return metadata

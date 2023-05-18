@@ -68,30 +68,26 @@ extension [[CGPoint]]{
 }
 
 extension View {
+    
     @MainActor
     func exportAsPdf(documentDirectory:URL,filePath:String)->URL?{
         let renderedUrl = documentDirectory.appending(path: filePath)
      
-        if let consumer = CGDataConsumer(url: renderedUrl as CFURL),
-           let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) {
-            let renderer = ImageRenderer(content: self)
-            renderer.render { size, renderer in
-                let options: [CFString: Any] = [
-                    kCGPDFContextMediaBox: CGRect(origin: .zero, size: size)
-                ]
-     
-                pdfContext.beginPDFPage(options as CFDictionary)
-     
-                renderer(pdfContext)
-                pdfContext.endPDFPage()
-                pdfContext.closePDF()
-            }
+        guard let consumer = CGDataConsumer(url: renderedUrl as CFURL),
+              let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) else { return nil }
+        
+        let renderer = ImageRenderer(content: self)
+        renderer.render { size, renderer in
+            let options: [CFString: Any] = [
+                kCGPDFContextMediaBox: CGRect(origin: .zero, size: size)
+            ]
+ 
+            pdfContext.beginPDFPage(options as CFDictionary)
+ 
+            renderer(pdfContext)
+            pdfContext.endPDFPage()
+            pdfContext.closePDF()
         }
-        else{
-            return nil
-        }
-     
-        print("Saving PDF to \(renderedUrl.path())")
         return renderedUrl
     }
     
