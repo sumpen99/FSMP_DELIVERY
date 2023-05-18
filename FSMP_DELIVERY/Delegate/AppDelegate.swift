@@ -22,42 +22,30 @@ import FirebaseMessaging
  
  */
 
-class AppDelegate: NSObject, UIApplicationDelegate{
+class AppDelegate: NSObject,UIApplicationDelegate{
  
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        self.registerForFirebaseNotification(application: application)
-        
+        Messaging.messaging().delegate = self
+        registerForPush
         UNUserNotificationCenter.current().delegate = self
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        
         UNUserNotificationCenter.current().requestAuthorization(
           options: authOptions) { _, _ in }
+        
         application.registerForRemoteNotifications()
         
-        Messaging.messaging().delegate = self
-        return true
-    }
-   
-    func registerForFirebaseNotification(application: UIApplication) {
-        if #available(iOS 10.0, *) {
-         
-            UNUserNotificationCenter.current().delegate = self
-
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: {_, _ in })
-        } else {
-            let settings: UIUserNotificationSettings =
-                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-
-        application.registerForRemoteNotifications()
+         return true
     }
     
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error){
+        print(error.localizedDescription)
+    }
+   
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -69,34 +57,29 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         func application(_ application: UIApplication,
                          didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                          fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-            print("APNs received with: \(userInfo)")
-        }
+         }
     
         private func process(_ notification: UNNotification) {
-            
               let userInfo = notification.request.content.userInfo
               UIApplication.shared.applicationIconBadgeNumber = 0
             
-            if let newsTitle = userInfo["newsTitle"] as? String,
+            /*if let newsTitle = userInfo["newsTitle"] as? String,
                 let newsBody = userInfo["newsBody"] as? String {
                 let newsItem = NewsItem(title: newsTitle, body: newsBody, date: Date())
                 NewsModel.shared.add([newsItem])
-              }
+              }*/
         }
-
+    
+        
         func userNotificationCenter(_ center: UNUserNotificationCenter,
                                       willPresent notification: UNNotification,
                                       withCompletionHandler completionHandler:@escaping (UNNotificationPresentationOptions) -> Void) {
-            
-            process(notification)
             completionHandler([[.banner, .sound]])
         }
 
        func userNotificationCenter(_ center: UNUserNotificationCenter,
                                  didReceive response: UNNotificationResponse,
                                  withCompletionHandler completionHandler: @escaping () -> Void) {
-           
-           process(response.notification)
            completionHandler()
        }
   
@@ -110,6 +93,7 @@ extension AppDelegate: MessagingDelegate {
             name: Notification.Name("FCMToken"),
             object: nil,
             userInfo: tokenDict)
+        
     }
 
 }

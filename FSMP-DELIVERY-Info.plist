@@ -4,8 +4,6 @@
 <dict>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
-	<key>CFBundleIdentifier</key>
-	<string></string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
