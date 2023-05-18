@@ -23,13 +23,12 @@ import FirebaseMessaging
  */
 
 class AppDelegate: NSObject,UIApplicationDelegate{
- 
+    static private(set) var instance: AppDelegate! = nil
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        AppDelegate.instance = self
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
-        registerForPush
         UNUserNotificationCenter.current().delegate = self
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         
