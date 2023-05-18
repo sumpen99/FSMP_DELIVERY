@@ -11,6 +11,7 @@ import FirebaseStorage
 class FirestoreRepository{
     let USER_COLLECTION = "USER"
     let COMPANY_COLLECTION = "COMPANY"
+    let SIGNED_ORDER = "ORDER"
     private let firestoreDB = Firestore.firestore()
     private let firestoreStorage = Storage.storage()
     
@@ -26,4 +27,19 @@ class FirestoreRepository{
             .document(userId)
     }
     
+    /*func getSignedOrderImageReference(orderNumber:String) -> StorageReference{
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).jpg")
+    }*/
+    
+    func getSignedOrderReference(orderNumber:String) -> StorageReference{
+        return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).pdf")
+    }
+    
+    func setMetaDataAsJpg() -> StorageMetadata{
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        return metadata
+    }
 }

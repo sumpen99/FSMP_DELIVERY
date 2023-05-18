@@ -9,6 +9,8 @@ import SwiftUI
 var ALERT_TITLE = ""
 var ALERT_MESSAGE = ""
 
+var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
+
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
@@ -19,6 +21,24 @@ extension UIWindow {
             NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
         }
      }
+}
+
+extension UIImage {
+    
+    func aspectFittedToHeight(_ newHeight: CGFloat) -> UIImage {
+        let scale = newHeight / self.size.height
+        let newWidth = self.size.width * scale
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+    }
+    
+    func compressImage(_ quality:CGFloat) -> Data?{
+        return self.jpegData(compressionQuality: quality)
+    }
 }
 
 extension Date{
@@ -48,6 +68,32 @@ extension [[CGPoint]]{
 }
 
 extension View {
+    @MainActor
+    func exportAsPdf(documentDirectory:URL,filePath:String)->URL?{
+        let renderedUrl = documentDirectory.appending(path: filePath)
+     
+        if let consumer = CGDataConsumer(url: renderedUrl as CFURL),
+           let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) {
+            let renderer = ImageRenderer(content: self)
+            renderer.render { size, renderer in
+                let options: [CFString: Any] = [
+                    kCGPDFContextMediaBox: CGRect(origin: .zero, size: size)
+                ]
+     
+                pdfContext.beginPDFPage(options as CFDictionary)
+     
+                renderer(pdfContext)
+                pdfContext.endPDFPage()
+                pdfContext.closePDF()
+            }
+        }
+        else{
+            return nil
+        }
+     
+        print("Saving PDF to \(renderedUrl.path())")
+        return renderedUrl
+    }
     
     func snapshot() -> UIImage {
             let controller = UIHostingController(rootView: self)
@@ -61,7 +107,7 @@ extension View {
             return renderer.image { _ in
                 view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
             }
-        }
+    }
     
     func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
       background(

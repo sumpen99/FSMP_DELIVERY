@@ -19,29 +19,11 @@ struct SignOfOrderView: View{
     @Environment(\.displayScale) var displayScale
     var body: some View{
         NavigationStack {
-            VStack{
-                Form{
-                    Section(header: Text("Datum")){
-                        Text(Date().toISO8601String())
-                        .font(.largeTitle)
-                        .foregroundColor(.gray)
-                    }
-                    Section(header: Text("Verifierad Qr-Kod")){
-                        Text("")
-                        .font(.largeTitle)
-                        .foregroundColor(.gray)
-                    }
-                    Section(header: Text("Signatur (shake device to clear)")){
-                        renderedImage
-                    }
-                }
-                Spacer()
-                selfSignedCanvas
-            }
-            .alert(isPresented: $isFormSignedResult, content: {
-                onResultAlert{ }
-            })
+            signedForm
         }
+        .alert(isPresented: $isFormSignedResult, content: {
+            onResultAlert{ }
+        })
         .toolbar {
             ToolbarItemGroup{
                 Button(action: clearAllDrawnLines) {
@@ -51,6 +33,28 @@ struct SignOfOrderView: View{
                     Image(systemName: "square.and.arrow.up")
                 }
             }
+        }
+    }
+    
+    var signedForm: some View{
+        return VStack{
+            Form{
+                Section(header: Text("Datum")){
+                    Text(Date().toISO8601String())
+                    .font(.largeTitle)
+                    .foregroundColor(.gray)
+                }
+                Section(header: Text("Verifierad Qr-Kod")){
+                    Text("")
+                    .font(.largeTitle)
+                    .foregroundColor(.gray)
+                }
+                Section(header: Text("Signatur (shake device to clear)")){
+                    renderedImage
+                }
+            }
+            Spacer()
+            selfSignedCanvas
         }
     }
     
@@ -98,17 +102,57 @@ struct SignOfOrderView: View{
                 path.addPath(DrawShape(points:pointsToDraw).path())
             }
         }
-        .stroke(lineWidth:5)
-        .foregroundColor(.blue)
+        .stroke(lineWidth:2)
+        .foregroundColor(.black)
+    }
+    
+    var formAsPdf:some View{
+        return VStack(alignment:.center,spacing:5){
+                    Image("delivery")
+                        .resizable()
+                        .frame(width:200,height:200)
+                    Text("FSMP - Delivery")
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .padding()
+                    Section(header: Text("Bekräftelse av mottagen service")){
+                        Text("Order")
+                        Text("muraregatan")
+                            .font(.caption)
+                        Text("Datum")
+                        Text(Date().toISO8601String())
+                            .font(.caption)
+                        Text("Verifierad Qr-Kod")
+                        Text("123456789")
+                            .font(.caption)
+                           
+                    }
+                    Spacer()
+                    Text("Signatur").foregroundColor(.gray)
+                    renderedImage
+                }
+                .hLeading()
+                .frame(width:400,height:800)
     }
     
     private func uploadSignedForm(){
         if !qrCode.verified && renderedImage == nil{
-            setFormIsNotSignedResult()
+            setFormResult(.FORM_NOT_FILLED)
             return
         }
-        
-        
+      
+        guard let documentDirectory = documentDirectory else {
+            setFormResult(.USER_URL_ERROR)
+            return
+            
+        }
+        let filePath = UUID().uuidString
+        guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
+            setFormResult(.USER_URL_ERROR)
+            return
+        }
+        firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
+            setFormResult(result)
+        }
     }
     
     private func renderCurrentSignaturePath(){
@@ -142,9 +186,10 @@ struct SignOfOrderView: View{
                newLocation.y >= frame.minY+OFFSET && newLocation.y <= frame.minY + frame.height - OFFSET
     }
     
-    private func setFormIsNotSignedResult(){
-        ALERT_TITLE = "Saknar info"
-        ALERT_MESSAGE = "Beställningen måste signeras alternativt Qr-koden verifieras"
+    private func setFormResult(_ signedFormResult:SignedFormResult){
+        let desc = signedFormResult.describeYourSelf
+        ALERT_TITLE = desc.title
+        ALERT_MESSAGE = desc.message
         isFormSignedResult.toggle()
     }
     

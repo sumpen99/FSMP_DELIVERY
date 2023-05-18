@@ -22,6 +22,7 @@
 		7D20F7412A15223700C66167 /* DeviceShakeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7402A15223700C66167 /* DeviceShakeModifier.swift */; };
 		7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7422A15224500C66167 /* ToastModifier.swift */; };
 		7D20F7452A15626000C66167 /* QrCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7442A15626000C66167 /* QrCode.swift */; };
+		7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -57,6 +58,7 @@
 		7D20F7402A15223700C66167 /* DeviceShakeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceShakeModifier.swift; sourceTree = "<group>"; };
 		7D20F7422A15224500C66167 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		7D20F7442A15626000C66167 /* QrCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCode.swift; sourceTree = "<group>"; };
+		7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedFormResult.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				7D53029F2A097417005EAAD0 /* User.swift */,
 				7D5302A12A097422005EAAD0 /* Company.swift */,
 				7D20F7442A15626000C66167 /* QrCode.swift */,
+				7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -294,6 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
+				7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
 				7D20F7452A15626000C66167 /* QrCode.swift in Sources */,
