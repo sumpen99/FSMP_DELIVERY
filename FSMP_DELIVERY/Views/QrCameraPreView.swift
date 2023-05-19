@@ -7,15 +7,15 @@
 
 import UIKit
 import AVFoundation
-
+import SwiftUI
 
 class QrCameraPreView: UIView {
     
-    private var label:UILabel?
+    private var imageView = UIImageView()
     
     var previewLayer: AVCaptureVideoPreviewLayer?
     var session:AVCaptureSession?
-    weak var delegate: QrCodeCameraDelegate?
+    weak var delegate: QrCameraDelegate?
     
     init(session: AVCaptureSession) {
         super.init(frame: .zero)
@@ -26,29 +26,49 @@ class QrCameraPreView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func createSimulatorView(delegate: QrCodeCameraDelegate){
+    func createSimulatorView(delegate: QrCameraDelegate){
+        let qrCodeStr = UUID().uuidString
         self.delegate = delegate
-        self.backgroundColor = UIColor.black
-        label = UILabel(frame: self.bounds)
-        label?.numberOfLines = 4
-        label?.text = "Click here to simulate scan"
-        label?.textColor = UIColor.white
-        label?.textAlignment = .center
-        if let label = label {
-            addSubview(label)
+        self.delegate?.mockData = qrCodeStr
+        guard let imgView = getQrUIImageView(qrCodeStr:qrCodeStr) else { return }
+        imageView = imgView
+        addSubview(imageView)
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.0){
+            self.delegate?.onSimulateScanning()
         }
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(onClick))
-        self.addGestureRecognizer(gesture)
     }
     
-    @objc func onClick(){
-        delegate?.onSimulateScanning()
+    func getQrUIImageView(qrCodeStr:String) -> UIImageView?{
+        guard let data = generateQrCode(qrCodeStr:qrCodeStr),
+              let uiImage = UIImage(data: data) else { return nil}
+      
+        let imageView = UIImageView(image: uiImage)
+        return imageView
+    }
+    
+    func getQrImage() -> Image?{
+        guard let data = generateQrCode(qrCodeStr:UUID().uuidString),
+              let uiImage = UIImage(data: data) else { return nil}
+        
+        return Image(uiImage:uiImage)
+    }
+    
+    func generateQrCode(qrCodeStr:String) -> Data?{
+        guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+        let data = qrCodeStr.data(using: .ascii, allowLossyConversion: false)
+        filter.setValue(data, forKey: "inputMessage")
+        guard let ciimage = filter.outputImage else { return nil }
+        let transform = CGAffineTransform(scaleX: 10, y: 10)
+        let scaledCIImage = ciimage.transformed(by: transform)
+        let uiimage = UIImage(ciImage: scaledCIImage)
+        return uiimage.pngData()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         #if targetEnvironment(simulator)
-            label?.frame = self.bounds
+            let p = CGPoint(x: self.center.x - 50.0, y: self.center.y - 75.0)
+            imageView.frame = CGRect(origin: p, size: CGSize(width: 100.0, height:100.0))
         #else
             previewLayer?.frame = self.bounds
         #endif

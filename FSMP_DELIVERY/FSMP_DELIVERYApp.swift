@@ -14,12 +14,6 @@ struct FSMP_DELIVERYApp: App {
     @StateObject var firebaseAuth = FirebaseAuth()
     @StateObject var firestoreViewModel = FirestoreViewModel()
   
-    /*init(){
-        FirebaseApp.configure()
-    }*/
-    
-   
-    
     var body: some Scene {
         WindowGroup {
           NavigationView {

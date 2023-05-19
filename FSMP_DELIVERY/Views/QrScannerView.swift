@@ -2,223 +2,160 @@
 //  QrScannerView.swift
 //  FSMP_DELIVERY
 //
-//  Created by fredrik sundström on 2023-05-18.
+//  Created by fredrik sundström on 2023-05-19.
 //
 
 import SwiftUI
+import UIKit
+import AVFoundation
 
-class ScannerViewModel: ObservableObject {
+struct QrScannerView: UIViewRepresentable {
+    @EnvironmentObject var scannerViewModel: ScannerViewModel
+    typealias UIViewType = QrCameraPreView
+    private let session = AVCaptureSession()
+    private let delegate = QrCameraDelegate()
+    private let metadataOutput = AVCaptureMetadataOutput()
     
-    let scanInterval: Double = 1.0
-    
-    @Published var torchIsOn: Bool = false
-    @Published var lastQrCode: String = "Qr-code goes here"
-    @Published var isPrivacyResult = false
-    
-    
-    func onFoundQrCode(_ code: String) {
-        self.lastQrCode = code
-    }
-}
-
-struct QrScannerView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var isPrivacyResult = false
-    @ObservedObject var scannerViewModel = ScannerViewModel()
-    let qrQodeScannerView = QrCodeScannerView()
-    
-    var body: some View {
-        ZStack {
-            qrQodeScannerView
-            .found(r: self.scannerViewModel.onFoundQrCode)
-            .torchLight(isOn: self.scannerViewModel.torchIsOn)
-            .interval(delay: self.scannerViewModel.scanInterval)
-            VStack {
-                captureBox
-                //scannerBox
-                Spacer()
-                lightButton
-            }.padding()
-        }
-        .alert(isPresented: $scannerViewModel.isPrivacyResult, content: {
-            onPrivacyAlert(actionPrimary: openPrivacySettings,
-                           actionSecondary: closeScannerView)
-        })
-        .onAppear{
-            print("appear")
-        }
-        .environmentObject(scannerViewModel)
-    }
-    
-    var body2: some View{
-        NavigationStack {
-            VStack {
-                getQrImage()?.resizable().frame(width: 200, height: 200)
-            }
-        }
-    }
-    
-    var scannerBox: some View{
-        GeometryReader { geometry in
-            let cutoutWidth: CGFloat = min(geometry.size.width, geometry.size.height) / 2.5
-
-            Path { path in
-                
-                let left = (geometry.size.width - cutoutWidth) / 2.0
-                let right = left + cutoutWidth
-                let top = (geometry.size.height - cutoutWidth) / 2.0
-                let bottom = top + cutoutWidth
-                
-                path.addPath(
-                    createCornersPath(
-                        left: left, top: top,
-                        right: right, bottom: bottom,
-                        cornerRadius: 40, cornerLength: 20
-                    )
-                )
-            }
-            .stroke(Color.blue, lineWidth: 8)
-            .frame(width: cutoutWidth, height: cutoutWidth, alignment: .center)
-            .aspectRatio(1, contentMode: .fit)
-        }
-    }
-    
-    var captureBox: some View{
-        VStack {
-            Text("Keep scanning for QR-codes")
-                .font(.subheadline)
-            Text(self.scannerViewModel.lastQrCode)
-                .bold()
-                .lineLimit(5)
-                .padding()
-        }
-        .padding(.vertical, 20)
-    }
-    
-    var lightButton: some View{
-        HStack {
-            Button(action: {
-                if QrCodeScannerView.cameraPermissionIsAllowed(){
-                    self.scannerViewModel.torchIsOn.toggle()
+    func torchLight(isOn: Bool) -> QrScannerView {
+        if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
+            if backCamera.hasTorch {
+                try? backCamera.lockForConfiguration()
+                if isOn {
+                    backCamera.torchMode = .on
+                } else {
+                    backCamera.torchMode = .off
                 }
-            }, label: {
-                Image(systemName: self.scannerViewModel.torchIsOn ? "bolt.fill" : "bolt.slash.fill")
-                    .imageScale(.large)
-                    .foregroundColor(self.scannerViewModel.torchIsOn ? Color.yellow : Color.blue)
-                    .padding()
-            })
-        }
-        .background(Color.white)
-        .cornerRadius(10)
-    }
-    
-    func closeScannerView(){
-        dismiss()
-    }
-    
-    func openPrivacySettings(){
-        guard let url = URL(string: UIApplication.openSettingsURLString),
-                UIApplication.shared.canOpenURL(url) else {
-                    assertionFailure("Not able to open App privacy settings")
-                    return
+                backCamera.unlockForConfiguration()
             }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-    }
-    
-    private func createCornersPath(
-            left: CGFloat,
-            top: CGFloat,
-            right: CGFloat,
-            bottom: CGFloat,
-            cornerRadius: CGFloat,
-            cornerLength: CGFloat
-        ) -> Path {
-            var path = Path()
-
-            // top left
-            path.move(to: CGPoint(x: left, y: (top + cornerRadius / 2.0)))
-            path.addArc(
-                center: CGPoint(x: (left + cornerRadius / 2.0), y: (top + cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
-                startAngle: Angle(degrees: 180.0),
-                endAngle: Angle(degrees: 270.0),
-                clockwise: false
-            )
-
-            path.move(to: CGPoint(x: left + (cornerRadius / 2.0), y: top))
-            path.addLine(to: CGPoint(x: left + (cornerRadius / 2.0) + cornerLength, y: top))
-
-            path.move(to: CGPoint(x: left, y: top + (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: left, y: top + (cornerRadius / 2.0) + cornerLength))
-
-            // top right
-            path.move(to: CGPoint(x: right - cornerRadius / 2.0, y: top))
-            path.addArc(
-                center: CGPoint(x: (right - cornerRadius / 2.0), y: (top + cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
-                startAngle: Angle(degrees: 270.0),
-                endAngle: Angle(degrees: 360.0),
-                clockwise: false
-            )
-
-            path.move(to: CGPoint(x: right - (cornerRadius / 2.0), y: top))
-            path.addLine(to: CGPoint(x: right - (cornerRadius / 2.0) - cornerLength, y: top))
-
-            path.move(to: CGPoint(x: right, y: top + (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: right, y: top + (cornerRadius / 2.0) + cornerLength))
-
-            // bottom left
-            path.move(to: CGPoint(x: left + cornerRadius / 2.0, y: bottom))
-            path.addArc(
-                center: CGPoint(x: (left + cornerRadius / 2.0), y: (bottom - cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
-                startAngle: Angle(degrees: 90.0),
-                endAngle: Angle(degrees: 180.0),
-                clockwise: false
-            )
-            
-            path.move(to: CGPoint(x: left + (cornerRadius / 2.0), y: bottom))
-            path.addLine(to: CGPoint(x: left + (cornerRadius / 2.0) + cornerLength, y: bottom))
-
-            path.move(to: CGPoint(x: left, y: bottom - (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: left, y: bottom - (cornerRadius / 2.0) - cornerLength))
-
-            // bottom right
-            path.move(to: CGPoint(x: right, y: bottom - cornerRadius / 2.0))
-            path.addArc(
-                center: CGPoint(x: (right - cornerRadius / 2.0), y: (bottom - cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
-                startAngle: Angle(degrees: 0.0),
-                endAngle: Angle(degrees: 90.0),
-                clockwise: false
-            )
-            
-            path.move(to: CGPoint(x: right - (cornerRadius / 2.0), y: bottom))
-            path.addLine(to: CGPoint(x: right - (cornerRadius / 2.0) - cornerLength, y: bottom))
-
-            path.move(to: CGPoint(x: right, y: bottom - (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: right, y: bottom - (cornerRadius / 2.0) - cornerLength))
-
-            return path
         }
-    
-    
-    
-    func getQrImage() -> Image?{
-        guard let data = generateQrCode(strValue:UUID().uuidString),
-              let uiImage = UIImage(data: data) else { return nil}
-              
-        return Image(uiImage:uiImage)
+        return self
     }
     
-    func generateQrCode(strValue:String) -> Data?{
-        guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
-        let data = strValue.data(using: .ascii, allowLossyConversion: false)
-        filter.setValue(data, forKey: "inputMessage")
-        guard let ciimage = filter.outputImage else { return nil }
-        let transform = CGAffineTransform(scaleX: 10, y: 10)
-        let scaledCIImage = ciimage.transformed(by: transform)
-        let uiimage = UIImage(ciImage: scaledCIImage)
-        return uiimage.pngData()
+    func pointOfInterest() -> QrScannerView {
+        if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
+            if backCamera.isFocusModeSupported(.continuousAutoFocus){
+                try? backCamera.lockForConfiguration()
+                backCamera.focusPointOfInterest = CGPointMake(0.51,0.51)
+                backCamera.focusMode = .continuousAutoFocus
+                backCamera.unlockForConfiguration()
+            }
+        }
+        return self
     }
+    
+    func interval(delay: Double) -> QrScannerView {
+        delegate.scanInterval = delay
+        return self
+    }
+    
+    func found(r: @escaping (String) -> Void) -> QrScannerView {
+        delegate.onResult = r
+        return self
+    }
+    
+    func simulator(mockBarCode: String)-> QrScannerView{
+        delegate.mockData = mockBarCode
+        return self
+    }
+    
+    func setupCamera(_ uiView: QrCameraPreView) {
+        if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
+            if let input = try? AVCaptureDeviceInput(device: backCamera) {
+                
+                session.sessionPreset = .photo
+                
+                if session.canAddInput(input) {
+                    session.addInput(input)
+                }
+                if session.canAddOutput(metadataOutput) {
+                    session.addOutput(metadataOutput)
+                    metadataOutput.metadataObjectTypes = metadataOutput.availableMetadataObjectTypes
+                    metadataOutput.setMetadataObjectsDelegate(delegate, queue: DispatchQueue.main)
+                }
+                let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+                
+                uiView.backgroundColor = UIColor.gray
+                previewLayer.videoGravity = .resizeAspectFill
+                uiView.layer.addSublayer(previewLayer)
+                uiView.previewLayer = previewLayer
+                DispatchQueue.global(qos: .background).async {
+                    session.startRunning()
+                }
+            }
+        }
+        
+    }
+    
+    func makeUIView(context: UIViewRepresentableContext<QrScannerView>) -> QrScannerView.UIViewType {
+        let cameraView = QrCameraPreView(session: session)
+        #if targetEnvironment(simulator)
+        cameraView.createSimulatorView(delegate: self.delegate)
+        #else
+        checkCameraAuthorizationStatus(cameraView)
+        #endif
+        
+        return cameraView
+    }
+    
+    static func dismantleUIView(_ uiView: QrCameraPreView, coordinator: ()) {
+        uiView.session?.stopRunning()
+    }
+    
+    
+    private func checkCameraAuthorizationStatus(_ uiView: QrCameraPreView) {
+        let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        
+        switch cameraAuthorizationStatus {
+            case .denied:
+                setCameraPermissionDenied()
+            case .restricted:
+                setCameraPermissionRestricted()
+            case .authorized:
+                setupCamera(uiView)
+            case .notDetermined:
+                setCameraPermissionNotDetermined(uiView)
+            @unknown default:
+                fatalError("AVCaptureDevice::execute - \"Unknown case\"")
+        }
+           
+    }
+    
+    static func cameraPermissionIsAllowed() -> Bool{
+        let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        return cameraAuthorizationStatus == .authorized
+    }
+    
+    private func setCameraPermissionNotDetermined(_ uiView: QrCameraPreView){
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.sync {
+                if granted {
+                    self.setupCamera(uiView)
+                }
+            }
+        }
+    }
+    
+    private func setCameraPermissionDenied(){
+        DispatchQueue.main.async {
+            ALERT_TITLE = "Permission to access camera is denied"
+            ALERT_MESSAGE = "If you want to scan qr-code, please go to settings and enable it"
+            scannerViewModel.isPrivacyResult.toggle()
+        }
+    }
+    
+    private func setCameraPermissionRestricted(){
+        DispatchQueue.main.async {
+            ALERT_TITLE = "Permission to access camera is restricted"
+            ALERT_MESSAGE = "If you want to scan qr-code device owner must approve, our guess is you can do that from settings"
+            scannerViewModel.isPrivacyResult.toggle()
+        }
+    }
+    
+    
+    func updateUIView(_ uiView: QrCameraPreView, context: UIViewRepresentableContext<QrScannerView>) {
+        uiView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        uiView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+    }
+    
 }
+

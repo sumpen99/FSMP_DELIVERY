@@ -23,11 +23,12 @@
 		7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7422A15224500C66167 /* ToastModifier.swift */; };
 		7D20F7452A15626000C66167 /* QrCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7442A15626000C66167 /* QrCode.swift */; };
 		7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */; };
-		7D20F74F2A164A2B00C66167 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F74E2A164A2B00C66167 /* QrScannerView.swift */; };
-		7D20F7542A164AD900C66167 /* QrCodeCameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7532A164AD900C66167 /* QrCodeCameraDelegate.swift */; };
-		7D20F7582A164D9F00C66167 /* QrCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7572A164D9F00C66167 /* QrCodeScannerView.swift */; };
 		7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0E12A165FF2003E0BE8 /* AppDelegate.swift */; };
 		7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0E32A1782BD003E0BE8 /* QrCameraPreView.swift */; };
+		7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0E72A17CCF0003E0BE8 /* ScannerViewModel.swift */; };
+		7D29E0EA2A17CD56003E0BE8 /* QrView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0E92A17CD56003E0BE8 /* QrView.swift */; };
+		7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */; };
+		7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -64,12 +65,13 @@
 		7D20F7422A15224500C66167 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		7D20F7442A15626000C66167 /* QrCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCode.swift; sourceTree = "<group>"; };
 		7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedFormResult.swift; sourceTree = "<group>"; };
-		7D20F74E2A164A2B00C66167 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
-		7D20F7532A164AD900C66167 /* QrCodeCameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeCameraDelegate.swift; sourceTree = "<group>"; };
-		7D20F7572A164D9F00C66167 /* QrCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerView.swift; sourceTree = "<group>"; };
 		7D29E0E02A165D75003E0BE8 /* FSMP_DELIVERY.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FSMP_DELIVERY.entitlements; sourceTree = "<group>"; };
 		7D29E0E12A165FF2003E0BE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D29E0E32A1782BD003E0BE8 /* QrCameraPreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCameraPreView.swift; sourceTree = "<group>"; };
+		7D29E0E72A17CCF0003E0BE8 /* ScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewModel.swift; sourceTree = "<group>"; };
+		7D29E0E92A17CD56003E0BE8 /* QrView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrView.swift; sourceTree = "<group>"; };
+		7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
+		7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCameraDelegate.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -121,9 +123,9 @@
 				0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */,
 				0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */,
 				7D20F7362A15122900C66167 /* SignOfOrderView.swift */,
-				7D20F74E2A164A2B00C66167 /* QrScannerView.swift */,
-				7D20F7572A164D9F00C66167 /* QrCodeScannerView.swift */,
 				7D29E0E32A1782BD003E0BE8 /* QrCameraPreView.swift */,
+				7D29E0E92A17CD56003E0BE8 /* QrView.swift */,
+				7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -165,8 +167,8 @@
 		7D20F7502A164AAD00C66167 /* Delegate */ = {
 			isa = PBXGroup;
 			children = (
-				7D20F7532A164AD900C66167 /* QrCodeCameraDelegate.swift */,
 				7D29E0E12A165FF2003E0BE8 /* AppDelegate.swift */,
+				7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */,
 			);
 			path = Delegate;
 			sourceTree = "<group>";
@@ -223,6 +225,7 @@
 				7D5302932A0963C0005EAAD0 /* FirebaseAuth.swift */,
 				7D5302982A096F3A005EAAD0 /* FirestoreRepository.swift */,
 				7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */,
+				7D29E0E72A17CCF0003E0BE8 /* ScannerViewModel.swift */,
 			);
 			path = Observable;
 			sourceTree = "<group>";
@@ -321,13 +324,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D20F74F2A164A2B00C66167 /* QrScannerView.swift in Sources */,
+				7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */,
 				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
 				7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
 				7D20F7452A15626000C66167 /* QrCode.swift in Sources */,
-				7D20F7542A164AD900C66167 /* QrCodeCameraDelegate.swift in Sources */,
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
 				7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */,
 				0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */,
@@ -338,12 +340,14 @@
 				7D20F73A2A15127F00C66167 /* AppExtensions.swift in Sources */,
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,
+				7D29E0EA2A17CD56003E0BE8 /* QrView.swift in Sources */,
 				7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
+				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
 				7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */,
-				7D20F7582A164D9F00C66167 /* QrCodeScannerView.swift in Sources */,
+				7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
 				5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */,
