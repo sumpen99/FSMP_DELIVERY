@@ -23,17 +23,19 @@ import FirebaseMessaging
  */
 
 class AppDelegate: NSObject,UIApplicationDelegate{
+    
     static private(set) var instance: AppDelegate! = nil
+    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         AppDelegate.instance = self
         FirebaseApp.configure()
-        Messaging.messaging().delegate = self
-        UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         
-        UNUserNotificationCenter.current().requestAuthorization(
-          options: authOptions) { _, _ in }
+        Messaging.messaging().delegate = self
+        
+        UNUserNotificationCenter.current().delegate = self
+        
+        //askForPushNotificationPermission()
         
         application.registerForRemoteNotifications()
         
@@ -43,6 +45,13 @@ class AppDelegate: NSObject,UIApplicationDelegate{
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error){
         print(error.localizedDescription)
+    }
+    
+    func askForPushPermission(){
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        
+        UNUserNotificationCenter.current().requestAuthorization(
+          options: authOptions) { _, _ in }
     }
    
 }
@@ -58,29 +67,30 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                          fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
          }
     
-        private func process(_ notification: UNNotification) {
-              let userInfo = notification.request.content.userInfo
-              UIApplication.shared.applicationIconBadgeNumber = 0
-            
-            /*if let newsTitle = userInfo["newsTitle"] as? String,
-                let newsBody = userInfo["newsBody"] as? String {
-                let newsItem = NewsItem(title: newsTitle, body: newsBody, date: Date())
-                NewsModel.shared.add([newsItem])
-              }*/
-        }
-    
-        
         func userNotificationCenter(_ center: UNUserNotificationCenter,
                                       willPresent notification: UNNotification,
                                       withCompletionHandler completionHandler:@escaping (UNNotificationPresentationOptions) -> Void) {
+            // when app is active
             completionHandler([[.banner, .sound]])
         }
 
        func userNotificationCenter(_ center: UNUserNotificationCenter,
                                  didReceive response: UNNotificationResponse,
                                  withCompletionHandler completionHandler: @escaping () -> Void) {
+           // when message is tapped
            completionHandler()
        }
+    
+    /*private func process(_ notification: UNNotification) {
+          let userInfo = notification.request.content.userInfo
+          UIApplication.shared.applicationIconBadgeNumber = 0
+        
+        if let newsTitle = userInfo["newsTitle"] as? String,
+            let newsBody = userInfo["newsBody"] as? String {
+            let newsItem = NewsItem(title: newsTitle, body: newsBody, date: Date())
+            NewsModel.shared.add([newsItem])
+          }
+    }*/
   
 }
 

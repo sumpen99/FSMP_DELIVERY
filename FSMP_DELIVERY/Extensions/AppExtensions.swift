@@ -155,6 +155,16 @@ extension View {
         self.modifier(DeviceShakeViewModifier(action: action))
     }
     
+    func onPrivacyAlert(actionPrimary:@escaping (()-> Void),
+                        actionSecondary:@escaping (()-> Void)) -> Alert{
+        return Alert(
+                title: Text(ALERT_TITLE),
+                message: Text(ALERT_MESSAGE),
+                primaryButton: .destructive(Text("OK"), action: { actionPrimary() }),
+                secondaryButton: .cancel(Text("AVBRYT"), action: { actionSecondary() } )
+        )
+    }
+    
     func onResultAlert(action:@escaping (()-> Void)) -> Alert{
         return Alert(
                 title: Text(ALERT_TITLE),

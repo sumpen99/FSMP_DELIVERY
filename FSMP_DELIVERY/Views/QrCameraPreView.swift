@@ -1,20 +1,20 @@
 //
-//  CameraPreviewView.swift
+//  QrCameraPreView.swift
 //  FSMP_DELIVERY
 //
-//  Created by fredrik sundström on 2023-05-18.
+//  Created by fredrik sundström on 2023-05-19.
 //
 
 import UIKit
 import AVFoundation
 
 
-class CameraPreviewView: UIView {
+class QrCameraPreView: UIView {
     
     private var label:UILabel?
     
     var previewLayer: AVCaptureVideoPreviewLayer?
-    var session = AVCaptureSession()
+    var session:AVCaptureSession?
     weak var delegate: QrCodeCameraDelegate?
     
     init(session: AVCaptureSession) {
@@ -54,3 +54,4 @@ class CameraPreviewView: UIView {
         #endif
     }
 }
+
