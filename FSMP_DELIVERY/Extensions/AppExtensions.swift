@@ -23,6 +23,18 @@ extension UIWindow {
      }
 }
 
+extension String{
+    
+    func capitalizingFirstLetter() -> String {
+          return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+    
+    mutating func capitalizeFirst() {
+        if self.isEmpty { return }
+        self = self.capitalizingFirstLetter()
+    }
+}
+
 extension UIImage {
     
     func aspectFittedToHeight(_ newHeight: CGFloat) -> UIImage {
@@ -141,6 +153,16 @@ extension View {
     
     func onShake(perform action: @escaping () -> Void) -> some View {
         self.modifier(DeviceShakeViewModifier(action: action))
+    }
+    
+    func onPrivacyAlert(actionPrimary:@escaping (()-> Void),
+                        actionSecondary:@escaping (()-> Void)) -> Alert{
+        return Alert(
+                title: Text(ALERT_TITLE),
+                message: Text(ALERT_MESSAGE),
+                primaryButton: .destructive(Text("OK"), action: { actionPrimary() }),
+                secondaryButton: .cancel(Text("AVBRYT"), action: { actionSecondary() } )
+        )
     }
     
     func onResultAlert(action:@escaping (()-> Void)) -> Alert{

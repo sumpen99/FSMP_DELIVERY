@@ -51,6 +51,7 @@ struct CustomerView: View {
         
     }
     
+
     func test() -> some View {
         print("asd")
         return EmptyView()

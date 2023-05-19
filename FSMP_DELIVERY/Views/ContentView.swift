@@ -13,7 +13,7 @@ struct ContentView: View {
  @EnvironmentObject var firebaseAuth: FirebaseAuth
  @EnvironmentObject var firestoreViewModel: FirestoreViewModel
  
- @State var signedIn : Bool = false
+ @State var signedIn : Bool = true
  
  var body: some View {
      ZStack{

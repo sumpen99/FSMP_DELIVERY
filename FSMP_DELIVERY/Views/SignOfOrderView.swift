@@ -14,6 +14,7 @@ struct SignOfOrderView: View{
     @State var qrCode = QrCode()
     @State var isFormSignedResult:Bool = false
     @State private var renderedImage:Image?
+    @StateObject var scannerViewModel = ScannerViewModel()
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     var body: some View{
@@ -25,7 +26,9 @@ struct SignOfOrderView: View{
         })
         .toolbar {
             ToolbarItemGroup{
-                Button(action: clearAllDrawnLines) {
+                NavigationLink(destination:
+                                QrView()
+                    .environmentObject(scannerViewModel)) {
                     Image(systemName: "qrcode.viewfinder")
                 }
                 Button(action: uploadSignedForm) {
@@ -40,12 +43,12 @@ struct SignOfOrderView: View{
             Form{
                 Section(header: Text("Datum")){
                     Text(Date().toISO8601String())
-                    .font(.largeTitle)
+                    .font(.title3)
                     .foregroundColor(.gray)
                 }
                 Section(header: Text("Verifierad Qr-Kod")){
-                    Text("")
-                    .font(.largeTitle)
+                    Text(scannerViewModel.lastQrCode)
+                    .font(.title3)
                     .foregroundColor(.gray)
                 }
                 Section(header: Text("Signatur (shake device to clear)")){
@@ -115,13 +118,13 @@ struct SignOfOrderView: View{
                     .padding()
                     Section(header: Text("Bekräftelse av mottagen service")){
                         Text("Order")
-                        Text("muraregatan")
+                        Text("insert details of order")
                             .font(.caption)
                         Text("Datum")
                         Text(Date().toISO8601String())
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
-                        Text("123456789")
+                        Text(scannerViewModel.lastQrCode)
                             .font(.caption)
                            
                     }

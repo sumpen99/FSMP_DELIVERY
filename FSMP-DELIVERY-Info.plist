@@ -2,12 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Permission needed to scan qr code</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
-	<key>NSLocationUsageDescription</key>
-	<string>Grant permission to get delivery route</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Grant permission to scan qr-code</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -15,5 +13,9 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
