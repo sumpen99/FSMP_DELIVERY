@@ -8,12 +8,14 @@ import FirebaseFirestoreSwift
 import SwiftUI
 import Foundation
 
-struct Customer {
+struct Customer : Encodable, Decodable, Identifiable, Hashable {
+    
+    @DocumentID var id : String?
     
     var name : String
     var email : String
 //    var addres : latLng or smthin
     var phoneNumber : Int
     var description : String = ""
-    var taxnumber : String = ""
+    var taxnumber : Int
 }

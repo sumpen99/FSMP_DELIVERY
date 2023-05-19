@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C5698952A1620040014450C /* DataHandlerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5698942A1620040014450C /* DataHandlerVM.swift */; };
 		0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */; };
 		0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */; };
 		0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */; };
@@ -46,9 +47,12 @@
 		7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */; };
 		7D5302A02A097417005EAAD0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029F2A097417005EAAD0 /* User.swift */; };
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
+		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
+		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C5698942A1620040014450C /* DataHandlerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHandlerVM.swift; sourceTree = "<group>"; };
 		0C64FB382A0E1E1600AB9E8B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerView.swift; sourceTree = "<group>"; };
 		0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCustomerView.swift; sourceTree = "<group>"; };
@@ -84,6 +88,8 @@
 		7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		7D53029F2A097417005EAAD0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
+		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,11 +110,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C5698932A161FD90014450C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0C5698942A1620040014450C /* DataHandlerVM.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		0CD28CD62A0CCB6B00481B9D /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				0CD28CD72A0CCBB500481B9D /* Customer.swift */,
 				0CD28CD92A0CCBCD00481B9D /* Order.swift */,
+				AFC1D9872A164A4C0065FCAD /* Map.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -126,6 +141,7 @@
 				7D29E0E32A1782BD003E0BE8 /* QrCameraPreView.swift */,
 				7D29E0E92A17CD56003E0BE8 /* QrView.swift */,
 				7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */,
+				AFC1D9852A164A140065FCAD /* MapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -200,6 +216,7 @@
 				0CD28CDF2A0D0F9900481B9D /* Styles */,
 				0CD28CDE2A0CD50400481B9D /* RowViews */,
 				0CD28CDB2A0CD45800481B9D /* Views */,
+				0C5698932A161FD90014450C /* ViewModels */,
 				0CD28CD62A0CCB6B00481B9D /* Models */,
 				7D53029E2A097406005EAAD0 /* Data */,
 				7D5302922A0963AC005EAAD0 /* Observable */,
@@ -327,6 +344,7 @@
 				7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */,
 				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
 				7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */,
+				AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
 				7D20F7452A15626000C66167 /* QrCode.swift in Sources */,
@@ -337,6 +355,8 @@
 				0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */,
 				0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */,
 				0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */,
+				AFC1D9862A164A140065FCAD /* MapView.swift in Sources */,
+				0C5698952A1620040014450C /* DataHandlerVM.swift in Sources */,
 				7D20F73A2A15127F00C66167 /* AppExtensions.swift in Sources */,
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,

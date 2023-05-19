@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CustomerView: View {
     // temp State var. remove
+    @EnvironmentObject var firestoreVM: FirestoreViewModel
+    
     @State private var choosenCustomerDetails = "Here is all information about the highlighted customer\n\nName: Janne\nAdress: Lugnagatan 1. 242 33 Hörby\nNumber: 0701234567\nEmail: janne.jansson@gmail.com\n\nDescription: Bra kille!"
     
     var body: some View {
@@ -28,10 +30,10 @@ struct CustomerView: View {
                 }
                 .padding(.leading, 20)
                 List{
-                    ForEach(1...10, id: \.self) { i in
+                    ForEach(firestoreVM.customers) { customer in
                         HStack {
                             test()
-                            Text("Customer \(i)")
+                            Text(customer.name)
                         }
                     }
                 }
@@ -40,14 +42,22 @@ struct CustomerView: View {
                     Image(systemName: "plus.circle")
             })
             .navigationTitle("Customers")
+            
+        }
+        .onAppear() {
+            firestoreVM.listenToFirestore()
+            print(firestoreVM.customers.count)
         }
         
     }
     
-    func test() -> some View{
-        print("name")
+
+    func test() -> some View {
+        print("asd")
         return EmptyView()
+        
     }
+    
 }
 
 struct CustomerView_Previews: PreviewProvider {
