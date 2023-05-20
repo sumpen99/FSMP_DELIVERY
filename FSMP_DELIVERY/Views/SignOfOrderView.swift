@@ -17,6 +17,7 @@ struct SignOfOrderView: View{
     @StateObject var scannerViewModel = ScannerViewModel()
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
+    let currentDate = Date().toISO8601String()
     var body: some View{
         NavigationStack {
             signedForm
@@ -42,7 +43,7 @@ struct SignOfOrderView: View{
         return VStack{
             Form{
                 Section(header: Text("Datum")){
-                    Text(Date().toISO8601String())
+                    Text(currentDate)
                     .font(.title3)
                     .foregroundColor(.gray)
                 }
@@ -121,7 +122,7 @@ struct SignOfOrderView: View{
                         Text("insert details of order")
                             .font(.caption)
                         Text("Datum")
-                        Text(Date().toISO8601String())
+                        Text(currentDate)
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
                         Text(scannerViewModel.lastQrCode)

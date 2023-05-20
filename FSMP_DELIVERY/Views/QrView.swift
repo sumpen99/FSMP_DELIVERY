@@ -17,9 +17,9 @@ struct QrView: View {
         ZStack {
             qrQodeScannerView
             .found(r: scannerViewModel.onFoundQrCode)
+            .reset(r: scannerViewModel.onResetQrCode)
             .torchLight(isOn: scannerViewModel.torchIsOn)
             .interval(delay: scannerViewModel.scanInterval)
-            .pointOfInterest()
             VStack {
                 scannerBox
                 Spacer()
@@ -39,25 +39,18 @@ struct QrView: View {
     var scannerBox: some View{
         GeometryReader { geometry in
             let cutoutWidth: CGFloat = min(geometry.size.width, geometry.size.height) / 2.5
-
-            Path { path in
-                
-                let left = (geometry.size.width - cutoutWidth) / 2.0
-                let right = left + cutoutWidth
-                let top = (geometry.size.height - cutoutWidth) / 2.0
-                let bottom = top + cutoutWidth
-                
-                path.addPath(
-                    createCornersPath(
-                        left: left, top: top,
-                        right: right, bottom: bottom,
-                        cornerRadius: 40, cornerLength: 20
+            scannerViewModel.setSize(geometry.size)
+            if scannerViewModel.foundQrCode{
+                Path { path in
+                    path.addPath(
+                        createCornersPath()
                     )
-                )
+                }
+                .stroke(scannerViewModel.foundQrCode ? Color.green : Color.blue, lineWidth: 8)
+                .frame(width: cutoutWidth, height: cutoutWidth, alignment: .center)
+                .aspectRatio(1, contentMode: .fit)
+                
             }
-            .stroke(scannerViewModel.foundQrCode ? Color.green : Color.blue, lineWidth: 8)
-            .frame(width: cutoutWidth, height: cutoutWidth, alignment: .center)
-            .aspectRatio(1, contentMode: .fit)
         }
     }
     
@@ -91,17 +84,17 @@ struct QrView: View {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
-    private func createCornersPath(
-            left: CGFloat,
-            top: CGFloat,
-            right: CGFloat,
-            bottom: CGFloat,
-            cornerRadius: CGFloat,
-            cornerLength: CGFloat
-        ) -> Path {
+    private func createCornersPath() -> Path {
             var path = Path()
 
             // top left
+            let left = scannerViewModel.left
+            let right = scannerViewModel.right
+            let top = scannerViewModel.top
+            let bottom = scannerViewModel.bottom
+            let cornerRadius = 4.0
+            let cornerLength = 2.0
+            
             path.move(to: CGPoint(x: left, y: (top + cornerRadius / 2.0)))
             path.addArc(
                 center: CGPoint(x: (left + cornerRadius / 2.0), y: (top + cornerRadius / 2.0)),
