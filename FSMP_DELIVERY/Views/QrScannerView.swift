@@ -16,6 +16,10 @@ struct QrScannerView: UIViewRepresentable {
     private let delegate = QrCameraDelegate()
     private let metadataOutput = AVCaptureMetadataOutput()
     
+    /*init(){
+        print("init qrscannerview")
+    }*/
+    
     func torchLight(isOn: Bool) -> QrScannerView {
         if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
             if backCamera.hasTorch {
@@ -48,20 +52,19 @@ struct QrScannerView: UIViewRepresentable {
         return self
     }
     
-    func found(r: @escaping (String) -> Void) -> QrScannerView {
+    func found(r: @escaping (String,CGRect) -> Void) -> QrScannerView {
         delegate.onResult = r
         return self
     }
     
-    func simulator(mockBarCode: String)-> QrScannerView{
-        delegate.mockData = mockBarCode
+    func reset(r: @escaping (Bool) -> Void) -> QrScannerView {
+        delegate.onReset = r
         return self
     }
     
     func setupCamera(_ uiView: QrCameraPreView) {
         if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
             if let input = try? AVCaptureDeviceInput(device: backCamera) {
-                
                 session.sessionPreset = .photo
                 
                 if session.canAddInput(input) {
@@ -73,12 +76,15 @@ struct QrScannerView: UIViewRepresentable {
                     metadataOutput.setMetadataObjectsDelegate(delegate, queue: DispatchQueue.main)
                 }
                 let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-                
                 uiView.backgroundColor = UIColor.gray
                 previewLayer.videoGravity = .resizeAspectFill
                 uiView.layer.addSublayer(previewLayer)
                 uiView.previewLayer = previewLayer
+                
+                delegate.onTransform = previewLayer.transformedMetadataObject
+                
                 DispatchQueue.global(qos: .background).async {
+                    //print("start running")
                     session.startRunning()
                 }
             }
@@ -98,6 +104,7 @@ struct QrScannerView: UIViewRepresentable {
     }
     
     static func dismantleUIView(_ uiView: QrCameraPreView, coordinator: ()) {
+        //print("dismantle")
         uiView.session?.stopRunning()
     }
     

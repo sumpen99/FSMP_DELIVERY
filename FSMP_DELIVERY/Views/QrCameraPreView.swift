@@ -26,6 +26,10 @@ class QrCameraPreView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /*deinit{
+        print("deinit camera preview")
+    }*/
+    
     func createSimulatorView(delegate: QrCameraDelegate){
         let qrCodeStr = UUID().uuidString
         self.delegate = delegate
@@ -68,7 +72,9 @@ class QrCameraPreView: UIView {
         super.layoutSubviews()
         #if targetEnvironment(simulator)
             let p = CGPoint(x: self.center.x - 50.0, y: self.center.y - 75.0)
-            imageView.frame = CGRect(origin: p, size: CGSize(width: 100.0, height:100.0))
+            let rec = CGRect(origin: p, size: CGSize(width: 100.0, height:100.0))
+            delegate?.simulatedRec = rec
+            imageView.frame = rec
         #else
             previewLayer?.frame = self.bounds
         #endif
