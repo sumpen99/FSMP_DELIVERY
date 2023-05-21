@@ -12,6 +12,8 @@ struct ContentView: View {
  
  @EnvironmentObject var firebaseAuth: FirebaseAuth
  @EnvironmentObject var firestoreViewModel: FirestoreViewModel
+ @State var isMemoryWarning: Bool = false
+ private let memoryWarningPublisher = NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)
  
  @State var signedIn : Bool = true
  
@@ -24,6 +26,9 @@ struct ContentView: View {
          } else {
              MainView()
          }
+     }
+     .onReceive(memoryWarningPublisher) { warn in
+         print(warn.debugDescription)
      }
  }
 

@@ -15,8 +15,7 @@ class ScannerViewModel: ObservableObject {
     @Published var lastQrCode: String = ""
     @Published var isPrivacyResult = false
     @Published var foundQrCode = false
-    
-    var screenerSize:CGSize?
+ 
     var left:CGFloat = 1.0
     var top:CGFloat = 1.0
     var right:CGFloat = 1.0
@@ -29,11 +28,6 @@ class ScannerViewModel: ObservableObject {
     deinit{
         print("deinit scannerviewmodel")
     }*/
-    
-    func setSize(_ size:CGSize) -> some View{
-        screenerSize = size
-        return EmptyView()
-    }
     
     func onFoundQrCode(_ code: String,bounds:CGRect) {
         left = bounds.minX

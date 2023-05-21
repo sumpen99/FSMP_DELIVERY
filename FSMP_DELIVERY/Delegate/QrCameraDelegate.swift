@@ -19,7 +19,7 @@ class QrCameraDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     var mockData: String?
     var onTransform: ((AVMetadataObject) -> AVMetadataObject?)? = nil
     var timer:Timer?
-    
+    var simulatedRec:CGRect?
     /*override init() {
         super.init()
         print("init camera delegate")
@@ -40,7 +40,8 @@ class QrCameraDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     }
     
     @objc func onSimulateScanning(){
-        self.onResult(mockData ?? "Simulated QR-code result.",CGRect(x: 0.0, y: 0.0, width: 100.0, height: 100.0))
+        guard let rec = simulatedRec else { return }
+        self.onResult(mockData ?? "Simulated QR-code result.",rec)
     }
     
     func foundBarcode(_ stringValue: String,bounds:CGRect) {

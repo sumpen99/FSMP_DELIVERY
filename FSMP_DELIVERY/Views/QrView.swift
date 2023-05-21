@@ -20,11 +20,11 @@ struct QrView: View {
             .reset(r: scannerViewModel.onResetQrCode)
             .torchLight(isOn: scannerViewModel.torchIsOn)
             .interval(delay: scannerViewModel.scanInterval)
-            VStack {
-                scannerBox
+            scannerBox
+            /*VStack {
                 Spacer()
                 lightButton
-            }.padding()
+            }.padding()*/
         }
         .alert(isPresented: $scannerViewModel.isPrivacyResult, content: {
             onPrivacyAlert(actionPrimary: openPrivacySettings,
@@ -33,29 +33,34 @@ struct QrView: View {
         .onAppear{
             scannerViewModel.reset()
         }
+        .toolbar {
+            ToolbarItemGroup{
+                lightButton
+            }
+        }
+        .navigationTitle(scannerViewModel.lastQrCode)
+        .navigationBarTitleDisplayMode(.inline)
+        //.ignoresSafeArea(.all)
         
     }
     
     var scannerBox: some View{
         GeometryReader { geometry in
-            let cutoutWidth: CGFloat = min(geometry.size.width, geometry.size.height) / 2.5
-            scannerViewModel.setSize(geometry.size)
             if scannerViewModel.foundQrCode{
                 Path { path in
                     path.addPath(
                         createCornersPath()
                     )
                 }
-                .stroke(scannerViewModel.foundQrCode ? Color.green : Color.blue, lineWidth: 8)
-                .frame(width: cutoutWidth, height: cutoutWidth, alignment: .center)
-                .aspectRatio(1, contentMode: .fit)
+                .stroke(Color.green, lineWidth:4)
+                //.aspectRatio(1, contentMode: .fit)
                 
             }
         }
     }
     
-    var lightButton: some View{
-        HStack {
+    /*var lightButton: some View{
+        HStack{
             Button(action: {
                 if QrScannerView.cameraPermissionIsAllowed(){
                     scannerViewModel.torchIsOn.toggle()
@@ -69,6 +74,19 @@ struct QrView: View {
         }
         .background(Color.white)
         .cornerRadius(10)
+    }*/
+    
+    var lightButton: some View{
+        Button(action: {
+            if QrScannerView.cameraPermissionIsAllowed(){
+                scannerViewModel.torchIsOn.toggle()
+            }
+        }, label: {
+            Image(systemName: scannerViewModel.torchIsOn ? "bolt.fill" : "bolt.slash.fill")
+                .imageScale(.large)
+                .foregroundColor(scannerViewModel.torchIsOn ? Color.yellow : Color.blue)
+                .padding()
+        })
     }
     
     func closeScannerView(){
@@ -87,79 +105,80 @@ struct QrView: View {
     private func createCornersPath() -> Path {
             var path = Path()
 
-            // top left
             let left = scannerViewModel.left
             let right = scannerViewModel.right
+            let width = right-left
             let top = scannerViewModel.top
             let bottom = scannerViewModel.bottom
-            let cornerRadius = 4.0
-            let cornerLength = 2.0
-            
-            path.move(to: CGPoint(x: left, y: (top + cornerRadius / 2.0)))
+            let radius = width/20.0 / 2.0
+            let cornerLength = width/10.0
+        
+            path.move(to: CGPoint(x: left, y: top + radius))
             path.addArc(
-                center: CGPoint(x: (left + cornerRadius / 2.0), y: (top + cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
+                center: CGPoint(x: left + radius, y: top + radius),
+                radius: radius,
                 startAngle: Angle(degrees: 180.0),
                 endAngle: Angle(degrees: 270.0),
                 clockwise: false
             )
 
-            path.move(to: CGPoint(x: left + (cornerRadius / 2.0), y: top))
-            path.addLine(to: CGPoint(x: left + (cornerRadius / 2.0) + cornerLength, y: top))
+            path.move(to: CGPoint(x: left + radius, y: top))
+            path.addLine(to: CGPoint(x: left + radius + cornerLength, y: top))
 
-            path.move(to: CGPoint(x: left, y: top + (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: left, y: top + (cornerRadius / 2.0) + cornerLength))
+            path.move(to: CGPoint(x: left, y: top + radius))
+            path.addLine(to: CGPoint(x: left, y: top + radius + cornerLength))
 
             // top right
-            path.move(to: CGPoint(x: right - cornerRadius / 2.0, y: top))
+            path.move(to: CGPoint(x: right - radius, y: top))
             path.addArc(
-                center: CGPoint(x: (right - cornerRadius / 2.0), y: (top + cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
+                center: CGPoint(x: right - radius, y: top + radius),
+                radius: radius,
                 startAngle: Angle(degrees: 270.0),
                 endAngle: Angle(degrees: 360.0),
                 clockwise: false
             )
 
-            path.move(to: CGPoint(x: right - (cornerRadius / 2.0), y: top))
-            path.addLine(to: CGPoint(x: right - (cornerRadius / 2.0) - cornerLength, y: top))
+            path.move(to: CGPoint(x: right - radius, y: top))
+            path.addLine(to: CGPoint(x: right - radius - cornerLength, y: top))
 
-            path.move(to: CGPoint(x: right, y: top + (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: right, y: top + (cornerRadius / 2.0) + cornerLength))
+            path.move(to: CGPoint(x: right, y: top + radius))
+            path.addLine(to: CGPoint(x: right, y: top + radius + cornerLength))
 
             // bottom left
-            path.move(to: CGPoint(x: left + cornerRadius / 2.0, y: bottom))
+            path.move(to: CGPoint(x: left + radius, y: bottom))
             path.addArc(
-                center: CGPoint(x: (left + cornerRadius / 2.0), y: (bottom - cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
+                center: CGPoint(x: left + radius, y: bottom - radius),
+                radius: radius,
                 startAngle: Angle(degrees: 90.0),
                 endAngle: Angle(degrees: 180.0),
                 clockwise: false
             )
             
-            path.move(to: CGPoint(x: left + (cornerRadius / 2.0), y: bottom))
-            path.addLine(to: CGPoint(x: left + (cornerRadius / 2.0) + cornerLength, y: bottom))
+            path.move(to: CGPoint(x: left + radius, y: bottom))
+            path.addLine(to: CGPoint(x: left + radius + cornerLength, y: bottom))
 
-            path.move(to: CGPoint(x: left, y: bottom - (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: left, y: bottom - (cornerRadius / 2.0) - cornerLength))
+            path.move(to: CGPoint(x: left, y: bottom - radius))
+            path.addLine(to: CGPoint(x: left, y: bottom - radius - cornerLength))
 
             // bottom right
-            path.move(to: CGPoint(x: right, y: bottom - cornerRadius / 2.0))
+            path.move(to: CGPoint(x: right, y: bottom - radius))
             path.addArc(
-                center: CGPoint(x: (right - cornerRadius / 2.0), y: (bottom - cornerRadius / 2.0)),
-                radius: cornerRadius / 2.0,
+                center: CGPoint(x: right - radius, y: bottom - radius),
+                radius: radius,
                 startAngle: Angle(degrees: 0.0),
                 endAngle: Angle(degrees: 90.0),
                 clockwise: false
             )
             
-            path.move(to: CGPoint(x: right - (cornerRadius / 2.0), y: bottom))
-            path.addLine(to: CGPoint(x: right - (cornerRadius / 2.0) - cornerLength, y: bottom))
+            path.move(to: CGPoint(x: right - radius, y: bottom))
+            path.addLine(to: CGPoint(x: right - radius - cornerLength, y: bottom))
 
-            path.move(to: CGPoint(x: right, y: bottom - (cornerRadius / 2.0)))
-            path.addLine(to: CGPoint(x: right, y: bottom - (cornerRadius / 2.0) - cornerLength))
+            path.move(to: CGPoint(x: right, y: bottom - radius))
+            path.addLine(to: CGPoint(x: right, y: bottom - radius - cornerLength))
 
             return path
         }
     
+   
+    
 }
-
