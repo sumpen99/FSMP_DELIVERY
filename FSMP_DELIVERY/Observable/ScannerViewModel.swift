@@ -34,8 +34,8 @@ class ScannerViewModel: ObservableObject {
         top = bounds.minY
         right = bounds.maxX
         bottom = bounds.maxY
-        self.lastQrCode = code
-        self.foundQrCode = true
+        lastQrCode = code
+        foundQrCode = true
     }
     
     func onResetQrCode(_ value: Bool) {
@@ -44,7 +44,7 @@ class ScannerViewModel: ObservableObject {
     
     func reset(){
         lastQrCode = ""
-        self.foundQrCode = false
+        foundQrCode = false
     }
   
 }

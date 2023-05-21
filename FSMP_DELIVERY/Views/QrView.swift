@@ -10,6 +10,7 @@ import SwiftUI
 struct QrView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isPrivacyResult = false
+    @State private var closeOnTappedToast:Bool = false
     @EnvironmentObject var scannerViewModel: ScannerViewModel
     let qrQodeScannerView = QrScannerView()
     
@@ -21,11 +22,9 @@ struct QrView: View {
             .torchLight(isOn: scannerViewModel.torchIsOn)
             .interval(delay: scannerViewModel.scanInterval)
             scannerBox
-            /*VStack {
-                Spacer()
-                lightButton
-            }.padding()*/
+            toastLastReadQrCode
         }
+        .opacity(closeOnTappedToast ? 0.0 : 1.0)
         .alert(isPresented: $scannerViewModel.isPrivacyResult, content: {
             onPrivacyAlert(actionPrimary: openPrivacySettings,
                            actionSecondary: closeScannerView)
@@ -38,10 +37,8 @@ struct QrView: View {
                 lightButton
             }
         }
-        .navigationTitle(scannerViewModel.lastQrCode)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        //.ignoresSafeArea(.all)
-        
     }
     
     var scannerBox: some View{
@@ -53,28 +50,34 @@ struct QrView: View {
                     )
                 }
                 .stroke(Color.green, lineWidth:4)
-                //.aspectRatio(1, contentMode: .fit)
-                
             }
         }
     }
     
-    /*var lightButton: some View{
-        HStack{
-            Button(action: {
-                if QrScannerView.cameraPermissionIsAllowed(){
-                    scannerViewModel.torchIsOn.toggle()
-                }
-            }, label: {
-                Image(systemName: scannerViewModel.torchIsOn ? "bolt.fill" : "bolt.slash.fill")
-                    .imageScale(.large)
-                    .foregroundColor(scannerViewModel.torchIsOn ? Color.yellow : Color.blue)
+    var toastLastReadQrCode: some View {
+        VStack{
+            if scannerViewModel.lastQrCode != ""{
+                Spacer()
+                VStack{
+                    Text(scannerViewModel.lastQrCode)
+                      .multilineTextAlignment(.center)
+                      .foregroundColor(Color.white)
+                      .font(.system(size: 14))
+                      .padding(20)
+                    HStack(){
+                        foundQrCloseButton
+                        Spacer()
+                        foundQrOkButton
+                    }
                     .padding()
-            })
+                }
+                .background(Color.black.opacity(0.588))
+                .cornerRadius(8)
+                .padding()
+            }
         }
-        .background(Color.white)
-        .cornerRadius(10)
-    }*/
+        
+    }
     
     var lightButton: some View{
         Button(action: {
@@ -87,6 +90,31 @@ struct QrView: View {
                 .foregroundColor(scannerViewModel.torchIsOn ? Color.yellow : Color.blue)
                 .padding()
         })
+    }
+    
+    var foundQrOkButton: some View{
+        Button(action: {
+            withAnimation(Animation.spring().speed(0.2)) {
+                closeOnTappedToast.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                      closeScannerView()
+                }
+            }
+        }, label: {
+            Image(systemName:"checkmark.circle")
+                .font(.largeTitle)
+                .foregroundColor(Color.blue)
+        })
+        .padding(.trailing)
+    }
+    
+    var foundQrCloseButton: some View{
+        Button(action: {scannerViewModel.lastQrCode = ""}, label: {
+            Image(systemName:"xmark.circle")
+                .font(.largeTitle)
+                .foregroundColor(Color.blue)
+        })
+        .padding(.leading)
     }
     
     func closeScannerView(){
@@ -107,11 +135,11 @@ struct QrView: View {
 
             let left = scannerViewModel.left
             let right = scannerViewModel.right
-            let width = right-left
             let top = scannerViewModel.top
             let bottom = scannerViewModel.bottom
-            let radius = width/20.0 / 2.0
-            let cornerLength = width/10.0
+            let width = right - left
+            let radius = width / 20.0 / 2.0
+            let cornerLength = width / 10.0
         
             path.move(to: CGPoint(x: left, y: top + radius))
             path.addArc(
@@ -128,7 +156,6 @@ struct QrView: View {
             path.move(to: CGPoint(x: left, y: top + radius))
             path.addLine(to: CGPoint(x: left, y: top + radius + cornerLength))
 
-            // top right
             path.move(to: CGPoint(x: right - radius, y: top))
             path.addArc(
                 center: CGPoint(x: right - radius, y: top + radius),
@@ -144,7 +171,6 @@ struct QrView: View {
             path.move(to: CGPoint(x: right, y: top + radius))
             path.addLine(to: CGPoint(x: right, y: top + radius + cornerLength))
 
-            // bottom left
             path.move(to: CGPoint(x: left + radius, y: bottom))
             path.addArc(
                 center: CGPoint(x: left + radius, y: bottom - radius),
@@ -160,7 +186,6 @@ struct QrView: View {
             path.move(to: CGPoint(x: left, y: bottom - radius))
             path.addLine(to: CGPoint(x: left, y: bottom - radius - cornerLength))
 
-            // bottom right
             path.move(to: CGPoint(x: right, y: bottom - radius))
             path.addArc(
                 center: CGPoint(x: right - radius, y: bottom - radius),
