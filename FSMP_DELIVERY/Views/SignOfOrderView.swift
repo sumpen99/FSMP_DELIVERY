@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+struct LazyDestination<Destination: View>: View {
+    var destination: () -> Destination
+    var body: some View {
+        self.destination()
+    }
+}
+
 struct SignOfOrderView: View{
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []
@@ -14,10 +21,10 @@ struct SignOfOrderView: View{
     @State var qrCode = QrCode()
     @State var isFormSignedResult:Bool = false
     @State private var renderedImage:Image?
-    @StateObject var scannerViewModel = ScannerViewModel()
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     let currentDate = Date().toISO8601String()
+   
     var body: some View{
         NavigationStack {
             signedForm
@@ -25,9 +32,13 @@ struct SignOfOrderView: View{
         .alert(isPresented: $isFormSignedResult, content: {
             onResultAlert{ }
         })
+        .onAppear(){
+            qrCode.verifiedCode = QrView.SCANNED_QR_CODE
+            qrCode.verified = !QrView.SCANNED_QR_CODE.isEmpty
+        }
         .toolbar {
             ToolbarItemGroup{
-                NavigationLink(destination:QrView().environmentObject(scannerViewModel)) {
+                NavigationLink(destination:LazyDestination(destination: { QrView() })) {
                     Image(systemName: "qrcode.viewfinder")
                 }
                 Button(action: uploadSignedForm) {
@@ -46,11 +57,11 @@ struct SignOfOrderView: View{
                     .foregroundColor(.gray)
                 }
                 Section(header: Text("Verifierad Qr-Kod")){
-                    Text(scannerViewModel.lastQrCode)
+                    Text(qrCode.verifiedCode)
                     .font(.title3)
                     .foregroundColor(.gray)
                 }
-                Section(header: Text("Signatur (shake device to clear)")){
+                Section(header: Text("Signatur")){
                     renderedImage
                 }
             }
@@ -123,7 +134,7 @@ struct SignOfOrderView: View{
                         Text(currentDate)
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
-                        Text(scannerViewModel.lastQrCode)
+                        Text(qrCode.verifiedCode)
                             .font(.caption)
                            
                     }

@@ -20,6 +20,7 @@ class QrCameraDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     var onTransform: ((AVMetadataObject) -> AVMetadataObject?)? = nil
     var timer:Timer?
     var simulatedRec:CGRect?
+    
     /*override init() {
         super.init()
         print("init camera delegate")

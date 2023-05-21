@@ -9,18 +9,25 @@ import SwiftUI
 
 struct QrView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var scannerViewModel = ScannerViewModel()
     @State private var isPrivacyResult = false
     @State private var closeOnTappedToast:Bool = false
-    @EnvironmentObject var scannerViewModel: ScannerViewModel
-    let qrQodeScannerView = QrScannerView()
+    let scannerView = QrScannerView()
+    
+    static var SCANNED_QR_CODE: String = ""
+    
+    /*init(){
+        print("init qrview")
+    }*/
     
     var body: some View {
         ZStack {
-            qrQodeScannerView
+            scannerView
             .found(r: scannerViewModel.onFoundQrCode)
             .reset(r: scannerViewModel.onResetQrCode)
             .torchLight(isOn: scannerViewModel.torchIsOn)
             .interval(delay: scannerViewModel.scanInterval)
+            .environmentObject(scannerViewModel)
             scannerBox
             toastLastReadQrCode
         }
@@ -29,13 +36,13 @@ struct QrView: View {
             onPrivacyAlert(actionPrimary: openPrivacySettings,
                            actionSecondary: closeScannerView)
         })
-        .onAppear{
-            scannerViewModel.reset()
-        }
         .toolbar {
             ToolbarItemGroup{
                 lightButton
             }
+        }
+        .onAppear(){
+            QrView.SCANNED_QR_CODE = ""
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
@@ -55,26 +62,29 @@ struct QrView: View {
     }
     
     var toastLastReadQrCode: some View {
-        VStack{
-            if scannerViewModel.lastQrCode != ""{
-                Spacer()
-                VStack{
-                    Text(scannerViewModel.lastQrCode)
-                      .multilineTextAlignment(.center)
-                      .foregroundColor(Color.white)
-                      .font(.system(size: 14))
-                      .padding(20)
-                    HStack(){
-                        foundQrCloseButton
-                        Spacer()
-                        foundQrOkButton
+        withAnimation(.linear(duration: 5)){
+            VStack{
+                if scannerViewModel.lastQrCode != ""{
+                    Spacer()
+                    VStack{
+                        Text(scannerViewModel.lastQrCode)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color.white)
+                            .font(.system(size: 14))
+                            .padding(20)
+                        HStack(){
+                            foundQrCloseButton
+                            Spacer()
+                            foundQrOkButton
+                        }
+                        .padding()
                     }
+                    .background(Color.black.opacity(0.588))
+                    .cornerRadius(8)
                     .padding()
                 }
-                .background(Color.black.opacity(0.588))
-                .cornerRadius(8)
-                .padding()
             }
+            
         }
         
     }
@@ -95,6 +105,7 @@ struct QrView: View {
     var foundQrOkButton: some View{
         Button(action: {
             withAnimation(Animation.spring().speed(0.2)) {
+                QrView.SCANNED_QR_CODE = scannerViewModel.lastQrCode
                 closeOnTappedToast.toggle()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
                       closeScannerView()
@@ -103,16 +114,18 @@ struct QrView: View {
         }, label: {
             Image(systemName:"checkmark.circle")
                 .font(.largeTitle)
-                .foregroundColor(Color.blue)
+                .foregroundColor(Color.green)
         })
         .padding(.trailing)
     }
     
     var foundQrCloseButton: some View{
-        Button(action: {scannerViewModel.lastQrCode = ""}, label: {
+        Button(action: {
+            scannerViewModel.onReset()
+        }, label: {
             Image(systemName:"xmark.circle")
                 .font(.largeTitle)
-                .foregroundColor(Color.blue)
+                .foregroundColor(Color.red)
         })
         .padding(.leading)
     }

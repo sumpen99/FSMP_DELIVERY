@@ -17,7 +17,7 @@ struct QrScannerView: UIViewRepresentable {
     private let metadataOutput = AVCaptureMetadataOutput()
     
     /*init(){
-        print("init scannerview")
+        print("init qrscannerview")
     }*/
     
     func torchLight(isOn: Bool) -> QrScannerView {
@@ -65,7 +65,6 @@ struct QrScannerView: UIViewRepresentable {
     func setupCamera(_ uiView: QrCameraPreView) {
         if let backCamera = AVCaptureDevice.default(for: AVMediaType.video) {
             if let input = try? AVCaptureDeviceInput(device: backCamera) {
-                
                 session.sessionPreset = .photo
                 
                 if session.canAddInput(input) {
@@ -85,6 +84,7 @@ struct QrScannerView: UIViewRepresentable {
                 delegate.onTransform = previewLayer.transformedMetadataObject
                 
                 DispatchQueue.global(qos: .background).async {
+                    //print("start running")
                     session.startRunning()
                 }
             }
@@ -104,6 +104,7 @@ struct QrScannerView: UIViewRepresentable {
     }
     
     static func dismantleUIView(_ uiView: QrCameraPreView, coordinator: ()) {
+        //print("dismantle")
         uiView.session?.stopRunning()
     }
     

@@ -26,6 +26,10 @@ class QrCameraPreView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /*deinit{
+        print("deinit camera preview")
+    }*/
+    
     func createSimulatorView(delegate: QrCameraDelegate){
         let qrCodeStr = UUID().uuidString
         self.delegate = delegate

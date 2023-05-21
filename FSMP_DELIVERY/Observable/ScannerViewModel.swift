@@ -12,7 +12,7 @@ class ScannerViewModel: ObservableObject {
     let scanInterval: Double = 1.0
     
     @Published var torchIsOn: Bool = false
-    @Published var lastQrCode: String = ""
+    var lastQrCode: String = ""
     @Published var isPrivacyResult = false
     @Published var foundQrCode = false
  
@@ -42,7 +42,7 @@ class ScannerViewModel: ObservableObject {
         self.foundQrCode = value
     }
     
-    func reset(){
+    func onReset(){
         lastQrCode = ""
         foundQrCode = false
     }
