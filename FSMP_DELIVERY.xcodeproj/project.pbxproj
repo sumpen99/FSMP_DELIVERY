@@ -43,6 +43,7 @@
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
 		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
 		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
+		AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
+		AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				0CD28CD72A0CCBB500481B9D /* Customer.swift */,
 				0CD28CD92A0CCBCD00481B9D /* Order.swift */,
 				AFC1D9872A164A4C0065FCAD /* Map.swift */,
+				AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */,
 				7D20F7412A15223700C66167 /* DeviceShakeModifier.swift in Sources */,
 				7D20F73C2A15158400C66167 /* CustomButtonStyleDisabledable.swift in Sources */,
+				AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,6 +475,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FSMP-DELIVERY-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Grant permission to scan qr-code";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Grant permission to get delivery route";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission to user your location";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -500,6 +508,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FSMP-DELIVERY-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Grant permission to scan qr-code";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Grant permission to get delivery route";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission to user your location";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
