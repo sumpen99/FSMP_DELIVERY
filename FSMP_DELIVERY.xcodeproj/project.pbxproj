@@ -31,6 +31,8 @@
 		7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */; };
 		7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */; };
 		7D29E0F22A1A4419003E0BE8 /* QrCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F12A1A4419003E0BE8 /* QrCode.swift */; };
+		7D29E0F82A1BC866003E0BE8 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F72A1BC866003E0BE8 /* UserRole.swift */; };
+		7D29E0FC2A1BC933003E0BE8 /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -79,6 +81,8 @@
 		7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
 		7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCameraDelegate.swift; sourceTree = "<group>"; };
 		7D29E0F12A1A4419003E0BE8 /* QrCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCode.swift; sourceTree = "<group>"; };
+		7D29E0F72A1BC866003E0BE8 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
+		7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminView.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -148,6 +152,7 @@
 				7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */,
 				AFC1D9852A164A140065FCAD /* MapView.swift */,
 				5F8C2AB12A1B910500EAB420 /* createAccountView.swift */,
+				7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -260,6 +265,7 @@
 				7D5302A12A097422005EAAD0 /* Company.swift */,
 				7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */,
 				7D29E0F12A1A4419003E0BE8 /* QrCode.swift */,
+				7D29E0F72A1BC866003E0BE8 /* UserRole.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -348,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */,
+				7D29E0F82A1BC866003E0BE8 /* UserRole.swift in Sources */,
 				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
 				7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */,
 				7D29E0F22A1A4419003E0BE8 /* QrCode.swift in Sources */,
@@ -372,6 +379,7 @@
 				5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,
+				7D29E0FC2A1BC933003E0BE8 /* AdminView.swift in Sources */,
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
 				7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */,
 				7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */,

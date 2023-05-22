@@ -17,20 +17,31 @@ struct ContentView: View {
  
  @State var signedIn : Bool = true
  
- var body: some View {
-     ZStack{
-         Color(red: 70/256, green: 89/256, blue: 116/256)
-             .ignoresSafeArea()
-         if !firebaseAuth.isLoggedIn {
-             SignInView(signedIn: $signedIn)
-         } else {
-             MainView()
+    var body: some View {
+         ZStack{
+             Color(red: 70/256, green: 89/256, blue: 116/256)
+                 .ignoresSafeArea()
+             switch firebaseAuth.loggedInAs{
+                 case .NOT_LOGGED_IN:
+                    SignInView(signedIn: $signedIn)
+                 case .ADMIN:
+                    AdminView()
+                 case .EMPLOYEE:
+                    MainView()
+                 case .CUSTOMER:
+                     EmptyView()
+                 default:
+                    EmptyView()
+             }
+         }
+         /*.onChange(of: firebaseAuth.loggedInAs){ _ in
+             withAnimation(.linear(duration: 0.5)){
+             }
+         }*/
+         .onReceive(memoryWarningPublisher) { warn in
+             print(warn.debugDescription)
          }
      }
-     .onReceive(memoryWarningPublisher) { warn in
-         print(warn.debugDescription)
-     }
- }
 
  struct ContentView_Previews: PreviewProvider {
      static var previews: some View {
@@ -41,10 +52,6 @@ struct ContentView: View {
 }
 
 struct SignInView : View {
-   
-    @EnvironmentObject var firebaseAuth: FirebaseAuth
-    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
-    
     @Binding var signedIn : Bool
     @State var showAlert : Bool = false
     
