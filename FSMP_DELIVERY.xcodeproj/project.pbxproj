@@ -16,6 +16,7 @@
 		0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CDC2A0CD4A500481B9D /* MainView.swift */; };
 		0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */; };
 		0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */; };
+		5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8C2AB12A1B910500EAB420 /* createAccountView.swift */; };
 		5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE40DAD2A124D2400D5539C /* AddOrderView.swift */; };
 		7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7362A15122900C66167 /* SignOfOrderView.swift */; };
 		7D20F73A2A15127F00C66167 /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D20F7392A15127F00C66167 /* AppExtensions.swift */; };
@@ -62,6 +63,7 @@
 		0CD28CDC2A0CD4A500481B9D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle1.swift; sourceTree = "<group>"; };
 		0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle2.swift; sourceTree = "<group>"; };
+		5F8C2AB12A1B910500EAB420 /* createAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView.swift; sourceTree = "<group>"; };
 		5FE40DAD2A124D2400D5539C /* AddOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOrderView.swift; sourceTree = "<group>"; };
 		7D20F7362A15122900C66167 /* SignOfOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOfOrderView.swift; sourceTree = "<group>"; };
 		7D20F7392A15127F00C66167 /* AppExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 				7D29E0E92A17CD56003E0BE8 /* QrView.swift */,
 				7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */,
 				AFC1D9852A164A140065FCAD /* MapView.swift */,
+				5F8C2AB12A1B910500EAB420 /* createAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -366,6 +369,7 @@
 				7D29E0EA2A17CD56003E0BE8 /* QrView.swift in Sources */,
 				7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
+				5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
