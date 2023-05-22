@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SideMenuView: View {
-    
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
     var body: some View {
         
         NavigationStack {
@@ -47,6 +47,11 @@ struct SideMenuView: View {
                     NavigationLink(destination: CustomerView()) {
                         Text("Customer")
                     }
+                }
+                .buttonStyle(CustomButtonStyle1())
+                .padding()
+                Button(action: {firebaseAuth.signOut()}){
+                    Text("Sign Out")
                 }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()

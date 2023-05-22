@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+struct LazyDestination<Destination: View>: View {
+    var destination: () -> Destination
+    var body: some View {
+        self.destination()
+    }
+}
+
 struct SignOfOrderView: View{
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []
@@ -16,6 +23,8 @@ struct SignOfOrderView: View{
     @State private var renderedImage:Image?
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
+    let currentDate = Date().toISO8601String()
+   
     var body: some View{
         NavigationStack {
             signedForm
@@ -23,9 +32,13 @@ struct SignOfOrderView: View{
         .alert(isPresented: $isFormSignedResult, content: {
             onResultAlert{ }
         })
+        .onAppear(){
+            qrCode.verifiedCode = QrView.SCANNED_QR_CODE
+            qrCode.verified = !QrView.SCANNED_QR_CODE.isEmpty
+        }
         .toolbar {
             ToolbarItemGroup{
-                Button(action: clearAllDrawnLines) {
+                NavigationLink(destination:LazyDestination(destination: { QrView() })) {
                     Image(systemName: "qrcode.viewfinder")
                 }
                 Button(action: uploadSignedForm) {
@@ -39,16 +52,16 @@ struct SignOfOrderView: View{
         return VStack{
             Form{
                 Section(header: Text("Datum")){
-                    Text(Date().toISO8601String())
-                    .font(.largeTitle)
+                    Text(currentDate)
+                    .font(.title3)
                     .foregroundColor(.gray)
                 }
                 Section(header: Text("Verifierad Qr-Kod")){
-                    Text("")
-                    .font(.largeTitle)
+                    Text(qrCode.verifiedCode)
+                    .font(.title3)
                     .foregroundColor(.gray)
                 }
-                Section(header: Text("Signatur (shake device to clear)")){
+                Section(header: Text("Signatur")){
                     renderedImage
                 }
             }
@@ -115,13 +128,13 @@ struct SignOfOrderView: View{
                     .padding()
                     Section(header: Text("Bekräftelse av mottagen service")){
                         Text("Order")
-                        Text("muraregatan")
+                        Text("insert details of order")
                             .font(.caption)
                         Text("Datum")
-                        Text(Date().toISO8601String())
+                        Text(currentDate)
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
-                        Text("123456789")
+                        Text(qrCode.verifiedCode)
                             .font(.caption)
                            
                     }
