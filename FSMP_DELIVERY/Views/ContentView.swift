@@ -56,6 +56,17 @@ struct SignInView : View {
     var body: some View {
     
         VStack{
+            HStack{
+                Image(systemName: "wrench.and.screwdriver.fill")
+                    .font(.largeTitle)
+                    .bold()
+                Text("FSMP Service")
+                    .font(.largeTitle)
+                    .bold()
+                Image(systemName: "wrench.and.screwdriver.fill")
+                    .font(.largeTitle)
+                    .bold()
+            }
             Image ("delivery")
                 .resizable()
                 .padding(.leading, 20.0)
@@ -90,6 +101,11 @@ struct SignInView : View {
             .padding()
             Spacer()
             
+            Button(action: {}){
+                NavigationLink(destination: createAccountView()) {
+                    Text("test to createAccountView")
+                }
+            }
             Button(action: {
                 auth.signIn(withEmail: email, password: password) { authResult, error in
                     if let _ = error {
@@ -108,12 +124,15 @@ struct SignInView : View {
                     .padding()
                     .background(Color(red: 239/256, green: 167/256, blue: 62/256))
                     .cornerRadius(40.0)
-            }.alert(isPresented: $showAlert) {
+            }
+            Spacer()
+            Spacer()
+            .alert(isPresented: $showAlert) {
                 Alert(title: Text("Felaktig Login"),
                       message: Text("Fel lösenord eller email"),
                       dismissButton: .default(Text("OK")))
+                
             }
-            Spacer()
         }
     }
 

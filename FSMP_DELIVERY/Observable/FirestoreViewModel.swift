@@ -26,7 +26,7 @@ class FirestoreViewModel: ObservableObject{
             
             guard let snapshot = snapshot else {print("1"); return}
             
-            if let err = err {
+            if let _ = err {
                 print("error fetching customers")
             } else {
                 print("2")
