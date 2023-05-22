@@ -6,6 +6,7 @@
 //
 
 enum UserRole{
+    case NOT_LOGGED_IN
     case ADMIN
     case EMPLOYEE
     case CUSTOMER
