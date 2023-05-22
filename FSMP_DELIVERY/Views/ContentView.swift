@@ -24,7 +24,15 @@ struct ContentView: View {
          if !firebaseAuth.isLoggedIn {
              SignInView(signedIn: $signedIn)
          } else {
-             MainView()
+             firebaseAuth.getUserRole(){ role in
+                 switch role{
+                 case .ADMIN:
+                     print("usere is admin")
+                 default:
+                     MainView()
+                     
+                 }
+             }
          }
      }
      .onReceive(memoryWarningPublisher) { warn in

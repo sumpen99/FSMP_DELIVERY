@@ -30,6 +30,7 @@
 		7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */; };
 		7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */; };
 		7D29E0F22A1A4419003E0BE8 /* QrCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F12A1A4419003E0BE8 /* QrCode.swift */; };
+		7D29E0F42A1BB06B003E0BE8 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F32A1BB06B003E0BE8 /* UserRole.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -77,6 +78,7 @@
 		7D29E0EB2A17CDE3003E0BE8 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
 		7D29E0ED2A17CE51003E0BE8 /* QrCameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCameraDelegate.swift; sourceTree = "<group>"; };
 		7D29E0F12A1A4419003E0BE8 /* QrCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCode.swift; sourceTree = "<group>"; };
+		7D29E0F32A1BB06B003E0BE8 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 				7D5302A12A097422005EAAD0 /* Company.swift */,
 				7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */,
 				7D29E0F12A1A4419003E0BE8 /* QrCode.swift */,
+				7D29E0F32A1BB06B003E0BE8 /* UserRole.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */,
 				7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */,
 				7D29E0EA2A17CD56003E0BE8 /* QrView.swift in Sources */,
+				7D29E0F42A1BB06B003E0BE8 /* UserRole.swift in Sources */,
 				7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
