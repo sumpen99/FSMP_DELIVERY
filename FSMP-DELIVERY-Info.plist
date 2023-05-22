@@ -6,8 +6,6 @@
 	<string>Permission needed to scan qr code</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
-  <key>NSLocationUsageDescription</key>
-  <string>Grant permission to get delivery route</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
