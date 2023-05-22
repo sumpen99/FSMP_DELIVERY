@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseAuth
 class FirebaseAuth:ObservableObject{
     let auth = Auth.auth()
-    @Published private(set) var isLoggedIn: Bool = false
+    @Published private(set) var loggedInAs: UserRole = .NOT_LOGGED_IN
     private var handleAuthState: AuthStateDidChangeListenerHandle?
     
     init(){
@@ -18,9 +18,10 @@ class FirebaseAuth:ObservableObject{
     
     func listenForAuthDidChange() {
         guard handleAuthState == nil else { return }
-        handleAuthState = auth.addStateDidChangeListener { auth, _ in
-            withAnimation(.linear(duration: 0.1)){
-                self.isLoggedIn = auth.currentUser != nil
+        handleAuthState = auth.addStateDidChangeListener { [weak self] auth, _ in
+            guard let strongSelf = self else { return }
+            strongSelf.getUserRole(){ role in
+                strongSelf.loggedInAs = role
             }
         }
     }
@@ -40,6 +41,20 @@ class FirebaseAuth:ObservableObject{
     
     func getUserID() ->String? {
         return auth.currentUser?.uid
+    }
+    
+    func getUserRole(completion: @escaping (UserRole) -> Void){
+        guard let user = auth.currentUser else { completion(.NOT_LOGGED_IN); return }
+        user.getIDTokenResult(){ (result,error) in
+            guard let role = result?.claims["role"] as? NSString else {
+                completion(.ANONYMOUS)
+                return
+            }
+            if role == "admin"{ completion(.ADMIN) }
+            else if(role == "customer") { completion(.CUSTOMER) }
+            else if(role == "employee") { completion(.EMPLOYEE) }
+            else{ completion(.ANONYMOUS) }
+        }
     }
     
     func loginWithEmail(_ email:String,password:String,completion:((AuthDataResult?,Error?)->Void)?){

@@ -5,7 +5,7 @@
 //  Created by fredrik sundström on 2023-05-18.
 //
 
-enum SignedFormResult : Error {
+enum SignedFormResult {
     case FORM_NOT_FILLED
     case IMAGE_DATA_ERROR
     case USER_URL_ERROR
