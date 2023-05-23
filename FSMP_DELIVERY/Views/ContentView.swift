@@ -31,7 +31,7 @@ struct ContentView: View {
                  case .CUSTOMER:
                      EmptyView()
                  default:
-                    EmptyView()
+                    MainView()
              }
          }
          /*.onChange(of: firebaseAuth.loggedInAs){ _ in

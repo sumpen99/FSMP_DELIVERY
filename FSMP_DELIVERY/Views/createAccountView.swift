@@ -13,7 +13,6 @@ struct createAccountView: View {
     @State private var password: String = ""
     
     var body: some View {
-
             VStack{
                 HStack{
                     Image(systemName: "person.crop.circle.fill")
