@@ -67,7 +67,7 @@ struct createAccountView: View {
                     }
                 }){
                     Text("Create New Account")
-                        .font(.title)
+                        .font(.title2)
                         .bold ()
                         .foregroundColor(.black)
                         .padding()
