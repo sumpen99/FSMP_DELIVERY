@@ -108,11 +108,6 @@ struct SignInView : View {
             .padding()
             Spacer()
             
-            Button(action: {}){
-                NavigationLink(destination: createAccountView()) {
-                    Text("test to createAccountView")
-                }
-            }
             Button(action: {
                 auth.signIn(withEmail: email, password: password) { authResult, error in
                     if let _ = error {
