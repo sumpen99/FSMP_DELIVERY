@@ -8,60 +8,71 @@
 import SwiftUI
 
 struct CustomerView: View {
-    // temp State var. remove
+    
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     
-    @State private var choosenCustomerDetails = "Here is all information about the highlighted customer\n\nName: Janne\nAdress: Lugnagatan 1. 242 33 Hörby\nNumber: 0701234567\nEmail: janne.jansson@gmail.com\n\nDescription: Bra kille!"
+    @State private var choosenCustomer : Customer? = nil
     
     var body: some View {
         NavigationStack {
             VStack {
-                TextEditor(text: $choosenCustomerDetails)
+                TextEditor(text: Binding(get: { chosenCustomerDetails }, set: { _ in }))
                     .disabled(true)
                     .padding()
-                HStack{
-                    Button {
-                        print("Go to add orderView with this customer as a Binding")
-                    } label: {
+                if let customer = choosenCustomer {
+                    NavigationLink(destination: AddOrderView(customer: Binding(get: { customer }, set: { _ in }))) {
                         Text("Add order")
+                        }
+                        .buttonStyle(CustomButtonStyle1())
+                        .padding(.leading, 20)
+                    } else {
+                        Spacer()
                     }
-                    .buttonStyle(CustomButtonStyle1())
-                    Spacer()
-                }
-                .padding(.leading, 20)
+                
                 List{
                     ForEach(firestoreVM.customers) { customer in
                         HStack {
-                            test()
                             Text(customer.name)
+                        }
+                        .onTapGesture {
+                            choosenCustomer = customer
                         }
                     }
                 }
             }
             .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()) {
-                    Image(systemName: "plus.circle")
+                Image(systemName: "plus.circle")
             })
             .navigationTitle("Customers")
             
         }
         .onAppear() {
             firestoreVM.listenToFirestore()
-            print(firestoreVM.customers.count)
+            if let firstCustomer = firestoreVM.customers.first {
+                choosenCustomer = firstCustomer
+            }
+        }
+    }
+    
+    var chosenCustomerDetails: String {
+        guard let customer = choosenCustomer else {
+            return ""
         }
         
-    }
-    
-
-    func test() -> some View {
-        print("asd")
-        return EmptyView()
+        var details = ""
+        details += "\(customer.name)\n"
+        details += "Email: \(customer.email)\n"
+        details += "Phone Number: \(customer.phoneNumber)\n"
+        details += "Description: \(customer.description)\n"
+        details += "Tax Number: \(customer.taxnumber)"
         
+        return details
     }
-    
 }
 
 struct CustomerView_Previews: PreviewProvider {
     static var previews: some View {
         CustomerView()
+            .environmentObject(FirestoreViewModel())
     }
 }

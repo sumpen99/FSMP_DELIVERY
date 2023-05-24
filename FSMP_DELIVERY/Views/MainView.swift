@@ -78,9 +78,9 @@ struct MainView: View {
                         .foregroundColor(.accentColor)
                 }
             }
-            .navigationBarItems(trailing: NavigationLink(destination: AddOrderView()) {
-                Image(systemName: "plus.circle")
-            })
+//            .navigationBarItems(leading: NavigationLink(destination: AddOrderView()) {
+//                Image(systemName: "plus.circle")
+//            })
         }
         .onAppear() {
             firestoreVM.listenToFirestore()
