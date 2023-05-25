@@ -145,6 +145,15 @@ class FirestoreViewModel: ObservableObject{
             }
         }  
     }
+    
+    func getCredentials(){
+        repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
+            guard let doc = snapshot?.data() else { return }
+            print(doc["token"])
+            print(doc["adress"])
+        }
+        //n3mwjwh4dSK20s4FF6w7
+    }
         
     
     /*func downloadFormImage(orderNumber:String){

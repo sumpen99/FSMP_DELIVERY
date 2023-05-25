@@ -115,7 +115,7 @@ struct SignOfOrderView: View{
             }
         }
         .stroke(lineWidth:2)
-        .foregroundColor(.black)
+        .foregroundColor(.gray)
     }
     
     var formAsPdf:some View{
@@ -162,9 +162,11 @@ struct SignOfOrderView: View{
             setFormResult(.USER_URL_ERROR)
             return
         }
-        firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
-            setFormResult(result)
-        }
+        firestoreViewModel.getCredentials()
+        //MailManager().sendSignedResponseMailTo()
+        //firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
+            //setFormResult(result)
+        //}
     }
     
     private func renderCurrentSignaturePath(){

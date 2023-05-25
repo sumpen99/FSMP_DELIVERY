@@ -1,0 +1,69 @@
+//
+//  MailManager.swift
+//  FSMP_DELIVERY
+//
+//  Created by fredrik sundström on 2023-05-25.
+//
+import SwiftUI
+import SwiftSMTP
+class MailManager{
+    let SMTP_ADRESS = "smtp.gmail.com"
+    let EMAIL_ADRESS_SENDER = "fsmp.delivery.service@gmail.com"
+    let EMAIL_PASSWORD = "oafw dids qoit lvsw"
+    var EMAIL_SUBJECT = ""
+    var EMAIL_TEXT = ""
+    let EMAIL_SENDER = Mail.User(name:"Team FSMP",email: "fsmp.delivery.service@gmail.com")
+    
+    
+    /*func sendSignedResponseMailTo(_ customer:Customer){
+        setSignedSubjectAndText()
+        let email = createMail(customer.email,name:customer.name)
+        sendEmail(email)
+    }*/
+    
+    func sendSignedResponseMailTo(){
+        setSignedSubjectAndText()
+        let email = createMail("fredrik@heatia.se",name:"Fredrik Sundström")
+        sendEmail(email)
+    }
+    
+    func sendEmail(_ email:Mail){
+        let smtp = SMTP(
+            hostname:SMTP_ADRESS,
+            email:EMAIL_ADRESS_SENDER,
+            password:EMAIL_PASSWORD,
+            port:587
+        )
+        DispatchQueue.global(qos: .background).async {
+            smtp.send(email){ [weak self] error in
+                DispatchQueue.main.sync {
+                    print(error)
+                }
+                
+            }
+        
+        }
+    }
+    
+    func createMail(_ adress:String,name:String) -> Mail{
+        //let toUser = Mail.User(name:name,email: adress)
+        let toUser = Mail.User(name:"Fredrik Sundström",email: "fredrik@heatia.se")
+        return Mail(
+            from:EMAIL_SENDER,
+            to:[toUser],
+            subject:EMAIL_SUBJECT,
+            text:EMAIL_TEXT
+        )
+    }
+    
+    func setSignedSubjectAndText(){
+        EMAIL_SUBJECT = "Tack för förtroendet"
+        EMAIL_TEXT = "Din service är signerad och klar.\nHoppas arbetet var till belåtenhet \nFSMP_DELIVERY_SERVICE."
+    }
+    
+    func setAcceptedOrderSubjectAndText(){
+        EMAIL_SUBJECT = "Din order är mottagen"
+        EMAIL_TEXT = "Den kommer behandlas så snart som möjligt.\nFSMP_DELIVERY_SERVICE."
+    }
+    
+}
