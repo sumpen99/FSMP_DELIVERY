@@ -14,14 +14,6 @@ struct createAccountView: View {
     
     var body: some View {
             VStack{
-                HStack{
-                    Image(systemName: "person.crop.circle.fill")
-                        .font(.largeTitle)
-                        .bold()
-                    Text("Create an Account!")
-                        .font(.largeTitle)
-                        .bold()
-                }
                 Image ("delivery")
                     .resizable()
                     .padding(.leading, 20.0)
@@ -54,8 +46,7 @@ struct createAccountView: View {
                         .foregroundColor(.black)
                 }
                 .padding()
-                Spacer()
-
+              
                 Button(action: {
                     Auth.auth().createUser(withEmail: email, password: password) { result, error in 
                         if let _ = error {
@@ -75,7 +66,7 @@ struct createAccountView: View {
                 }
                 Spacer()
                 Spacer()
-            }
+            } .navigationTitle("Create an Account!")
     }
 }
 
