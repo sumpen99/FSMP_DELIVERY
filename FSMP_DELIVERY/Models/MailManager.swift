@@ -25,9 +25,10 @@ class MailManager{
         sendEmail(email)
     }*/
     
-    func sendSignedResponseMailTo(){
+    func sendSignedResponseMailTo(fileUrl:URL){
+        // pass customerinfo
         setSignedSubjectAndText()
-        let email = createMail("fredrik@heatia.se",name:"Fredrik Sundström")
+        let email = createMail("fredrik@heatia.se",name:"Fredrik Sundström",filePath:fileUrl.relativePath)
         sendEmail(email)
     }
     
@@ -51,15 +52,23 @@ class MailManager{
         }
     }
     
-    func createMail(_ adress:String,name:String) -> Mail{
+    func createMail(_ adress:String,name:String,filePath:String) -> Mail{
         //let toUser = Mail.User(name:name,email: adress)
         let EMAIL_SENDER = Mail.User(name:"Team FSMP",email: EMAIL_ADRESS_SENDER)
         let toUser = Mail.User(name:"Fredrik Sundström",email: "fredrik@heatia.se")
+        
+        let attachments = [
+            Attachment(
+                filePath: filePath,
+                additionalHeaders: ["CONTENT_ID": "pdf001"])
+        ]
+        
         return Mail(
             from:EMAIL_SENDER,
             to:[toUser],
             subject:EMAIL_SUBJECT,
-            text:EMAIL_TEXT
+            text:EMAIL_TEXT,
+            attachments: attachments
         )
     }
     
