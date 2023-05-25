@@ -157,25 +157,26 @@ struct SignOfOrderView: View{
             return
             
         }
-        let filePath = UUID().uuidString
+        
+        let filePath = UUID().uuidString + ".pdf"
+        
         guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
             setFormResult(.USER_URL_ERROR)
             return
         }
-        
         firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
-                sendMailVerificationToCustomer()
+                sendMailVerificationToCustomer(fileUrl: fileUrl)
             }
             setFormResult(result)
         }
     }
     
-    private func sendMailVerificationToCustomer(){
+    private func sendMailVerificationToCustomer(fileUrl:URL){
         firestoreViewModel.getCredentials(){ credentials in
             guard let credentials = credentials else { return }
             MailManager(credentials:credentials)
-                .sendSignedResponseMailTo()
+                .sendSignedResponseMailTo(fileUrl:fileUrl)
                 
         }
     }
