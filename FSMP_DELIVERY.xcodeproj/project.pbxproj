@@ -518,11 +518,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FSMP_DELIVERY/Preview Content\"";
-				DEVELOPMENT_TEAM = 46XS2RD832;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FSMP-DELIVERY-Info.plist";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Grant permission to scan qr-code";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Permission needed to scan qr code";
 				INFOPLIST_KEY_NSLocationUsageDescription = "Grant permission to get delivery route";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission to user your location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -552,11 +552,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FSMP_DELIVERY/Preview Content\"";
-				DEVELOPMENT_TEAM = 46XS2RD832;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FSMP-DELIVERY-Info.plist";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Grant permission to scan qr-code";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Permission needed to scan qr code";
 				INFOPLIST_KEY_NSLocationUsageDescription = "Grant permission to get delivery route";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission to user your location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
