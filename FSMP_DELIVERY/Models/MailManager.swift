@@ -26,8 +26,8 @@ class MailManager{
     }*/
     
     func sendSignedResponseMailTo(fileUrl:URL){
+        // pass customerinfo
         setSignedSubjectAndText()
-        print(fileUrl.relativePath)
         let email = createMail("fredrik@heatia.se",name:"Fredrik Sundström",filePath:fileUrl.relativePath)
         sendEmail(email)
     }
