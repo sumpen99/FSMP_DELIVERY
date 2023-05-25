@@ -68,7 +68,11 @@ struct SideMenuView: View {
                 Button(action: {firebaseAuth.signOut()}){
                     Text("Sign Out")
                 }
-                .buttonStyle(CustomButtonStyle1())
+                .foregroundColor(.white)
+                .padding(8)
+                .background(Color.red)
+                .cornerRadius(16)
+                .fontWeight(.semibold)
                 .padding()
                 Spacer()
             }
