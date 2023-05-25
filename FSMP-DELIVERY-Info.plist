@@ -9,8 +9,6 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-	<key>CFBundleIdentifier</key>
-	<string></string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>UIBackgroundModes</key>
