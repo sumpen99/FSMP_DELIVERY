@@ -42,8 +42,8 @@ class MailManager{
             smtp.send(email){ [weak self] error in
                 guard let strongSelf = self else { return }
                 DispatchQueue.main.sync { 
-                    strongSelf.onResult?(error != nil)
-                    //print(error)
+                    strongSelf.onResult?(error == nil)
+                    //print(error == nil)
                 }
                 
             }
