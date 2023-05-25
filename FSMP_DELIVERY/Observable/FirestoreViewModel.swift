@@ -145,6 +145,17 @@ class FirestoreViewModel: ObservableObject{
             }
         }  
     }
+    
+    func getCredentials(completion: @escaping (Credentials?) -> Void){
+        repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
+            do{
+                let cred = try snapshot?.data(as : Credentials.self)
+                completion(cred)
+            } catch {
+                completion(nil)
+            }
+        }
+    }
         
     
     /*func downloadFormImage(orderNumber:String){

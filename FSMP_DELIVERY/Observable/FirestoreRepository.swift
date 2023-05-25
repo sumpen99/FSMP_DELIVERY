@@ -11,6 +11,7 @@ import FirebaseStorage
 class FirestoreRepository{
     let USER_COLLECTION = "USER"
     let COMPANY_COLLECTION = "COMPANY"
+    let CREDENTIALS_COLLECTION = "credentials"
     let SIGNED_ORDER = "ORDER"
     private let firestoreDB = Firestore.firestore()
     private let firestoreStorage = Storage.storage()
@@ -25,6 +26,12 @@ class FirestoreRepository{
         return firestoreDB
             .collection(USER_COLLECTION)
             .document(userId)
+    }
+    
+    func getCredentialsDocument(_ token:String) -> DocumentReference {
+        return firestoreDB
+            .collection(CREDENTIALS_COLLECTION)
+            .document(token)
     }
     
     

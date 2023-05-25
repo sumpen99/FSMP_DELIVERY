@@ -33,6 +33,8 @@
 		7D29E0F22A1A4419003E0BE8 /* QrCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F12A1A4419003E0BE8 /* QrCode.swift */; };
 		7D29E0F82A1BC866003E0BE8 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0F72A1BC866003E0BE8 /* UserRole.swift */; };
 		7D29E0FC2A1BC933003E0BE8 /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */; };
+		7D29E0FF2A1FBAFD003E0BE8 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = 7D29E0FE2A1FBAFD003E0BE8 /* SwiftSMTP */; };
+		7D29E1012A1FBB18003E0BE8 /* MailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E1002A1FBB18003E0BE8 /* MailManager.swift */; };
 		7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */; };
 		7D53026C2A0952D4005EAAD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53026B2A0952D4005EAAD0 /* ContentView.swift */; };
 		7D53026E2A0952D5005EAAD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D53026D2A0952D5005EAAD0 /* Assets.xcassets */; };
@@ -50,6 +52,7 @@
 		7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */; };
 		7D5302A02A097417005EAAD0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029F2A097417005EAAD0 /* User.swift */; };
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
+		7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607C2A1FD905000F49CB /* Credentials.swift */; };
 		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
 		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
 		AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */; };
@@ -83,6 +86,7 @@
 		7D29E0F12A1A4419003E0BE8 /* QrCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCode.swift; sourceTree = "<group>"; };
 		7D29E0F72A1BC866003E0BE8 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminView.swift; sourceTree = "<group>"; };
+		7D29E1002A1FBB18003E0BE8 /* MailManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailManager.swift; sourceTree = "<group>"; };
 		7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FSMP_DELIVERY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSMP_DELIVERYApp.swift; sourceTree = "<group>"; };
 		7D53026B2A0952D4005EAAD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 		7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		7D53029F2A097417005EAAD0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
+		7DE7607C2A1FD905000F49CB /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -107,6 +112,7 @@
 			files = (
 				7D5302832A09549E005EAAD0 /* FirebaseMessaging in Frameworks */,
 				7D5302812A09549E005EAAD0 /* FirebaseFirestoreSwift in Frameworks */,
+				7D29E0FF2A1FBAFD003E0BE8 /* SwiftSMTP in Frameworks */,
 				7D53027D2A09549E005EAAD0 /* FirebaseDatabaseSwift in Frameworks */,
 				7D53027F2A09549E005EAAD0 /* FirebaseFirestore in Frameworks */,
 				7D5302852A09549E005EAAD0 /* FirebaseStorage in Frameworks */,
@@ -133,6 +139,7 @@
 				0CD28CD92A0CCBCD00481B9D /* Order.swift */,
 				AFC1D9872A164A4C0065FCAD /* Map.swift */,
 				AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */,
+				7D29E1002A1FBB18003E0BE8 /* MailManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -266,6 +273,7 @@
 				7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */,
 				7D29E0F12A1A4419003E0BE8 /* QrCode.swift */,
 				7D29E0F72A1BC866003E0BE8 /* UserRole.swift */,
+				7DE7607C2A1FD905000F49CB /* Credentials.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -294,6 +302,7 @@
 				7D5302802A09549E005EAAD0 /* FirebaseFirestoreSwift */,
 				7D5302822A09549E005EAAD0 /* FirebaseMessaging */,
 				7D5302842A09549E005EAAD0 /* FirebaseStorage */,
+				7D29E0FE2A1FBAFD003E0BE8 /* SwiftSMTP */,
 			);
 			productName = FSMP_DELIVERY;
 			productReference = 7D5302662A0952D4005EAAD0 /* FSMP_DELIVERY.app */;
@@ -325,6 +334,7 @@
 			mainGroup = 7D53025D2A0952D4005EAAD0;
 			packageReferences = (
 				7D5302772A09549E005EAAD0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				7D29E0FD2A1FBAFD003E0BE8 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
 			);
 			productRefGroup = 7D5302672A0952D4005EAAD0 /* Products */;
 			projectDirPath = "";
@@ -365,6 +375,7 @@
 				7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */,
 				0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */,
 				0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */,
+				7D29E1012A1FBB18003E0BE8 /* MailManager.swift in Sources */,
 				0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */,
 				0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */,
 				0CD28CE32A0D126900481B9D /* CustomButtonStyle2.swift in Sources */,
@@ -384,6 +395,7 @@
 				7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */,
 				7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
+				7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
 				5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */,
 				7D20F7412A15223700C66167 /* DeviceShakeModifier.swift in Sources */,
@@ -601,6 +613,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7D29E0FD2A1FBAFD003E0BE8 /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-SMTP";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		7D5302772A09549E005EAAD0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -612,6 +632,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7D29E0FE2A1FBAFD003E0BE8 /* SwiftSMTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7D29E0FD2A1FBAFD003E0BE8 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
+			productName = SwiftSMTP;
+		};
 		7D5302782A09549E005EAAD0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7D5302772A09549E005EAAD0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
