@@ -24,6 +24,7 @@ struct SideMenuView: View {
                 
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
+                        Image(systemName: "pencil.circle.fill")
                         Text("Manage Orders")
                     }
                 }
@@ -31,6 +32,7 @@ struct SideMenuView: View {
                 .padding()
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
+                        Image(systemName: "checklist.checked")
                         Text("Activer Orders")
                     }
                 }
@@ -38,6 +40,7 @@ struct SideMenuView: View {
                 .padding()
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
+                        Image(systemName: "list.bullet.clipboard.fill")
                         Text("History")
                     }
                 }
@@ -45,11 +48,23 @@ struct SideMenuView: View {
                 .padding()
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
+                        Image(systemName: "person.text.rectangle.fill")
                         Text("Customer")
                     }
                 }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
+                
+                if firebaseAuth.loggedInAs == .ADMIN {
+                    Button(action: {}){
+                        NavigationLink(destination: createAccountView()){
+                            Image(systemName: "person.crop.circle.fill")
+                            Text("Create account")
+                        }
+                    }
+                    .buttonStyle(CustomButtonStyle1())
+                    .padding()
+                }
                 Button(action: {firebaseAuth.signOut()}){
                     Text("Sign Out")
                 }

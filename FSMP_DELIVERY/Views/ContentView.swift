@@ -25,13 +25,14 @@ struct ContentView: View {
                  case .NOT_LOGGED_IN:
                     SignInView(signedIn: $signedIn)
                  case .ADMIN:
-                    AdminView()
+                      MainView()
+//                    AdminView()
                  case .EMPLOYEE:
-                    MainView()
+                      MainView()
                  case .CUSTOMER:
                      EmptyView()
                  default:
-                    MainView()
+                     MainView()
              }
          }
          /*.onChange(of: firebaseAuth.loggedInAs){ _ in
