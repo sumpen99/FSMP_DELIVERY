@@ -162,11 +162,22 @@ struct SignOfOrderView: View{
             setFormResult(.USER_URL_ERROR)
             return
         }
-        firestoreViewModel.getCredentials()
-        //MailManager().sendSignedResponseMailTo()
-        //firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
-            //setFormResult(result)
-        //}
+        
+        firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
+            if result == .FORM_SAVED_SUCCESFULLY{
+                sendMailVerificationToCustomer()
+            }
+            setFormResult(result)
+        }
+    }
+    
+    private func sendMailVerificationToCustomer(){
+        firestoreViewModel.getCredentials(){ credentials in
+            guard let credentials = credentials else { return }
+            MailManager(credentials:credentials)
+                .sendSignedResponseMailTo()
+                
+        }
     }
     
     private func renderCurrentSignaturePath(){

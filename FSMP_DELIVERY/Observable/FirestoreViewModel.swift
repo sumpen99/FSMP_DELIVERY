@@ -146,13 +146,15 @@ class FirestoreViewModel: ObservableObject{
         }  
     }
     
-    func getCredentials(){
+    func getCredentials(completion: @escaping (Credentials?) -> Void){
         repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
-            guard let doc = snapshot?.data() else { return }
-            print(doc["token"])
-            print(doc["adress"])
+            do{
+                let cred = try snapshot?.data(as : Credentials.self)
+                completion(cred)
+            } catch {
+                completion(nil)
+            }
         }
-        //n3mwjwh4dSK20s4FF6w7
     }
         
     

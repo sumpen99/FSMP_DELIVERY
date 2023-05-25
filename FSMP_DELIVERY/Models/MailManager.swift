@@ -7,14 +7,18 @@
 import SwiftUI
 import SwiftSMTP
 class MailManager{
+    var onResult: ((Bool) -> Void)? = nil
     let SMTP_ADRESS = "smtp.gmail.com"
-    let EMAIL_ADRESS_SENDER = "fsmp.delivery.service@gmail.com"
-    let EMAIL_PASSWORD = "oafw dids qoit lvsw"
+    var EMAIL_ADRESS_SENDER = ""
+    var EMAIL_TOKEN = ""
     var EMAIL_SUBJECT = ""
     var EMAIL_TEXT = ""
-    let EMAIL_SENDER = Mail.User(name:"Team FSMP",email: "fsmp.delivery.service@gmail.com")
     
-    
+    init(credentials:Credentials){
+        EMAIL_ADRESS_SENDER = credentials.adress
+        EMAIL_TOKEN = credentials.token
+    }
+  
     /*func sendSignedResponseMailTo(_ customer:Customer){
         setSignedSubjectAndText()
         let email = createMail(customer.email,name:customer.name)
@@ -31,13 +35,15 @@ class MailManager{
         let smtp = SMTP(
             hostname:SMTP_ADRESS,
             email:EMAIL_ADRESS_SENDER,
-            password:EMAIL_PASSWORD,
+            password:EMAIL_TOKEN,
             port:587
         )
         DispatchQueue.global(qos: .background).async {
             smtp.send(email){ [weak self] error in
-                DispatchQueue.main.sync {
-                    print(error)
+                guard let strongSelf = self else { return }
+                DispatchQueue.main.sync { 
+                    strongSelf.onResult?(error != nil)
+                    //print(error)
                 }
                 
             }
@@ -47,6 +53,7 @@ class MailManager{
     
     func createMail(_ adress:String,name:String) -> Mail{
         //let toUser = Mail.User(name:name,email: adress)
+        let EMAIL_SENDER = Mail.User(name:"Team FSMP",email: EMAIL_ADRESS_SENDER)
         let toUser = Mail.User(name:"Fredrik Sundström",email: "fredrik@heatia.se")
         return Mail(
             from:EMAIL_SENDER,

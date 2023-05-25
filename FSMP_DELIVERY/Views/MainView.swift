@@ -89,11 +89,9 @@ struct MainView: View {
     }
     
     
-    
-    
     func getSignOfOrderBtn() -> some View{
-        return NavigationLink(destination:SignOfOrderView()) {
-            Text("Sign Of Order")
+        return NavigationLink(destination:LazyDestination(destination: { SignOfOrderView() })) {
+            Text(Image(systemName: "square.and.pencil"))
         }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(orderIsActivated)

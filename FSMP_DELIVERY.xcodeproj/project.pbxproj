@@ -52,6 +52,7 @@
 		7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */; };
 		7D5302A02A097417005EAAD0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D53029F2A097417005EAAD0 /* User.swift */; };
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
+		7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607C2A1FD905000F49CB /* Credentials.swift */; };
 		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
 		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
 		AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */; };
@@ -98,6 +99,7 @@
 		7D53029A2A097259005EAAD0 /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		7D53029F2A097417005EAAD0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
+		7DE7607C2A1FD905000F49CB /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				7D20F74A2A15E51A00C66167 /* SignedFormResult.swift */,
 				7D29E0F12A1A4419003E0BE8 /* QrCode.swift */,
 				7D29E0F72A1BC866003E0BE8 /* UserRole.swift */,
+				7DE7607C2A1FD905000F49CB /* Credentials.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -392,6 +395,7 @@
 				7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */,
 				7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
+				7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */,
 				7D5302992A096F3A005EAAD0 /* FirestoreRepository.swift in Sources */,
 				5FE40DAE2A124D2400D5539C /* AddOrderView.swift in Sources */,
 				7D20F7412A15223700C66167 /* DeviceShakeModifier.swift in Sources */,
