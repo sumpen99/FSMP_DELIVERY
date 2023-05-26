@@ -180,7 +180,7 @@ extension View {
         self.modifier(DeviceShakeViewModifier(action: action))
     }
     
-    func onPrivacyAlert(actionPrimary:@escaping (()-> Void),
+    func onConditionalAlert(actionPrimary:@escaping (()-> Void),
                         actionSecondary:@escaping (()-> Void)) -> Alert{
         return Alert(
                 title: Text(ALERT_TITLE),

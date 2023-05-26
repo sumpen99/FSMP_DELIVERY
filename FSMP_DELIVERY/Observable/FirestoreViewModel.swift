@@ -11,29 +11,72 @@ import SwiftUI
 class FirestoreViewModel: ObservableObject{
     let repo = FirestoreRepository()
     @Published var customers = [Customer]()
-    //var listenerCompany: ListenerRegistration?
+    var listenerCustomers: ListenerRegistration?
     //var listenerUser: ListenerRegistration?
     
-    func listenToFirestore() {
-        
+    func closeAllListener(){
+        closeListenerCustomer()
+    }
+    
+    func closeListenerCustomer(){
+        listenerCustomers?.remove()
+    }
+    
+    
+    func removeCustomer(_ customer:Customer){
+        removeCustomerOrderHistory(customer.orderIds)
+        let doc = repo.getCustomerDocument(customer.customerId)
+        doc.delete(){ err in
+            if let err = err {
+              print("Error removing document: \(err)")
+            }
+            else {
+              print("Customer successfully removed!")
+            }
+        }
+    }
+    
+    func removeCustomerOrderHistory(_ orderIds:[String]?){
+        guard let orderIds = orderIds else { return }
+        let collectionOrderInProcess = repo.getOrderInProcessCollection()
+        let collectionOrderSigned = repo.getOrderSignedCollection()
+        DispatchQueue.global(qos:.background).async {
+            for id in orderIds{
+                collectionOrderInProcess.document(id).delete()
+                collectionOrderSigned.document(id).delete()
+            }
+        }
+    }
+    
+    func setCustomerDocument(_ customer : Customer) {
+        let doc = repo.getCustomerDocument(customer.customerId)
+        do{
+            try doc.setData(from:customer){ err in
+                if let err = err {
+                    print("err ... \(err)")
+                }
+                else {
+                    print("saved ok")
+                }
+            }
+        }
+        catch{
+            print("Caught error")
+        }
+    }
+    
+    func listenToFirestoreCustomers() {
         let customers = repo.getCustomerCollection()
-        
-        customers.addSnapshotListener() {
+        listenerCustomers = customers.addSnapshotListener() {
             snapshot, err in
-            
             guard let snapshot = snapshot else {print("1"); return}
-            
             if let _ = err {
                 print("error fetching customers")
             } else {
-                print("2")
                 self.customers.removeAll()
-                
                 for document in snapshot.documents {
-                    
                     do{
                         let customer = try document.data(as : Customer.self)
-                        print("3")
                         self.customers.append(customer)
                     } catch {
                         print("error reading DB")
@@ -48,7 +91,6 @@ class FirestoreViewModel: ObservableObject{
             guard let cmpId = cmp.companyID else {
                 completion(false,"Company ID is null")
                 return
-                
             }
             try repo.getCompanyDocument(cmpId).setData(from:cmp)
             completion(true,"")
@@ -73,21 +115,12 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
-    func setCustomerDocument(_ customer : Customer) {
-        let customers = repo.getCustomerCollection()
-        
-        do {
-            try customers.addDocument(from: customer)
-        } catch {
-            print("error saving customer to firestore")
-        }
-    }
-    
-    func setOrderDocument(_ order : Order) {
+    func setOrderInProcessDocument(_ order : Order) {
         let orders = repo.getOrderInProcessCollection()
         
         do {
-            try orders.addDocument(from: order)
+            let _ = try orders.addDocument(from: order)
+            
         } catch {
             print("error saving order to firestore")
         }

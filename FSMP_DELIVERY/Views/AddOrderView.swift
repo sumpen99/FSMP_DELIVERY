@@ -114,8 +114,7 @@ struct AddOrderView: View {
             setFormResult(.USER_URL_ERROR)
             return
         }
-        sendMailVerificationToCustomer(fileUrl: fileUrl)
-        /*firestoreVM.setOrderDocument(newOrder)
+        firestoreVM.setOrderInProcessDocument(newOrder)
         firestoreVM.uploadFormPDf(
             url:fileUrl,
             orderType:.ORDER_IN_PROCESS,
@@ -124,7 +123,7 @@ struct AddOrderView: View {
                 sendMailVerificationToCustomer(fileUrl: fileUrl)
             }
             setFormResult(result)
-        }*/
+        }
     }
     
     private func sendMailVerificationToCustomer(fileUrl:URL){
@@ -159,7 +158,7 @@ struct AddOrderView: View {
 
 struct AddOrderView_Previews: PreviewProvider {
     static var previews: some View {
-        var customer = Customer( name: "janne", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
+        var customer = Customer( customerId:"12334",name: "janne", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
         
         return AddOrderView(customer: Binding<Customer>(
             get: { customer },

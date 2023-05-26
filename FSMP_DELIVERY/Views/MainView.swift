@@ -83,7 +83,7 @@ struct MainView: View {
 //            })
         }
         .onAppear() {
-            firestoreVM.listenToFirestore()
+            firestoreVM.listenToFirestoreCustomers()
         }
         
     }

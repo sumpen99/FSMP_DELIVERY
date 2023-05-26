@@ -89,7 +89,13 @@ struct CreateCustomerView: View {
                     
                     print("Saving customer to firestore")
                     // Needs if statements to check correct inputs
-                    let newCustomer = Customer(name: name, email: email, phoneNumber: number, description: description, taxnumber: taxNumber)
+                    let newCustomer = Customer(
+                        customerId:UUID().uuidString,
+                        name: name,
+                        email: email,
+                        phoneNumber: number,
+                        description: description,
+                        taxnumber: taxNumber)
                     firestoreVM.setCustomerDocument(newCustomer)
                     
                     
