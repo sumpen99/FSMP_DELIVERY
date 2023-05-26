@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestoreSwift
 
 
-struct Order : Codable {
+struct Order : Codable,Identifiable {
     @DocumentID var id: String?
     var ordername : String
     var details : String

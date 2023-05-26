@@ -12,6 +12,8 @@ struct Customer : Codable,Identifiable {
     @DocumentID var id : String?
     var customerId:String
     var name : String
+    var adress : String
+    var postcode : String
     var email : String
     var lat : Double?
     var lon : Double?

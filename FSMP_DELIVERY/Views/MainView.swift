@@ -8,62 +8,23 @@
 import SwiftUI
 
 struct MainView: View {
-    
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    
-    // temp State var. remove
-    @State private var choosenOrderDetails = "Here is all information about the highlighted order\n\nCustomer: Janne\nNumber: 0701234567\nAdress: Lugnagatan 1. 242 33 Hörby\n\nDescription: Sesensor utebelysning ur funktion"
-    
+    @State var pdfUrl:URL?
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
+    @State var currentOrder:Order?
     
     var body: some View {
         NavigationStack {
             ZStack() {
-                Color(red: 70/256, green: 89/256, blue: 116/256).opacity(0.5)
-                        .ignoresSafeArea()
+                backgroundColor
                 VStack {
-                    TextEditor(text: $choosenOrderDetails)
-                        .disabled(true)
-                        .cornerRadius(16)
-                        .padding()
-                    HStack{
-                        Button {
-                            print("Activate this order")
-                            print("and ...")
-                            orderIsActivated.toggle()
-                        } label: {
-                            Text("Activate")
-                        }
-                        .buttonStyle(CustomButtonStyle1())
-                        
-                        NavigationLink("View on map") {
-                            MapView()
-                        }
-                        .buttonStyle(CustomButtonStyle2())
-                        getSignOfOrderBtn()
-                        Spacer()
-                    }
-                    .padding(.leading, 20)
-                    List{
-                        ForEach(1...10, id: \.self) { i in
-                            HStack {
-                                Text("Order \(i)")
-                            }
-                        }
-                    }.background(Color(red: 70/256, green: 89/256, blue: 116/256))
-                        .cornerRadius(16)
-                        .padding()
-                }
-
-                GeometryReader { _ in
-                    
-                    SideMenuView()
-//                        .offset(x: 0)
-//                        .offset(x: UIScreen.main.bounds.width)
-                        .offset(x: showSideMenu ? 0 : -300, y: 0)
+                    PDFKitView(url:$pdfUrl)
+                    bottomButtons
                     Spacer()
+                    listOfOrders
                 }
+                sideMenu
             }
             .navigationTitle("Available orders")
             .fontWeight(.regular)
@@ -80,20 +41,96 @@ struct MainView: View {
             }
         }
         .onAppear() {
-            firestoreVM.listenToFirestoreCustomers()
+            firestoreVM.initializeListener()
         }
         
     }
     
+    var backgroundColor: some View{
+        Color(red: 70/256, green: 89/256, blue: 116/256).opacity(0.5)
+                .ignoresSafeArea()
+    }
     
-    func getSignOfOrderBtn() -> some View{
-        return NavigationLink(destination:LazyDestination(destination: { SignOfOrderView() })) {
+    var sideMenu: some View{
+        GeometryReader { _ in
+            SideMenuView()
+//              .offset(x: 0)
+//              .offset(x: UIScreen.main.bounds.width)
+                .offset(x: showSideMenu ? 0 : -300, y: 0)
+            Spacer()
+        }
+    }
+    
+    var listOfOrders: some View{
+        List{
+            ForEach(firestoreVM.orders, id: \.orderId) { order in
+                HStack {
+                    Text("\(order.ordername)")
+                }
+            }
+            .onReceive(firestoreVM.$orders) { (orders) in
+                guard !orders.isEmpty, let firstOrder = orders.first else { return }
+                print("recieved")
+                updatePdfViewWithOrder(firstOrder)
+            }
+        }
+        .cornerRadius(16)
+        .padding()
+    
+    }
+    
+    var bottomButtons: some View{
+        HStack(spacing:20){
+            activateOrderButton
+            mapviewButton
+            signOfOrderBtn
+            Spacer()
+        }
+        .padding(.leading)
+    }
+    
+    var activateOrderButton: some View {
+        Button {
+            orderIsActivated.toggle()
+        } label: {
+            Text(Image(systemName: "hand.tap"))
+                .font(.largeTitle)
+        }
+        .buttonStyle(CustomButtonStyle1())
+    }
+    
+    var mapviewButton: some View{
+        NavigationLink(destination: MapView()){
+            Text(Image(systemName: "map"))
+                .font(.largeTitle)
+        }
+        .buttonStyle(CustomButtonStyle2())
+    }
+    
+    var signOfOrderBtn: some View {
+        NavigationLink(destination:LazyDestination(destination: { SignOfOrderView() })) {
             Text(Image(systemName: "square.and.pencil"))
+                .font(.largeTitle)
         }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(orderIsActivated)
     }
+    
+    func updatePdfViewWithOrder(_ order:Order){
+        currentOrder = order
+        guard let documentDirectory = documentDirectory else { return }
+        let filePath = order.orderId + ".pdf"
+        let renderedUrl = documentDirectory.appending(path: filePath)
+        
+        firestoreVM.downloadFormPdf(orderType: .ORDER_IN_PROCESS,
+                                    localUrl: renderedUrl,
+                                    orderNumber: order.orderId){ url in
+            guard let url = url else { return }
+            pdfUrl = url
+        }
+    }
 }
+
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {

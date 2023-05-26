@@ -11,7 +11,9 @@ import SwiftUI
 class FirestoreViewModel: ObservableObject{
     let repo = FirestoreRepository()
     @Published var customers = [Customer]()
+    @Published var orders = [Order]()
     var listenerCustomers: ListenerRegistration?
+    var listenerOrders: ListenerRegistration?
     //var listenerUser: ListenerRegistration?
     
     func closeAllListener(){
@@ -22,7 +24,43 @@ class FirestoreViewModel: ObservableObject{
         listenerCustomers?.remove()
     }
     
+    func closeListenerOrders(){
+        listenerOrders?.remove()
+    }
     
+    func initializeListener(){
+        listenToCustomers()
+        listenToOrdersInProcess()
+    }
+    
+    // MARK: - FIREBASE LISTENER-FUNCTIONS
+    func listenToCustomers() {
+        let customers = repo.getCustomerCollection()
+        listenerCustomers = customers.addSnapshotListener() { [weak self] (snapshot, err) in
+            guard let documents = snapshot?.documents,let strongSelf = self else { return }
+            strongSelf.customers.removeAll()
+            for document in documents {
+                guard let customer = try? document.data(as : Customer.self) else { continue }
+                strongSelf.customers.append(customer)
+            }
+        }
+        
+    }
+    
+    
+    func listenToOrdersInProcess() {
+        let orders = repo.getOrderInProcessCollection()
+        listenerOrders = orders.addSnapshotListener() { [weak self] (snapshot, err) in
+            guard let documents = snapshot?.documents,let strongSelf = self else { return }
+            strongSelf.orders.removeAll()
+            for document in documents {
+                guard let order = try? document.data(as : Order.self) else { continue }
+                strongSelf.orders.append(order)
+            }
+        }
+    }
+    
+    // MARK: - FIREBASE REMOVE-FUNCTIONS
     func removeCustomer(_ customer:Customer){
         removeCustomerOrderHistory(customer.orderIds)
         let doc = repo.getCustomerDocument(customer.customerId)
@@ -48,6 +86,7 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    // MARK: - FIREBASE SETDATA-FUNCTIONS
     func setCustomerDocument(_ customer : Customer) {
         let doc = repo.getCustomerDocument(customer.customerId)
         do{
@@ -57,27 +96,6 @@ class FirestoreViewModel: ObservableObject{
         }
         catch{
             print("Caught error")
-        }
-    }
-    
-    func listenToFirestoreCustomers() {
-        let customers = repo.getCustomerCollection()
-        listenerCustomers = customers.addSnapshotListener() {
-            snapshot, err in
-            guard let snapshot = snapshot else {print("1"); return}
-            if let _ = err {
-                print("error fetching customers")
-            } else {
-                self.customers.removeAll()
-                for document in snapshot.documents {
-                    do{
-                        let customer = try document.data(as : Customer.self)
-                        self.customers.append(customer)
-                    } catch {
-                        print("error reading DB")
-                    }
-                }
-            }
         }
     }
     
@@ -92,14 +110,20 @@ class FirestoreViewModel: ObservableObject{
             print("Caught error")
         }
     }
-    
+   
+    // MARK: - FIREBASE ARRAY-FUNCTIONS
     func updateCustomerWithNewOrder(_ customer:Customer,orderId:String){
         let customer = repo.getCustomerDocument(customer.customerId)
         customer.updateData(["orderIds": FieldValue.arrayUnion([orderId])])
     }
     
+    func updateCustomerWithRemovedOrder(_ customer:Customer,orderId:String){
+        let customer = repo.getCustomerDocument(customer.customerId)
+        customer.updateData(["orderIds": FieldValue.arrayRemove([orderId])])
+    }
+    
+    // MARK: - FIREBASE PDF-FUNCTIONS
     func uploadFormPDf(url:URL,orderType:OrderType,orderNumber:String,completion:@escaping (SignedFormResult) -> Void){
-        
         let fileRef = repo.getOrderReference(orderType: orderType,orderNumber: orderNumber)
         fileRef.putFile(from: url, metadata: nil) { metadata, error in
             guard metadata != nil else {
@@ -116,18 +140,20 @@ class FirestoreViewModel: ObservableObject{
         }
      }
     
-    func downloadFormPdf(orderType:OrderType,localUrl:URL,orderNumber:String){
+    func downloadFormPdf(orderType:OrderType,localUrl:URL,orderNumber:String,callback: @escaping (URL?) -> Void){
         let fileRef = repo.getOrderReference(orderType:orderType,orderNumber: orderNumber)
         fileRef.write(toFile: localUrl) { url, error in
             if let error = error {
-                print("Error: \(error)")
+                callback(nil)
+                //print("Error: \(error)")
             } else {
-                print("PDF downloaded and written to device at path : \(localUrl)")
-                // Local file URL for "images/island.jpg" is returned
+                callback(url)
+                //print("PDF downloaded and written to device at path : \(localUrl)")
             }
         }  
     }
     
+    // MARK: - FIREBASE EMAIL-FUNCTIONS
     func getCredentials(completion: @escaping (Credentials?) -> Void){
         repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
             do{
@@ -138,61 +164,6 @@ class FirestoreViewModel: ObservableObject{
             }
         }
     }
-    
-    
-    func initializeCompanyData(_ cmp:Company,completion: @escaping ((Bool,String) -> Void )){
-        do{
-            guard let cmpId = cmp.companyID else {
-                completion(false,"Company ID is null")
-                return
-            }
-            try repo.getCompanyDocument(cmpId).setData(from:cmp)
-            completion(true,"")
-        }
-        catch {
-            completion(false,error.localizedDescription)
-        }
-    }
-    
-    func initializeUserData(_ user:User,completion: @escaping ((Bool,String) -> Void )){
-        do{
-            guard let userId = user.userId else {
-                completion(false,"UserId is null")
-                return
-                
-            }
-            try repo.getUserDocument(userId).setData(from:user)
-            completion(true,"")
-        }
-        catch {
-            completion(false,error.localizedDescription)
-        }
-    }
-    /*
-     // File located on disk
-     let localFile = URL(string: "path/to/docs/rivers.pdf")!
-
-         // Create a reference to the file you want to upload
-         let riversRef = storageRef.child("docs/rivers.pdf")
-
-         // Upload the file to the path "docs/rivers.pdf"
-         let uploadTask = riversRef.putFile(from: localFile, metadata: nil) { metadata, error in
-           guard let metadata = metadata else {
-             // Uh-oh, an error occurred!
-             return
-           }
-           // Metadata contains file metadata such as size, content-type.
-           let size = metadata.size
-           // You can also access to download URL after upload.
-           storageRef.downloadURL { (url, error) in
-             guard let downloadURL = url else {
-               // Uh-oh, an error occurred!
-               return
-             }
-           }
-         }
-     
-     */
     
     /*func downloadFormImage(orderNumber:String){
         let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
@@ -207,27 +178,7 @@ class FirestoreViewModel: ObservableObject{
         }
     }*/
     
-    /*
-     let uiImage = signedForm.snapshot()
-     let fittedImage = uiImage.aspectFittedToHeight(200.0)
-     guard let imgData = fittedImage.compressImage(0.2) else{
-         setFormResult(.IMAGE_DATA_ERROR)
-         return
-     }
-     firestoreViewModel.uploadSignedForm(imageData: imgData,orderNumber:UUID().uuidString)
-     func uploadSignedFormImage(imageData:Data,orderNumber:String){
-        let metadata = repo.setMetaDataAs("image/jpg")
-        repo.getSignedOrderReference(orderNumber: orderNumber)
-        .putData(imageData, metadata: metadata) { (metadata, error) in
-            if let error = error {
-                print("Error while uploading file: ", error)
-            }
-
-            if let metadata = metadata {
-                print("Metadata: ", metadata)
-            }
-        }
-    }*/
+    
     
 }
 

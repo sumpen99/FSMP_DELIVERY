@@ -75,9 +75,14 @@ struct AddOrderView: View {
                     Text("FSMP - Delivery")
                     .font(.system(size: 40, weight: .heavy, design: .rounded))
                     .padding()
-                    Section(header: Text("Bekräftelse av mottagen order")){
+                    Section(
+                        header: Text("Bekräftelse av mottagen order").font(.title2),
+                        footer: Text("\(currentDateString)")){
                         Text("Namn")
                         Text(customer.name)
+                            .font(.caption)
+                        Text("Adress")
+                        Text(customer.adress + "\n" + customer.postcode)
                             .font(.caption)
                         Text("Email")
                         Text(customer.email)
@@ -91,7 +96,6 @@ struct AddOrderView: View {
                     }
                     Spacer()
                     qrImage?.resizable().frame(width: 150.0,height: 150.0)
-                    Text(currentDateString).font(.caption)
                 }
                 .hLeading()
                 .frame(width:400,height:800)
@@ -119,7 +123,7 @@ struct AddOrderView: View {
         firestoreVM.uploadFormPDf(
             url:fileUrl,
             orderType:.ORDER_IN_PROCESS,
-            orderNumber:orderId){ result in
+            orderNumber:newOrder.orderId){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
                 sendMailVerificationToCustomer(fileUrl: fileUrl)
             }
@@ -159,7 +163,7 @@ struct AddOrderView: View {
 
 struct AddOrderView_Previews: PreviewProvider {
     static var previews: some View {
-        var customer = Customer( customerId:"12334",name: "janne", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
+        var customer = Customer( customerId:"12334",name: "janne",adress: "",postcode:"", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
         
         return AddOrderView(customer: Binding<Customer>(
             get: { customer },

@@ -26,7 +26,7 @@ struct CustomerView: View {
                             }
                             .buttonStyle(CustomButtonStyle1())
                             .padding(.leading, 20)
-                            removeCustomerButton
+                            //removeCustomerButton
                         }
                     }
                     
@@ -35,7 +35,7 @@ struct CustomerView: View {
                 }
                 
                 List{
-                    ForEach(firestoreVM.customers) { customer in
+                    ForEach(firestoreVM.customers,id: \.customerId) { customer in
                         getListButton(customer: customer)
                     }
                     .onReceive(firestoreVM.$customers) { (customers) in
@@ -49,10 +49,10 @@ struct CustomerView: View {
             })
             .navigationTitle("Customers")
         }
-        .alert(isPresented: $isRemoveCustomer, content: {
+        /*.alert(isPresented: $isRemoveCustomer, content: {
             onConditionalAlert(actionPrimary: removeCustomer,
                                actionSecondary: { })
-        })
+        })*/
         /*.onAppear() {
             firestoreVM.listenToFirestoreCustomers()
             if let firstCustomer = firestoreVM.customers.first {
@@ -91,6 +91,8 @@ struct CustomerView: View {
         var details = ""
         details += "\(customer.name)\n"
         details += "Email: \(customer.email)\n"
+        details += "Adress: \(customer.adress)\n"
+        details += "Postkod: \(customer.postcode)\n"
         details += "Phone Number: \(customer.phoneNumber)\n"
         details += "Description: \(customer.description)\n"
         details += "Tax Number: \(customer.taxnumber)"

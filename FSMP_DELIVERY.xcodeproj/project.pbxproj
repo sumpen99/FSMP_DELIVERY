@@ -54,6 +54,7 @@
 		7D5302A22A097422005EAAD0 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5302A12A097422005EAAD0 /* Company.swift */; };
 		7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607C2A1FD905000F49CB /* Credentials.swift */; };
 		7DE7607F2A20E881000F49CB /* OrderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607E2A20E881000F49CB /* OrderType.swift */; };
+		7DE760832A216279000F49CB /* PDFKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE760822A216279000F49CB /* PDFKitView.swift */; };
 		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
 		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
 		AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */; };
@@ -102,6 +103,7 @@
 		7D5302A12A097422005EAAD0 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		7DE7607C2A1FD905000F49CB /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		7DE7607E2A20E881000F49CB /* OrderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderType.swift; sourceTree = "<group>"; };
+		7DE760822A216279000F49CB /* PDFKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitView.swift; sourceTree = "<group>"; };
 		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				AFC1D9852A164A140065FCAD /* MapView.swift */,
 				5F8C2AB12A1B910500EAB420 /* createAccountView.swift */,
 				7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */,
+				7DE760822A216279000F49CB /* PDFKitView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				7D29E0EA2A17CD56003E0BE8 /* QrView.swift in Sources */,
 				7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
+				7DE760832A216279000F49CB /* PDFKitView.swift in Sources */,
 				5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,
