@@ -14,6 +14,7 @@ struct CreateCustomerView: View {
     @State var name : String = ""
     @State var email : String = ""
     @State var adress : String = ""
+    @State var postcode : String = ""
     @State var number : Int = 0
     @State var taxNumber : Int = 0
     @State var description : String = ""
@@ -21,7 +22,6 @@ struct CreateCustomerView: View {
     var body: some View {
         NavigationStack {
             VStack() {
-                Spacer()
                 HStack {
                     Spacer()
                     Image(systemName: "person.crop.circle")
@@ -46,6 +46,15 @@ struct CreateCustomerView: View {
                         .imageScale(.large)
                         .padding()
                     TextField("*Adress:", text: $adress)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                }
+                HStack {
+                    Spacer()
+                    Image(systemName: "signpost.right")
+                        .imageScale(.large)
+                        .padding()
+                    TextField("*Postkod:", text: $postcode)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
@@ -86,10 +95,17 @@ struct CreateCustomerView: View {
                 }
                 Spacer()
                 Button {
-                    
                     print("Saving customer to firestore")
                     // Needs if statements to check correct inputs
-                    let newCustomer = Customer(name: name, email: email, phoneNumber: number, description: description, taxnumber: taxNumber)
+                    let newCustomer = Customer(
+                        customerId:UUID().uuidString,
+                        name: name,
+                        adress: adress,
+                        postcode: postcode,
+                        email: email,
+                        phoneNumber: number,
+                        description: description,
+                        taxnumber: taxNumber)
                     firestoreVM.setCustomerDocument(newCustomer)
                     
                     
@@ -107,7 +123,6 @@ struct CreateCustomerView: View {
                         .fontWeight(.semibold)
                         
                 }
-                Spacer()
             }
             .navigationTitle("Create new customer")
         }

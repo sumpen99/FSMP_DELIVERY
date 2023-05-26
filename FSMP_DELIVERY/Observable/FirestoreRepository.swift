@@ -9,10 +9,16 @@ import Firebase
 import FirebaseStorage
 
 class FirestoreRepository{
-    let USER_COLLECTION = "USER"
-    let COMPANY_COLLECTION = "COMPANY"
+    let USER_COLLECTION = "user"
+    let COMPANY_COLLECTION = "company"
+    let CUSTOMER_COLLECTION = "customers"
     let CREDENTIALS_COLLECTION = "credentials"
-    let SIGNED_ORDER = "ORDER"
+    let ORDER_SIGNED_COLLECTION = "orders_signed"
+    let ORDER_IN_PROCESS_COLLECTION = "orders_in_process"
+    
+    let ORDER_SIGNED = "ORDER/SIGNED"
+    let ORDER_IN_PROCESS = "ORDER/PROCESS"
+    
     private let firestoreDB = Firestore.firestore()
     private let firestoreStorage = Storage.storage()
     
@@ -34,16 +40,35 @@ class FirestoreRepository{
             .document(token)
     }
     
+    func getOrderInProcessDocument(_ docId:String) -> DocumentReference{
+        return firestoreDB.collection(ORDER_IN_PROCESS_COLLECTION).document(docId)
+    }
+    
+    func getOrderInProcessCollection() -> CollectionReference{
+        return firestoreDB.collection(ORDER_IN_PROCESS_COLLECTION)
+    }
+    
+    func getOrderSignedCollection() -> CollectionReference{
+        return firestoreDB.collection(ORDER_SIGNED_COLLECTION)
+    }
+    
+    func getCustomerCollection() -> CollectionReference{
+        return firestoreDB.collection(CUSTOMER_COLLECTION)
+    }
+    
+    func getCustomerDocument(_ id:String) -> DocumentReference{
+        return firestoreDB.collection(CUSTOMER_COLLECTION).document(id)
+    }
     
     
-    /*func getSignedOrderImageReference(orderNumber:String) -> StorageReference{
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpg"
-        return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).jpg")
-    }*/
-    
-    func getSignedOrderReference(orderNumber:String) -> StorageReference{
-        return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).pdf")
+    func getOrderReference(orderType:OrderType,orderNumber:String) -> StorageReference{
+        switch orderType{
+            case .ORDER_SIGNED:
+                return firestoreStorage.reference().child("\(ORDER_SIGNED)/\(orderNumber).pdf")
+                    
+            case .ORDER_IN_PROCESS:
+                return firestoreStorage.reference().child("\(ORDER_IN_PROCESS)/\(orderNumber).pdf")
+        }
     }
     
     func setMetaDataAs(_ dataType:String) -> StorageMetadata{
@@ -52,4 +77,10 @@ class FirestoreRepository{
         metadata.contentType = "image/jpg"
         return metadata
     }
+    
+    /*func getSignedOrderImageReference(orderNumber:String) -> StorageReference{
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        return firestoreStorage.reference().child("\(SIGNED_ORDER)/\(orderNumber).jpg")
+    }*/
 }

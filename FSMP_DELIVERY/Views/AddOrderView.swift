@@ -10,56 +10,160 @@ import FirebaseCore
 import Firebase
 
 struct AddOrderView: View {
-    
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    
     @State private var orderName = ""
     @State private var description = ""
+    @State var isUploadAttempt = false
+    var isValidForm = false
+    let currentDate = Date()
+    let currentDateString:String = Date().toISO8601String()
+    let orderId:String =  UUID().uuidString
     @Binding var customer : Customer
-    // UserId isnt the same as FirestoreAuth UUID
-    @State private var user = UUID()
-    @State private var isActivated = false
-    @State private var isCompleted = false
-    @State private var initDate = Date()
-    @State private var dateOfCompletion = Date()
+    let qrImage:Image? = getQrImage()
+    
+    var isNotValidForm:Bool {
+        return (orderName.isEmpty || description.isEmpty)
+    }
     
     var body: some View {
-      
-        
         NavigationStack {
             VStack {
-                Form {
-                    Section(header: Text("Order Details")) {
-                        TextField("Order Name", text: $orderName)
-                        TextField("Description", text: $description)
-                    }
-                }
+                formSections
             }
         }
+        .alert(isPresented: $isUploadAttempt, content: {
+            onResultAlert(){
+                if isNotValidForm{ }
+                else{ presentationMode.wrappedValue.dismiss() }
+            }
+        })
         .navigationTitle("Create order for \(customer.name)")
         .fontWeight(.regular)
         .toolbar {
             ToolbarItemGroup{
-                Button(action: {
-                    let newOrder = Order(ordername: orderName, details: description, customer: customer, assignedUser: user, initDate: Date())
-                    
-                    firestoreVM.setOrderDocument(newOrder)
-                    
-                    presentationMode.wrappedValue.dismiss()
-                }
-) {
-                    Image(systemName: "square.and.arrow.up")
-                }
+                orderButton
             }
         }
     }
+    
+    var formSections: some View {
+        Form{
+            Section(header: Text("Order Details")) {
+                TextField("Order Name", text: $orderName)
+                TextField("Description", text: $description)
+                Text(currentDateString)
+            }
+            
+            Section(header: Text("Qr-Code")) {
+                qrImage?.resizable().frame(width: 150.0,height: 150.0)
+            }
+        }
+    }
+    
+    var orderButton: some View{
+        Button(action: { verifyAndUpload() }){
+            Image(systemName: "square.and.arrow.up")
+        }
+    }
+    
+    var formAsPdf:some View{
+        return VStack(alignment:.center,spacing:5){
+                    Image("delivery")
+                        .resizable()
+                        .frame(width:200,height:200)
+                    Text("FSMP - Delivery")
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .padding()
+                    Section(
+                        header: Text("Bekräftelse av mottagen order").font(.title2),
+                        footer: Text("\(currentDateString)")){
+                        Text("Namn")
+                        Text(customer.name)
+                            .font(.caption)
+                        Text("Adress")
+                        Text(customer.adress + "\n" + customer.postcode)
+                            .font(.caption)
+                        Text("Email")
+                        Text(customer.email)
+                            .font(.caption)
+                        Text("Order Id")
+                        Text(orderId)
+                            .font(.caption)
+                        Text("Information")
+                        Text(description)
+                            .font(.caption)
+                    }
+                    Spacer()
+                    qrImage?.resizable().frame(width: 150.0,height: 150.0)
+                }
+                .hLeading()
+                .frame(width:400,height:800)
+    }
+    
+    private func verifyAndUpload(){
+        guard let newOrder = getOrder() else{
+            setFormResult(.FORM_NOT_FILLED)
+            return
+        }
+      
+        guard let documentDirectory = documentDirectory else {
+            setFormResult(.USER_URL_ERROR)
+            return
+        }
+        
+        let filePath = orderId + ".pdf"
+        
+        guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
+            setFormResult(.USER_URL_ERROR)
+            return
+        }
+        firestoreVM.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId)
+        firestoreVM.setOrderInProcessDocument(newOrder)
+        firestoreVM.uploadFormPDf(
+            url:fileUrl,
+            orderType:.ORDER_IN_PROCESS,
+            orderNumber:newOrder.orderId){ result in
+            if result == .FORM_SAVED_SUCCESFULLY{
+                sendMailVerificationToCustomer(fileUrl: fileUrl)
+            }
+            setFormResult(result)
+        }
+    }
+    
+    private func sendMailVerificationToCustomer(fileUrl:URL){
+        firestoreVM.getCredentials(){ credentials in
+            guard let credentials = credentials else { return }
+            MailManager(credentials:credentials)
+                .sendOrderResponseMailTo(customer:customer,fileUrl:fileUrl)
+                
+        }
+    }
+    
+    func getOrder() -> Order?{
+        if isNotValidForm{
+            return nil
+        }
+        return Order(ordername: orderName,
+                     details: description,
+                     customer: customer,
+                     orderId: orderId,
+                     initDate:currentDate)
+    }
+    
+    private func setFormResult(_ signedFormResult:SignedFormResult){
+        let desc = signedFormResult.describeYourSelf
+        ALERT_TITLE = desc.title
+        ALERT_MESSAGE = desc.message
+        isUploadAttempt.toggle()
+    }
+    
 }
 
 
 struct AddOrderView_Previews: PreviewProvider {
     static var previews: some View {
-        var customer = Customer( name: "janne", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
+        var customer = Customer( customerId:"12334",name: "janne",adress: "",postcode:"", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
         
         return AddOrderView(customer: Binding<Customer>(
             get: { customer },

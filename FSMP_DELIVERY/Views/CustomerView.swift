@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct CustomerView: View {
-    
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    
     @State private var choosenCustomer : Customer? = nil
+    @State var isRemoveCustomer:Bool = false
     
     var body: some View {
         NavigationStack {
@@ -20,38 +19,68 @@ struct CustomerView: View {
                     .disabled(true)
                     .padding()
                 if let customer = choosenCustomer {
-                    NavigationLink(destination: AddOrderView(customer: Binding(get: { customer }, set: { _ in }))) {
-                        Text("Add order")
+                        HStack{
+                            NavigationLink(destination:LazyDestination(destination: {
+                                AddOrderView(customer: Binding(get: { customer }, set: { _ in }))})){
+                                    Text("Add order")
+                            }
+                            .buttonStyle(CustomButtonStyle1())
+                            .padding(.leading, 20)
+                            //removeCustomerButton
                         }
-                        .buttonStyle(CustomButtonStyle1())
-                        .padding(.leading, 20)
-                    } else {
-                        Spacer()
                     }
+                    
+                else{
+                    Spacer()
+                }
                 
                 List{
-                    ForEach(firestoreVM.customers) { customer in
-                        HStack {
-                            Text(customer.name)
-                        }
-                        .onTapGesture {
-                            choosenCustomer = customer
-                        }
+                    ForEach(firestoreVM.customers,id: \.customerId) { customer in
+                        getListButton(customer: customer)
+                    }
+                    .onReceive(firestoreVM.$customers) { (customers) in
+                        guard !customers.isEmpty else { return }
+                        choosenCustomer = customers.first
                     }
                 }
             }
-            .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()) {
-                Image(systemName: "plus.circle")
+            .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()){
+                Text(Image(systemName: "plus.circle"))
             })
             .navigationTitle("Customers")
-            
         }
-        .onAppear() {
-            firestoreVM.listenToFirestore()
+        /*.alert(isPresented: $isRemoveCustomer, content: {
+            onConditionalAlert(actionPrimary: removeCustomer,
+                               actionSecondary: { })
+        })*/
+        /*.onAppear() {
+            firestoreVM.listenToFirestoreCustomers()
             if let firstCustomer = firestoreVM.customers.first {
                 choosenCustomer = firstCustomer
             }
+        }*/
+    }
+    
+    func getListButton(customer:Customer) -> some View{
+        return HStack {
+            Button(action: { choosenCustomer = customer }){
+                Text(customer.name)
+            }
+            Spacer()
+            Image(systemName: "checkmark.circle.fill")
+                .opacity(choosenCustomer?.customerId == customer.customerId ? 1.0 : 0.0)
+                .foregroundColor(.gray)
         }
+    }
+    
+    var removeCustomerButton:some View{
+        Button(action: { setAlertRemoveCustomer() }){
+            Text(Image(systemName: "person.crop.circle.badge.minus"))
+                .font(.largeTitle).multilineTextAlignment(.leading)
+              
+        }
+        .hTrailing()
+        .padding(.trailing,20.0)
     }
     
     var chosenCustomerDetails: String {
@@ -62,11 +91,27 @@ struct CustomerView: View {
         var details = ""
         details += "\(customer.name)\n"
         details += "Email: \(customer.email)\n"
+        details += "Adress: \(customer.adress)\n"
+        details += "Postkod: \(customer.postcode)\n"
         details += "Phone Number: \(customer.phoneNumber)\n"
         details += "Description: \(customer.description)\n"
         details += "Tax Number: \(customer.taxnumber)"
         
         return details
+    }
+    
+    private func removeCustomer(){
+        guard let customer = choosenCustomer else {
+            return
+        }
+        firestoreVM.removeCustomer(customer)
+    }
+    
+    private func setAlertRemoveCustomer(){
+        let name = choosenCustomer?.name ?? "kunden"
+        ALERT_TITLE = "Ta bort kund"
+        ALERT_MESSAGE = "All information om \(name) kommer raderas.\n\nFortsätt?"
+        isRemoveCustomer.toggle()
     }
 }
 

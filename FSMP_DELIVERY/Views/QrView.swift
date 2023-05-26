@@ -33,7 +33,7 @@ struct QrView: View {
         }
         .opacity(closeOnTappedToast ? 0.0 : 1.0)
         .alert(isPresented: $scannerViewModel.isPrivacyResult, content: {
-            onPrivacyAlert(actionPrimary: openPrivacySettings,
+            onConditionalAlert(actionPrimary: openPrivacySettings,
                            actionSecondary: closeScannerView)
         })
         .toolbar {

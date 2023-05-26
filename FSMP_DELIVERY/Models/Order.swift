@@ -9,23 +9,16 @@ import Foundation
 import FirebaseFirestoreSwift
 
 
-struct Order : Encodable, Decodable, Identifiable, Hashable {
-
-    
+struct Order : Codable,Identifiable {
     @DocumentID var id: String?
-
     var ordername : String
     var details : String
     var customer : Customer
-    // var verificationQrCode : QRCode or Image ?
-    // var orderDestination : latLng or smthin
-    
-    var assignedUser : UUID
-    
+    var orderId:String
+    var assignedUser : UUID?
     var isActivated : Bool = false
     var isCompleted : Bool = false
-    
     var initDate : Date
-    var dateOfCompletion : Date = Date()
+    var dateOfCompletion : Date?
     
 }

@@ -57,17 +57,6 @@ class QrCameraPreView: UIView {
         return Image(uiImage:uiImage)
     }
     
-    func generateQrCode(qrCodeStr:String) -> Data?{
-        guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
-        let data = qrCodeStr.data(using: .ascii, allowLossyConversion: false)
-        filter.setValue(data, forKey: "inputMessage")
-        guard let ciimage = filter.outputImage else { return nil }
-        let transform = CGAffineTransform(scaleX: 10, y: 10)
-        let scaledCIImage = ciimage.transformed(by: transform)
-        let uiimage = UIImage(ciImage: scaledCIImage)
-        return uiimage.pngData()
-    }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         #if targetEnvironment(simulator)
