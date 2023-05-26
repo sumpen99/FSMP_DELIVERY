@@ -52,12 +52,7 @@ class FirestoreViewModel: ObservableObject{
         let doc = repo.getCustomerDocument(customer.customerId)
         do{
             try doc.setData(from:customer){ err in
-                if let err = err {
-                    print("err ... \(err)")
-                }
-                else {
-                    print("saved ok")
-                }
+                if let err = err { print("err ... \(err)") }
             }
         }
         catch{
@@ -86,44 +81,21 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
-    func initializeCompanyData(_ cmp:Company,completion: @escaping ((Bool,String) -> Void )){
-        do{
-            guard let cmpId = cmp.companyID else {
-                completion(false,"Company ID is null")
-                return
-            }
-            try repo.getCompanyDocument(cmpId).setData(from:cmp)
-            completion(true,"")
-        }
-        catch {
-            completion(false,error.localizedDescription)
-        }
-    }
-    
-    func initializeUserData(_ user:User,completion: @escaping ((Bool,String) -> Void )){
-        do{
-            guard let userId = user.userId else {
-                completion(false,"UserId is null")
-                return
-                
-            }
-            try repo.getUserDocument(userId).setData(from:user)
-            completion(true,"")
-        }
-        catch {
-            completion(false,error.localizedDescription)
-        }
-    }
-    
     func setOrderInProcessDocument(_ order : Order) {
-        let orders = repo.getOrderInProcessCollection()
-        
-        do {
-            let _ = try orders.addDocument(from: order)
-            
-        } catch {
-            print("error saving order to firestore")
+        let doc = repo.getOrderInProcessDocument(order.orderId)
+        do{
+            try doc.setData(from:order){ err in
+                if let err = err { print("err ... \(err)") }
+            }
         }
+        catch{
+            print("Caught error")
+        }
+    }
+    
+    func updateCustomerWithNewOrder(_ customer:Customer,orderId:String){
+        let customer = repo.getCustomerDocument(customer.customerId)
+        customer.updateData(["orderIds": FieldValue.arrayUnion([orderId])])
     }
     
     func uploadFormPDf(url:URL,orderType:OrderType,orderNumber:String,completion:@escaping (SignedFormResult) -> Void){
@@ -166,8 +138,36 @@ class FirestoreViewModel: ObservableObject{
             }
         }
     }
-        
     
+    
+    func initializeCompanyData(_ cmp:Company,completion: @escaping ((Bool,String) -> Void )){
+        do{
+            guard let cmpId = cmp.companyID else {
+                completion(false,"Company ID is null")
+                return
+            }
+            try repo.getCompanyDocument(cmpId).setData(from:cmp)
+            completion(true,"")
+        }
+        catch {
+            completion(false,error.localizedDescription)
+        }
+    }
+    
+    func initializeUserData(_ user:User,completion: @escaping ((Bool,String) -> Void )){
+        do{
+            guard let userId = user.userId else {
+                completion(false,"UserId is null")
+                return
+                
+            }
+            try repo.getUserDocument(userId).setData(from:user)
+            completion(true,"")
+        }
+        catch {
+            completion(false,error.localizedDescription)
+        }
+    }
     /*
      // File located on disk
      let localFile = URL(string: "path/to/docs/rivers.pdf")!

@@ -114,6 +114,7 @@ struct AddOrderView: View {
             setFormResult(.USER_URL_ERROR)
             return
         }
+        firestoreVM.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId)
         firestoreVM.setOrderInProcessDocument(newOrder)
         firestoreVM.uploadFormPDf(
             url:fileUrl,
