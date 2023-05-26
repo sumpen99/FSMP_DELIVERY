@@ -11,10 +11,14 @@ import Firebase
 
 struct AddOrderView: View {
     
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var firestoreVM: FirestoreViewModel
+    
     @State private var orderName = ""
     @State private var description = ""
     @Binding var customer : Customer
-    @State private var assignedUser = UUID()
+    // UserId isnt the same as FirestoreAuth UUID
+    @State private var user = UUID()
     @State private var isActivated = false
     @State private var isCompleted = false
     @State private var initDate = Date()
@@ -22,34 +26,44 @@ struct AddOrderView: View {
     
     var body: some View {
       
-            Form {
-                //            Section(header: Text("Customer Information")) {
-                //                TextField("Customer Name", text: $customerName)
-                //            }
-                
-                Section(header: Text("Order Details")) {
-                    TextField("Order Name", text: $orderName)
-                    TextField("Description", text: $description)
-                    //                DatePicker("Init Date", selection: $initDate, displayedComponents: .date)
-                    //                DatePicker("Date of Completion", selection: $dateOfCompletion, displayedComponents: .date)
+        
+        NavigationStack {
+            VStack {
+                Form {
+                    Section(header: Text("Order Details")) {
+                        TextField("Order Name", text: $orderName)
+                        TextField("Description", text: $description)
+                    }
                 }
-                
-//                Section(header: Text("Status")) {
-//                    Toggle("Is Activated", isOn: $isActivated)
-//                    Toggle("Is Completed", isOn: $isCompleted)
-//                }
             }
-            .navigationBarTitle("Add Order", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Save") {
-                print("save new order")
-                // Lägg till funs för att spara den nya ordern här
-            })
+        }
+        .navigationTitle("Create order for \(customer.name)")
+        .fontWeight(.regular)
+        .toolbar {
+            ToolbarItemGroup{
+                Button(action: {
+                    let newOrder = Order(ordername: orderName, details: description, customer: customer, assignedUser: user, initDate: Date())
+                    
+                    firestoreVM.setOrderDocument(newOrder)
+                    
+                    presentationMode.wrappedValue.dismiss()
+                }
+) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+        }
     }
 }
 
 
-//struct AddOrderView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AddOrderView()
-//    }
-//}
+struct AddOrderView_Previews: PreviewProvider {
+    static var previews: some View {
+        var customer = Customer( name: "janne", email: "asd", phoneNumber: 12, taxnumber: 123) // Create an instance of Customer
+        
+        return AddOrderView(customer: Binding<Customer>(
+            get: { customer },
+            set: { customer = $0 }
+        ))
+    }
+}

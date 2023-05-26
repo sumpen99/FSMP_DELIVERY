@@ -87,6 +87,17 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func setOrderDocument(_ order : Order) {
+        
+        let orders = db.collection("orders")
+        
+        do {
+            try orders.addDocument(from: order)
+        } catch {
+            print("error saving order to firestore")
+        }
+    }
+    
     /*
      
      
