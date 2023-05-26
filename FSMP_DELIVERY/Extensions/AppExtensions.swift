@@ -11,6 +11,24 @@ var ALERT_MESSAGE = ""
 
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
+func getQrImage() -> Image?{
+    guard let data = generateQrCode(qrCodeStr:UUID().uuidString),
+          let uiImage = UIImage(data: data) else { return nil}
+    
+    return Image(uiImage:uiImage)
+}
+
+func generateQrCode(qrCodeStr:String) -> Data?{
+    guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+    let data = qrCodeStr.data(using: .ascii, allowLossyConversion: false)
+    filter.setValue(data, forKey: "inputMessage")
+    guard let ciimage = filter.outputImage else { return nil }
+    let transform = CGAffineTransform(scaleX: 10, y: 10)
+    let scaledCIImage = ciimage.transformed(by: transform)
+    let uiimage = UIImage(ciImage: scaledCIImage)
+    return uiimage.pngData()
+}
+
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
@@ -54,6 +72,13 @@ extension UIImage {
 }
 
 extension Date{
+    
+    static func fromISO8601StringToDate(_ dateToProcess:String) -> Date?{
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        return formatter.date(from: dateToProcess)
+    }
+    
     func toISO8601String() -> String{
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]

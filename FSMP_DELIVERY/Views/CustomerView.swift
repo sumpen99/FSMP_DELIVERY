@@ -20,7 +20,8 @@ struct CustomerView: View {
                     .disabled(true)
                     .padding()
                 if let customer = choosenCustomer {
-                    NavigationLink(destination: AddOrderView(customer: Binding(get: { customer }, set: { _ in }))) {
+                    NavigationLink(destination:LazyDestination(destination: {
+                        AddOrderView(customer: Binding(get: { customer }, set: { _ in }))})){
                         Text("Add order")
                         }
                         .buttonStyle(CustomButtonStyle1())
@@ -40,11 +41,10 @@ struct CustomerView: View {
                     }
                 }
             }
-            .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()) {
-                Image(systemName: "plus.circle")
+            .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()){
+                Text(Image(systemName: "plus.circle"))
             })
             .navigationTitle("Customers")
-            
         }
         .onAppear() {
             firestoreVM.listenToFirestore()

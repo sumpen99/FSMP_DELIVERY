@@ -32,6 +32,12 @@ class MailManager{
         sendEmail(email)
     }
     
+    func sendOrderResponseMailTo(customer:Customer,fileUrl:URL){
+        setAcceptedOrderSubjectAndText()
+        let email = createMail(customer.email,name:customer.name,filePath:fileUrl.relativePath)
+        sendEmail(email)
+    }
+    
     func sendEmail(_ email:Mail){
         let smtp = SMTP(
             hostname:SMTP_ADRESS,
@@ -52,10 +58,10 @@ class MailManager{
         }
     }
     
-    func createMail(_ adress:String,name:String,filePath:String) -> Mail{
+    func createMail(_ email:String,name:String,filePath:String) -> Mail{
         //let toUser = Mail.User(name:name,email: adress)
         let EMAIL_SENDER = Mail.User(name:"Team FSMP",email: EMAIL_ADRESS_SENDER)
-        let toUser = Mail.User(name:"Fredrik Sundström",email: "fredrik@heatia.se")
+        let toUser = Mail.User(name:name,email: email)
         
         let attachments = [
             Attachment(

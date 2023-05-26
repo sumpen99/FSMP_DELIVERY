@@ -9,17 +9,14 @@ import Firebase
 import SwiftUI
 
 class FirestoreViewModel: ObservableObject{
-    
-    let db = Firestore.firestore()
     let repo = FirestoreRepository()
-    
     @Published var customers = [Customer]()
     //var listenerCompany: ListenerRegistration?
     //var listenerUser: ListenerRegistration?
     
     func listenToFirestore() {
         
-        let customers = db.collection("customers")
+        let customers = repo.getCustomerCollection()
         
         customers.addSnapshotListener() {
             snapshot, err in
@@ -77,8 +74,7 @@ class FirestoreViewModel: ObservableObject{
     }
     
     func setCustomerDocument(_ customer : Customer) {
-        
-        let customers = db.collection("customers")
+        let customers = repo.getCustomerCollection()
         
         do {
             try customers.addDocument(from: customer)
@@ -88,8 +84,7 @@ class FirestoreViewModel: ObservableObject{
     }
     
     func setOrderDocument(_ order : Order) {
-        
-        let orders = db.collection("orders")
+        let orders = repo.getOrderInProcessCollection()
         
         do {
             try orders.addDocument(from: order)
@@ -98,10 +93,49 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func uploadFormPDf(url:URL,orderType:OrderType,orderNumber:String,completion:@escaping (SignedFormResult) -> Void){
+        
+        let fileRef = repo.getOrderReference(orderType: orderType,orderNumber: orderNumber)
+        fileRef.putFile(from: url, metadata: nil) { metadata, error in
+            guard metadata != nil else {
+                  completion(.UPLOAD_FAILED)
+                  return
+            }
+            fileRef.downloadURL { (url, error) in
+                guard url != nil else {
+                    completion(.DOWNLOAD_FAILED)
+                    return
+                }
+                completion(.FORM_SAVED_SUCCESFULLY)
+            }
+        }
+     }
+    
+    func downloadFormPdf(orderType:OrderType,localUrl:URL,orderNumber:String){
+        let fileRef = repo.getOrderReference(orderType:orderType,orderNumber: orderNumber)
+        fileRef.write(toFile: localUrl) { url, error in
+            if let error = error {
+                print("Error: \(error)")
+            } else {
+                print("PDF downloaded and written to device at path : \(localUrl)")
+                // Local file URL for "images/island.jpg" is returned
+            }
+        }  
+    }
+    
+    func getCredentials(completion: @escaping (Credentials?) -> Void){
+        repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
+            do{
+                let cred = try snapshot?.data(as : Credentials.self)
+                completion(cred)
+            } catch {
+                completion(nil)
+            }
+        }
+    }
+        
+    
     /*
-     
-     
-
      // File located on disk
      let localFile = URL(string: "path/to/docs/rivers.pdf")!
 
@@ -126,48 +160,6 @@ class FirestoreViewModel: ObservableObject{
          }
      
      */
-    
-    func uploadSignedFormPDf(url:URL,orderNumber:String,completion:@escaping (SignedFormResult) -> Void){
-        let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
-        fileRef.putFile(from: url, metadata: nil) { metadata, error in
-            guard metadata != nil else {
-                  completion(.UPLOAD_FAILED)
-                  return
-            }
-            //let size = metadata.size
-            fileRef.downloadURL { (url, error) in
-                guard url != nil else {
-                    completion(.DOWNLOAD_FAILED)
-                    return
-                }
-                completion(.FORM_SAVED_SUCCESFULLY)
-            }
-        }
-     }
-    
-    func downloadFormPdf(localUrl:URL,orderNumber:String){
-        let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)
-        fileRef.write(toFile: localUrl) { url, error in
-            if let error = error {
-                print("Error: \(error)")
-            } else {
-                print("PDF downloaded and written to device at path : \(localUrl)")
-                // Local file URL for "images/island.jpg" is returned
-            }
-        }  
-    }
-    
-    func getCredentials(completion: @escaping (Credentials?) -> Void){
-        repo.getCredentialsDocument("n3mwjwh4dSK20s4FF6w7").getDocument{ (snapshot,error) in
-            do{
-                let cred = try snapshot?.data(as : Credentials.self)
-                completion(cred)
-            } catch {
-                completion(nil)
-            }
-        }
-    }
-        
     
     /*func downloadFormImage(orderNumber:String){
         let fileRef = repo.getSignedOrderReference(orderNumber: orderNumber)

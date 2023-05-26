@@ -158,13 +158,17 @@ struct SignOfOrderView: View{
             
         }
         
-        let filePath = UUID().uuidString + ".pdf"
+        let orderId = UUID().uuidString
+        let filePath = orderId + ".pdf"
         
         guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
             setFormResult(.USER_URL_ERROR)
             return
         }
-        firestoreViewModel.uploadSignedFormPDf(url:fileUrl,orderNumber:filePath){ result in
+        firestoreViewModel.uploadFormPDf(
+            url:fileUrl,
+            orderType:.ORDER_SIGNED,
+            orderNumber:orderId){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
                 sendMailVerificationToCustomer(fileUrl: fileUrl)
             }
