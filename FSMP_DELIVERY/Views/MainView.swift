@@ -98,7 +98,7 @@ struct MainView: View {
         Button(action: {setAlertActivateOrderMessage()})
         {
             Text(Image(systemName: "hand.tap"))
-                .font(.largeTitle).buttonStyle(CustomButtonStyle1())
+                .font(.largeTitle)
         }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(orderIsActivated)
@@ -125,7 +125,7 @@ struct MainView: View {
         Button(action: {setAlertDeActivateOrderMessage()})
         {
             Text(Image(systemName: "hand.raised.slash"))
-                .font(.largeTitle).buttonStyle(CustomButtonStyle1())
+                .font(.largeTitle)
         }
         .buttonStyle(CustomButtonStyle1())
         .padding(.trailing)
