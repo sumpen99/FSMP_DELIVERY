@@ -130,11 +130,8 @@ struct MainView: View {
     
     func updatePdfViewWithOrder(_ order:Order){
         currentOrder = order
-        guard let documentDirectory = documentDirectory else { return }
-        let filePath = order.orderId + ".pdf"
-        let renderedUrl = documentDirectory.appending(path: filePath)
-        let fileManager = FileManager.default
-        if fileManager.fileExists(atPath: renderedUrl.path()) {
+        guard let renderedUrl = getPdfUrlPath(fileName: order.orderId) else { return }
+        if FileManager.default.fileExists(atPath: renderedUrl.path()) {
             pdfUrl = renderedUrl
             print("FILE AVAILABLE")
         } else {
@@ -147,24 +144,13 @@ struct MainView: View {
             }
         }
         
+        /*
+            CLEAR ORDERS FOLDER AT SOME POINT
+         
+         */
+        
     }
     
-    /*
-     let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-         let url = NSURL(fileURLWithPath: path)
-         if let pathComponent = url.appendingPathComponent("nameOfFileHere") {
-             let filePath = pathComponent.path
-             let fileManager = FileManager.default
-             if fileManager.fileExists(atPath: filePath) {
-                 print("FILE AVAILABLE")
-             } else {
-                 print("FILE NOT AVAILABLE")
-             }
-         } else {
-             print("FILE PATH NOT AVAILABLE")
-         }
-     
-     */
 }
 
 
