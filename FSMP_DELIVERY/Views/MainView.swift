@@ -70,7 +70,6 @@ struct MainView: View {
             }
             .onReceive(firestoreVM.$orders) { (orders) in
                 guard !orders.isEmpty, let firstOrder = orders.first else { return }
-                print("recieved")
                 updatePdfViewWithOrder(firstOrder)
             }
         }

@@ -8,16 +8,8 @@
 import SwiftUI
 
 struct CreateCustomerView: View {
-    
     let firestoreVM = FirestoreViewModel()
-    
-    @State var name : String = ""
-    @State var email : String = ""
-    @State var adress : String = ""
-    @State var postcode : String = ""
-    @State var number : Int = 0
-    @State var taxNumber : Int = 0
-    @State var description : String = ""
+    @State var newCustomer:Customer = Customer(customerId:UUID().uuidString)
     
     var body: some View {
         NavigationStack {
@@ -27,7 +19,7 @@ struct CreateCustomerView: View {
                     Image(systemName: "person.crop.circle")
                         .imageScale(.large)
                         .padding()
-                    TextField("*Name:", text: $name)
+                    TextField("*Name:", text: $newCustomer.name)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
@@ -36,7 +28,7 @@ struct CreateCustomerView: View {
                     Image(systemName: "envelope.circle")
                         .imageScale(.large)
                         .padding()
-                    TextField("*Email:", text: $email)
+                    TextField("*Email:", text: $newCustomer.email)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
@@ -45,7 +37,7 @@ struct CreateCustomerView: View {
                     Image(systemName: "house.circle")
                         .imageScale(.large)
                         .padding()
-                    TextField("*Adress:", text: $adress)
+                    TextField("*Adress:", text: $newCustomer.adress)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
@@ -54,7 +46,7 @@ struct CreateCustomerView: View {
                     Image(systemName: "signpost.right")
                         .imageScale(.large)
                         .padding()
-                    TextField("*Postkod:", text: $postcode)
+                    TextField("*Postkod:", text: $newCustomer.postcode)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
@@ -67,7 +59,7 @@ struct CreateCustomerView: View {
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.gray.opacity(0.5))
-                    TextField("", value: $number, formatter: NumberFormatter())
+                    TextField("", value: $newCustomer.phoneNumber, formatter: NumberFormatter())
                         .font(.title3)
                         .fontWeight(.semibold)
                         .keyboardType(.numberPad)
@@ -81,7 +73,7 @@ struct CreateCustomerView: View {
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.gray.opacity(0.5))
-                    TextField("Number:", value: $taxNumber,  formatter: NumberFormatter())
+                    TextField("Number:", value: $newCustomer.taxnumber,  formatter: NumberFormatter())
                         .keyboardType(.numberPad)
                 }
                 HStack {
@@ -89,26 +81,18 @@ struct CreateCustomerView: View {
                     Image(systemName: "square.and.pencil.circle")
                         .imageScale(.large)
                         .padding()
-                    TextField("Description:", text: $description)
+                    TextField("Description:", text: $newCustomer.description)
                         .font(.title3)
                         .fontWeight(.semibold)
                 }
                 Spacer()
                 Button {
-                    print("Saving customer to firestore")
-                    // Needs if statements to check correct inputs
-                    let newCustomer = Customer(
-                        customerId:UUID().uuidString,
-                        name: name,
-                        adress: adress,
-                        postcode: postcode,
-                        email: email,
-                        phoneNumber: number,
-                        description: description,
-                        taxnumber: taxNumber)
+                    if newCustomer.isNotValid(){
+                        print("new customer is not valid, show dialog and tell people")
+                        return
+                    }
+                    
                     firestoreVM.setCustomerDocument(newCustomer)
-                    
-                    
                 } label: {
                     HStack {
                         Text("Save")

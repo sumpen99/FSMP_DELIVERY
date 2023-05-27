@@ -11,11 +11,12 @@ var ALERT_MESSAGE = ""
 
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
-func getQrImage() -> Image?{
-    guard let data = generateQrCode(qrCodeStr:UUID().uuidString),
-          let uiImage = UIImage(data: data) else { return nil}
+func getQrImage() -> (Image?,String?){
+    let token = UUID().uuidString
+    guard let data = generateQrCode(qrCodeStr:token),
+          let uiImage = UIImage(data: data) else { return (nil,nil)}
     
-    return Image(uiImage:uiImage)
+    return (Image(uiImage:uiImage),token)
 }
 
 func generateQrCode(qrCodeStr:String) -> Data?{
