@@ -22,7 +22,7 @@ struct CustomButtonStyleDisabledable: ButtonStyle {
         var body: some View {
             configuration.label
                 .padding(8)
-                .foregroundColor(isEnabled ? .white : Color.accentColor)
+                .foregroundColor(isEnabled ? (configuration.isPressed ? Color.white.opacity(0.5) : Color.white) : Color.accentColor)
                 .background(isEnabled ? Color.accentColor : Color.gray.opacity(0.2))
                 .cornerRadius(16)
                 .fontWeight(.semibold)

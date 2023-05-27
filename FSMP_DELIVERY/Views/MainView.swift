@@ -12,6 +12,7 @@ struct MainView: View {
     @State var pdfUrl:URL?
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
+    @State private var orderActivationChange: Bool = false
     @State var currentOrder:Order?
     
     var body: some View {
@@ -40,6 +41,10 @@ struct MainView: View {
                 }
             }
         }
+        .alert(isPresented: $orderActivationChange, content: {
+            onConditionalAlert(actionPrimary: { orderIsActivated.toggle()},
+                               actionSecondary: { })
+        })
         .onAppear() {
             firestoreVM.initializeListener()
         }
@@ -82,18 +87,21 @@ struct MainView: View {
             mapviewButton
             signOfOrderBtn
             Spacer()
+            if orderIsActivated{
+                deActivateOrderButton
+            }
         }
         .padding(.leading)
     }
     
     var activateOrderButton: some View {
-        Button {
-            orderIsActivated.toggle()
-        } label: {
+        Button(action: {setAlertActivateOrderMessage()})
+        {
             Text(Image(systemName: "hand.tap"))
-                .font(.largeTitle)
+                .font(.largeTitle).buttonStyle(CustomButtonStyle1())
         }
-        .buttonStyle(CustomButtonStyle1())
+        .buttonStyle(CustomButtonStyleDisabledable())
+        .disabled(orderIsActivated)
     }
     
     var mapviewButton: some View{
@@ -110,32 +118,43 @@ struct MainView: View {
                 .font(.largeTitle)
         }
         .buttonStyle(CustomButtonStyleDisabledable())
-        .disabled(orderIsActivated)
+        .disabled(!orderIsActivated)
+    }
+    
+    var deActivateOrderButton: some View {
+        Button(action: {setAlertDeActivateOrderMessage()})
+        {
+            Text(Image(systemName: "hand.raised.slash"))
+                .font(.largeTitle).buttonStyle(CustomButtonStyle1())
+        }
+        .buttonStyle(CustomButtonStyle1())
+        .padding(.trailing)
     }
     
     func getListOrderButton(order:Order) -> some View{
         return HStack {
             Button(action: {
+                if orderIsActivated { return }
                 currentOrder = order
                 updatePdfViewWithOrder(order)
             }){
-                Text("\(order.ordername)")
+                Text("\(order.customer.name) - \(order.ordername)")
             }
             Spacer()
             Image(systemName: "checkmark.circle.fill")
                 .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
-                .foregroundColor(.gray)
+                .foregroundColor(orderIsActivated ? .green : .gray)
         }
     }
+    
+    
     
     func updatePdfViewWithOrder(_ order:Order){
         currentOrder = order
         guard let renderedUrl = getPdfUrlPath(fileName: order.orderId) else { return }
         if FileManager.default.fileExists(atPath: renderedUrl.path()) {
             pdfUrl = renderedUrl
-            print("FILE AVAILABLE")
         } else {
-            print("FILE NOT AVAILABLE")
             firestoreVM.downloadFormPdf(orderType: .ORDER_IN_PROCESS,
                                         localUrl: renderedUrl,
                                         orderNumber: order.orderId){ url in
@@ -146,9 +165,23 @@ struct MainView: View {
         
         /*
             CLEAR ORDERS FOLDER AT SOME POINT
+            removeOneOrderFromFolder(fileName: order.orderId)
+            removeAllOrdersFromFolder()
          
          */
         
+    }
+    
+    private func setAlertActivateOrderMessage(){
+        ALERT_TITLE = "Aktivera Order"
+        ALERT_MESSAGE = "Vill ni aktivera \nOrder: \(currentOrder?.orderId ?? "")?"
+        orderActivationChange.toggle()
+    }
+    
+    private func setAlertDeActivateOrderMessage(){
+        ALERT_TITLE = "Avsluta Order"
+        ALERT_MESSAGE = "Vill ni ta bort aktiverad \nOrder: \(currentOrder?.orderId ?? "")?"
+        orderActivationChange.toggle()
     }
     
 }
