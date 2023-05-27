@@ -38,11 +38,12 @@ class FirestoreViewModel: ObservableObject{
         let customers = repo.getCustomerCollection()
         listenerCustomers = customers.addSnapshotListener() { [weak self] (snapshot, err) in
             guard let documents = snapshot?.documents,let strongSelf = self else { return }
-            strongSelf.customers.removeAll()
+            var newCustomers = [Customer]()
             for document in documents {
                 guard let customer = try? document.data(as : Customer.self) else { continue }
-                strongSelf.customers.append(customer)
+                newCustomers.append(customer)
             }
+            strongSelf.customers = newCustomers
         }
         
     }
@@ -52,11 +53,12 @@ class FirestoreViewModel: ObservableObject{
         let orders = repo.getOrderInProcessCollection()
         listenerOrders = orders.addSnapshotListener() { [weak self] (snapshot, err) in
             guard let documents = snapshot?.documents,let strongSelf = self else { return }
-            strongSelf.orders.removeAll()
+            var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
-                strongSelf.orders.append(order)
+                newOrders.append(order)
             }
+            strongSelf.orders = newOrders
         }
     }
     

@@ -18,12 +18,11 @@ struct AddOrderView: View {
     var isValidForm = false
     let currentDate = Date()
     let currentDateString:String = Date().toISO8601String()
-    let orderId:String =  UUID().uuidString
     @Binding var customer : Customer
-    let qrImage:Image? = getQrImage()
+    let qrCode:(qrImage:Image?,orderId:String?) = getQrImage()
     
     var isNotValidForm:Bool {
-        return (orderName.isEmpty || description.isEmpty)
+        return (orderName.isEmpty || description.isEmpty || qrCode.orderId == nil || qrCode.qrImage == nil)
     }
     
     var body: some View {
@@ -56,7 +55,7 @@ struct AddOrderView: View {
             }
             
             Section(header: Text("Qr-Code")) {
-                qrImage?.resizable().frame(width: 150.0,height: 150.0)
+                qrCode.qrImage?.resizable().frame(width: 150.0,height: 150.0)
             }
         }
     }
@@ -88,14 +87,14 @@ struct AddOrderView: View {
                         Text(customer.email)
                             .font(.caption)
                         Text("Order Id")
-                        Text(orderId)
+                            Text(qrCode.orderId ?? "")
                             .font(.caption)
                         Text("Information")
                         Text(description)
                             .font(.caption)
                     }
                     Spacer()
-                    qrImage?.resizable().frame(width: 150.0,height: 150.0)
+                    qrCode.qrImage?.resizable().frame(width: 150.0,height: 150.0)
                 }
                 .hLeading()
                 .frame(width:400,height:800)
@@ -112,7 +111,7 @@ struct AddOrderView: View {
             return
         }
         
-        let filePath = orderId + ".pdf"
+        let filePath = qrCode.orderId ?? "" + ".pdf"
         
         guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
             setFormResult(.USER_URL_ERROR)
@@ -147,7 +146,7 @@ struct AddOrderView: View {
         return Order(ordername: orderName,
                      details: description,
                      customer: customer,
-                     orderId: orderId,
+                     orderId: qrCode.orderId ?? "",
                      initDate:currentDate)
     }
     
