@@ -90,7 +90,7 @@ struct AddOrderView: View {
                             Text(qrCode.orderId ?? "")
                             .font(.caption)
                         Text("Information")
-                        Text(description)
+                        Text(ordername + "\n" description)
                             .font(.caption)
                     }
                     Spacer()

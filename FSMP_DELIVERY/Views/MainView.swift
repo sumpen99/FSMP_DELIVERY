@@ -64,9 +64,7 @@ struct MainView: View {
     var listOfOrders: some View{
         List{
             ForEach(firestoreVM.orders, id: \.orderId) { order in
-                HStack {
-                    Text("\(order.ordername)")
-                }
+                getListOrderButton(order: order)
             }
             .onReceive(firestoreVM.$orders) { (orders) in
                 guard !orders.isEmpty, let firstOrder = orders.first else { return }
@@ -115,18 +113,40 @@ struct MainView: View {
         .disabled(orderIsActivated)
     }
     
+    func getListOrderButton(order:Order) -> some View{
+        return HStack {
+            Button(action: {
+                currentOrder = order
+                updatePdfViewWithOrder(order)
+            }){
+                Text("\(order.ordername)")
+            }
+            Spacer()
+            Image(systemName: "checkmark.circle.fill")
+                .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
+                .foregroundColor(.gray)
+        }
+    }
+    
     func updatePdfViewWithOrder(_ order:Order){
         currentOrder = order
         guard let documentDirectory = documentDirectory else { return }
         let filePath = order.orderId + ".pdf"
         let renderedUrl = documentDirectory.appending(path: filePath)
-        
-        firestoreVM.downloadFormPdf(orderType: .ORDER_IN_PROCESS,
-                                    localUrl: renderedUrl,
-                                    orderNumber: order.orderId){ url in
-            guard let url = url else { return }
-            pdfUrl = url
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: renderedUrl.path()) {
+            pdfUrl = renderedUrl
+            print("FILE AVAILABLE")
+        } else {
+            print("FILE NOT AVAILABLE")
+            firestoreVM.downloadFormPdf(orderType: .ORDER_IN_PROCESS,
+                                        localUrl: renderedUrl,
+                                        orderNumber: order.orderId){ url in
+                guard let url = url else { return }
+                pdfUrl = url
+            }
         }
+        
     }
 }
 
