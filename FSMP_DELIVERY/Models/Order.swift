@@ -15,7 +15,7 @@ struct Order : Codable,Identifiable {
     var details : String
     var customer : Customer
     var orderId:String
-    var assignedUser : UUID?
+    var assignedUser : String?
     var isActivated : Bool = false
     var isCompleted : Bool = false
     var initDate : Date
