@@ -13,7 +13,7 @@ struct CustomButtonStyle1: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(8)
-            .foregroundColor(.white)
+            .foregroundColor(configuration.isPressed ? Color.white.opacity(0.5) : Color.white)
             .background(Color.accentColor)
             .cornerRadius(16)
             .fontWeight(.semibold)

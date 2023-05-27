@@ -45,6 +45,30 @@ var ordersFolder:URL? {
     return nil
 }
 
+func removeAllOrdersFromFolder(){
+    let fileManager = FileManager.default
+    guard let ordersFolder = ordersFolder,
+          let filePaths = try? fileManager.contentsOfDirectory(at: ordersFolder, includingPropertiesForKeys: nil, options: [])  else { return }
+    for filePath in filePaths {
+        do{
+            try fileManager.removeItem(at: filePath)
+        }
+        catch{
+            print(error)
+        }
+    }
+}
+
+func removeOneOrderFromFolder(fileName:String){
+    guard let filePath = getPdfUrlPath(fileName: fileName) else { return }
+    do{
+        try FileManager.default.removeItem(at: filePath)
+    }
+    catch{
+        print(error)
+    }
+}
+
 func getPdfUrlPath(fileName:String) -> URL?{
     guard let ordersFolder = ordersFolder else { return nil }
     let filePath = fileName + ".pdf"
@@ -227,7 +251,7 @@ extension View {
         return Alert(
                 title: Text(ALERT_TITLE),
                 message: Text(ALERT_MESSAGE),
-                primaryButton: .destructive(Text("OK"), action: { actionPrimary() }),
+                primaryButton: .default(Text("OK"), action: { actionPrimary() }),
                 secondaryButton: .cancel(Text("AVBRYT"), action: { actionSecondary() } )
         )
     }
