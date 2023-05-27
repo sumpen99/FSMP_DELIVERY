@@ -14,10 +14,16 @@ class FirestoreViewModel: ObservableObject{
     @Published var orders = [Order]()
     var listenerCustomers: ListenerRegistration?
     var listenerOrders: ListenerRegistration?
-    //var listenerUser: ListenerRegistration?
+        
+    // MARK: - FIREBASE LISTENER-REGISTRATION
+    func initializeListener(){
+        listenToCustomers()
+        listenToOrdersInProcess()
+    }
     
     func closeAllListener(){
         closeListenerCustomer()
+        closeListenerOrders()
     }
     
     func closeListenerCustomer(){
@@ -26,11 +32,6 @@ class FirestoreViewModel: ObservableObject{
     
     func closeListenerOrders(){
         listenerOrders?.remove()
-    }
-    
-    func initializeListener(){
-        listenToCustomers()
-        listenToOrdersInProcess()
     }
     
     // MARK: - FIREBASE LISTENER-FUNCTIONS
@@ -52,10 +53,12 @@ class FirestoreViewModel: ObservableObject{
     func listenToOrdersInProcess() {
         let orders = repo.getOrderInProcessCollection()
         listenerOrders = orders.addSnapshotListener() { [weak self] (snapshot, err) in
-            guard let documents = snapshot?.documents,let strongSelf = self else { return }
+            guard let documents = snapshot?.documents,
+                  let strongSelf = self else { return }
             var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
+                if order.isActivated && order.assignedUser != FirebaseAuth.currentUserId { continue }
                 newOrders.append(order)
             }
             strongSelf.orders = newOrders
@@ -111,6 +114,19 @@ class FirestoreViewModel: ObservableObject{
         catch{
             print("Caught error")
         }
+    }
+    
+    func activateOrderInProcess(_ orderId:String){
+        guard let employeeId = FirebaseAuth.currentUserId else { return }
+        let orderDoc = repo.getOrderInProcessDocument(orderId)
+        orderDoc.updateData(["isActivated": true,"assignedUser":employeeId])
+        
+    }
+    
+    func deActivateOrderInProcess(_ orderId:String){
+        let orderDoc = repo.getOrderInProcessDocument(orderId)
+        orderDoc.updateData(["isActivated": false,"assignedUser":""])
+        
     }
    
     // MARK: - FIREBASE ARRAY-FUNCTIONS

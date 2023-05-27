@@ -42,9 +42,14 @@ struct MainView: View {
             }
         }
         .alert(isPresented: $orderActivationChange, content: {
-            onConditionalAlert(actionPrimary: { orderIsActivated.toggle()},
-                               actionSecondary: { })
+            onConditionalAlert(actionPrimary: {
+                orderIsActivated.toggle()
+            },
+                actionSecondary: { })
         })
+        .onChange(of: orderIsActivated){ isActivated in
+            callFirebaseAndTooggleOrderActivation(shouldActivate: isActivated)
+        }
         .onAppear() {
             firestoreVM.initializeListener()
         }
@@ -73,7 +78,14 @@ struct MainView: View {
             }
             .onReceive(firestoreVM.$orders) { (orders) in
                 guard !orders.isEmpty, let firstOrder = orders.first else { return }
-                updatePdfViewWithOrder(firstOrder)
+                guard let index = orders.firstIndex(where: {
+                    $0.isActivated
+                })
+                else{ updatePdfViewWithOrder(firstOrder); return }
+            
+                orderIsActivated = true
+                currentOrder = orders[index]
+                updatePdfViewWithOrder(orders[index])
             }
         }
         .cornerRadius(16)
@@ -147,7 +159,15 @@ struct MainView: View {
         }
     }
     
-    
+    func callFirebaseAndTooggleOrderActivation(shouldActivate:Bool){
+        guard let orderId = currentOrder?.orderId else { return }
+        if shouldActivate{
+            firestoreVM.activateOrderInProcess(orderId)
+        }
+        else{
+            firestoreVM.deActivateOrderInProcess(orderId)
+        }
+    }
     
     func updatePdfViewWithOrder(_ order:Order){
         currentOrder = order

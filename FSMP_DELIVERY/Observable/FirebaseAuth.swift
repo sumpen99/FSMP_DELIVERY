@@ -11,6 +11,7 @@ class FirebaseAuth:ObservableObject{
     let auth = Auth.auth()
     @Published private(set) var loggedInAs: UserRole = .NOT_LOGGED_IN
     private var handleAuthState: AuthStateDidChangeListenerHandle?
+    static var currentUserId:String?
     
     init(){
         listenForAuthDidChange()
@@ -21,6 +22,7 @@ class FirebaseAuth:ObservableObject{
         handleAuthState = auth.addStateDidChangeListener { [weak self] auth, _ in
             guard let strongSelf = self else { return }
             strongSelf.getUserRole(){ role in
+                FirebaseAuth.currentUserId = auth.currentUser?.uid
                 strongSelf.loggedInAs = role
             }
         }
