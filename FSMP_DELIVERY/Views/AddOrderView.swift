@@ -61,7 +61,9 @@ struct AddOrderView: View {
     }
     
     var orderButton: some View{
-        Button(action: { verifyAndUpload() }){
+        Button(action: { verifyAndUpload()
+            presentationMode.wrappedValue.dismiss()
+        }){
             Image(systemName: "square.and.arrow.up")
         }
     }
