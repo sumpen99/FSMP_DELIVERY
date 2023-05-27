@@ -11,6 +11,24 @@ var ALERT_MESSAGE = ""
 
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
+/*var ordersFolder:String? {
+    guard let documentDirectory = documentDirectory else { return nil}
+   
+    let ordersDirectoryPath = documentDirectory.appending(queryItems: "/orders")
+    let fileManager = FileManager.default
+    if !fileManager.fileExists(atPath: ordersDirectoryPath) {
+        do {
+            try fileManager.createDirectory(atPath: ordersDirectoryPath,
+                                            withIntermediateDirectories: false,
+                                            attributes: nil)
+        } catch {
+            print("Error creating orders folder in documents dir: \(error)")
+            return nil
+        }
+    }
+    return ordersDirectoryPath
+}*/
+
 func getQrImage() -> (Image?,String?){
     let token = UUID().uuidString
     guard let data = generateQrCode(qrCodeStr:token),
