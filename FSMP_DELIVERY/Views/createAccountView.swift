@@ -48,13 +48,14 @@ struct createAccountView: View {
                 .padding()
               
                 Button(action: {
-                    Auth.auth().createUser(withEmail: email, password: password) { result, error in 
+                    createUserButDontLoggIn()
+                    /*Auth.auth().createUser(withEmail: email, password: password) { result, error in
                         if let _ = error {
                             print("error create account")
                         } else {
                             print("created account")
                         }
-                    }
+                    }*/
                 }){
                     Text("Create New Account")
                         .font(.title2)
@@ -67,6 +68,18 @@ struct createAccountView: View {
                 Spacer()
                 Spacer()
             } .navigationTitle("Create an Account!")
+    }
+    
+    func createUserButDontLoggIn(){
+        guard let originalUser = Auth.auth().currentUser else { return }
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let _ = error {
+                print("error create account")
+            } else {
+                Auth.auth().updateCurrentUser(originalUser,completion:nil)
+                print("created account")
+            }
+        }
     }
 }
 
