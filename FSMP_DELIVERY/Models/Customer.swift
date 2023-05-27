@@ -23,11 +23,10 @@ struct Customer : Codable,Identifiable {
     var taxnumber : Int = 0
     
     func isNotValid() -> Bool{
-        return
-        name.isEmpty ||
-        adress.isEmpty ||
-        postcode.isEmpty ||
-        email.isEmpty
+        return (name.isEmpty ||
+                adress.isEmpty ||
+                postcode.isEmpty ||
+                email.isEmpty)
     }
         
 }
