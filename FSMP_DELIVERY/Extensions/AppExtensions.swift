@@ -11,23 +11,46 @@ var ALERT_MESSAGE = ""
 
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
-/*var ordersFolder:String? {
+var ordersFolder:URL? {
     guard let documentDirectory = documentDirectory else { return nil}
-   
-    let ordersDirectoryPath = documentDirectory.appending(queryItems: "/orders")
-    let fileManager = FileManager.default
-    if !fileManager.fileExists(atPath: ordersDirectoryPath) {
-        do {
-            try fileManager.createDirectory(atPath: ordersDirectoryPath,
-                                            withIntermediateDirectories: false,
-                                            attributes: nil)
-        } catch {
-            print("Error creating orders folder in documents dir: \(error)")
+    
+    let ordersFolder = documentDirectory.appendingPathComponent("orders")
+    if !FileManager.default.fileExists(atPath: ordersFolder.absoluteString) {
+        do{
+            try FileManager.default.createDirectory(at: ordersFolder,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
+        }
+        catch{
+            print(error)
             return nil
         }
+        return ordersFolder
     }
-    return ordersDirectoryPath
-}*/
+    /*let subFolderInsideOrders = documentDirectory.appendingPathComponent("orders/\(String("newFolder"))")
+        
+    if !FileManager.default.fileExists(atPath: subFolderInsideOrders.absoluteString) {
+     do{
+         try FileManager.default.createDirectory(at: subFolderInsideOrders,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+     }
+     catch{
+         print(error)
+         return nil
+     }
+     return ordersFolder
+    }*/
+    
+    return nil
+}
+
+func getPdfUrlPath(fileName:String) -> URL?{
+    guard let ordersFolder = ordersFolder else { return nil }
+    let filePath = fileName + ".pdf"
+    let renderedUrl = ordersFolder.appending(path: filePath)
+    return renderedUrl
+}
 
 func getQrImage() -> (Image?,String?){
     let token = UUID().uuidString
