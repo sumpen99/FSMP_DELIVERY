@@ -24,6 +24,7 @@ struct SignOfOrderView: View{
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     let currentDate = Date().toISO8601String()
+    let currentOrder:Order?
    
     var body: some View{
         NavigationStack {
