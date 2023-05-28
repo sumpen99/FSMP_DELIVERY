@@ -175,7 +175,7 @@ struct SignOfOrderView: View{
         }
         
         else if !SCANNED_QR_CODE.isEmpty && renderedImage == nil{
-            validQrCode = SCANNED_QR_CODE == currentOrder.orderId
+            validQrCode = (SCANNED_QR_CODE == currentOrder.orderId)
             if !validQrCode{
                 setFormResult(.QR_CODE_IS_NOT_A_MATCH)
                 return

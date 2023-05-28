@@ -9,6 +9,7 @@
 import SwiftUI
 
 var SCANNED_QR_CODE: String = ""
+var SIMULATED_QR_CODE: String = ""
 class ScannerViewModel: ObservableObject {
     @Published var torchIsOn: Bool = false
     @Published var isPrivacyResult = false

@@ -161,7 +161,8 @@ struct MainView: View {
             updatePdfViewWithOrder(firstOrder);
             return
         }
-    
+        
+        SIMULATED_QR_CODE = orders[index].orderId
         orderIsActivated = true
         currentOrder = orders[index]
         updatePdfViewWithOrder(orders[index])
@@ -170,6 +171,7 @@ struct MainView: View {
     func callFirebaseAndTooggleOrderActivation(shouldActivate:Bool){
         guard let orderId = currentOrder?.orderId else { return }
         if shouldActivate{
+            SIMULATED_QR_CODE = orderId
             firestoreVM.activateOrderInProcess(orderId)
         }
         else{
