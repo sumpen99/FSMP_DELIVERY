@@ -108,17 +108,13 @@ struct AddOrderView: View {
             return
         }
       
-        guard let documentDirectory = documentDirectory else {
+        let orderId = "added" + (qrCode.orderId ?? "")
+        guard let url = getPdfUrlPath(fileName: orderId),
+              let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url) else{
             setFormResult(.USER_URL_ERROR)
             return
         }
         
-        let filePath = qrCode.orderId ?? "" + ".pdf"
-        
-        guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
-            setFormResult(.USER_URL_ERROR)
-            return
-        }
         firestoreVM.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId)
         firestoreVM.setOrderInProcessDocument(newOrder)
         firestoreVM.uploadFormPDf(

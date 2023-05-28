@@ -187,42 +187,36 @@ struct SignOfOrderView: View{
             return
         }
         
-        print("accepted")
-        
-        return
-      
-        guard let documentDirectory = documentDirectory else {
-            setFormResult(.USER_URL_ERROR)
-            return
-            
-        }
-        
-        let orderId = UUID().uuidString
-        let filePath = orderId + ".pdf"
-        
-        guard let fileUrl = formAsPdf.exportAsPdf(documentDirectory: documentDirectory,filePath:filePath) else{
+        let fileName = "signed" + currentOrder.orderId
+        guard let url = getPdfUrlPath(fileName: fileName),
+              let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url) else{
             setFormResult(.USER_URL_ERROR)
             return
         }
         firestoreViewModel.uploadFormPDf(
             url:fileUrl,
             orderType:.ORDER_SIGNED,
-            orderNumber:orderId){ result in
+            orderNumber:currentOrder.orderId){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
-                sendMailVerificationToCustomer(fileUrl: fileUrl)
+                sendMailVerificationToCustomer(currentOrder.customer,fileUrl: fileUrl,fileName: fileName)
             }
             setFormResult(result)
         }
     }
     
-    private func sendMailVerificationToCustomer(fileUrl:URL){
+    private func sendMailVerificationToCustomer(_ customer:Customer,fileUrl:URL,fileName:String){
         firestoreViewModel.getCredentials(){ credentials in
             guard let credentials = credentials else { return }
-            MailManager(credentials:credentials)
-                .sendSignedResponseMailTo(fileUrl:fileUrl)
+            let manager = MailManager(credentials:credentials)
+            manager.onResult = { result in
+                print("hepp elli hepp")
+            }
+            manager.sendSignedResponseMailTo(customer,fileUrl:fileUrl)
                 
         }
     }
+    
+    
     
     private func renderCurrentSignaturePath(){
         if pointsList.isEmpty { return }

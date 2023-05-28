@@ -19,18 +19,18 @@ class MailManager{
         EMAIL_TOKEN = credentials.token
     }
   
-    /*func sendSignedResponseMailTo(_ customer:Customer){
+    func sendSignedResponseMailTo(_ customer:Customer,fileUrl:URL){
         setSignedSubjectAndText()
-        let email = createMail(customer.email,name:customer.name)
+        let email = createMail(customer.email,name:customer.name,filePath:fileUrl.relativePath)
         sendEmail(email)
-    }*/
+    }
     
-    func sendSignedResponseMailTo(fileUrl:URL){
+    /*func sendSignedResponseMailTo(fileUrl:URL){
         // pass customerinfo
         setSignedSubjectAndText()
         let email = createMail("fredrik@heatia.se",name:"Fredrik Sundström",filePath:fileUrl.relativePath)
         sendEmail(email)
-    }
+    }*/
     
     func sendOrderResponseMailTo(customer:Customer,fileUrl:URL){
         setAcceptedOrderSubjectAndText()
