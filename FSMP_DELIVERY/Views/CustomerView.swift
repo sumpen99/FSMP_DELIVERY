@@ -40,9 +40,17 @@ struct CustomerView: View {
                     }
                     .onReceive(firestoreVM.$customers) { (customers) in
                         guard !customers.isEmpty else { return }
-                        choosenCustomer = customers.first
+                        guard let choosenCustomer = choosenCustomer
+                        else { choosenCustomer = customers.first;return}
+                        findActivatedLastCustomer(customerId: choosenCustomer.customerId, customers: customers)
                     }
                 }
+            }
+            .onDisappear(){
+                firestoreVM.closeListenerCustomers()
+            }
+            .onAppear{
+                firestoreVM.initializeListenerCustomers()
             }
             .navigationBarItems(trailing: NavigationLink(destination: CreateCustomerView()){
                 Text(Image(systemName: "plus.circle"))
@@ -98,6 +106,18 @@ struct CustomerView: View {
         details += "Tax Number: \(customer.taxnumber)"
         
         return details
+    }
+    
+    func findActivatedLastCustomer(customerId:String,customers:[Customer]){
+        guard let index = customers.firstIndex(where: {
+            $0.customerId == customerId
+        })
+        else{
+            guard let firstCustomer = customers.first else { return }
+            choosenCustomer = firstCustomer
+            return
+        }
+        choosenCustomer = customers[index]
     }
     
     private func removeCustomer(){

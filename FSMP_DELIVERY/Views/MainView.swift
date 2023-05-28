@@ -51,7 +51,10 @@ struct MainView: View {
             callFirebaseAndTooggleOrderActivation(shouldActivate: isActivated)
         }
         .onAppear() {
-            firestoreVM.initializeListener()
+            firestoreVM.initializeListenerOrdersInProcess()
+        }
+        .onDisappear{
+            firestoreVM.closeListenerOrdersInProcess()
         }
         
     }
@@ -158,6 +161,8 @@ struct MainView: View {
         })
         else{
             guard let firstOrder = orders.first else { return }
+            orderIsActivated = false
+            currentOrder = firstOrder
             updatePdfViewWithOrder(firstOrder);
             return
         }

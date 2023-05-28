@@ -46,15 +46,11 @@ class MailManager{
             port:587
         )
         DispatchQueue.global(qos: .background).async {
-            smtp.send(email){ [weak self] error in
-                guard let strongSelf = self else { return }
-                DispatchQueue.main.sync { 
-                    strongSelf.onResult?(error == nil)
-                    //print(error == nil)
+            smtp.send(email){error in
+                DispatchQueue.main.sync {
+                    self.onResult?(error == nil)
                 }
-                
             }
-        
         }
     }
     

@@ -15,6 +15,7 @@ struct AddOrderView: View {
     @State private var orderName = ""
     @State private var description = ""
     @State var isUploadAttempt = false
+    @State var showProgressOfUploadOrder = false
     var isValidForm = false
     let currentDate = Date()
     let currentDateString:String = Date().toISO8601String()
@@ -27,14 +28,22 @@ struct AddOrderView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                formSections
+            ZStack{
+                VStack {
+                    formSections
+                }
+                if showProgressOfUploadOrder{
+                    LoadingView(loadingtext: "Laddar upp...")
+                    
+                }
             }
         }
+        .navigationBarBackButtonHidden(showProgressOfUploadOrder)
         .alert(isPresented: $isUploadAttempt, content: {
             onResultAlert(){
-                if isNotValidForm{ }
-                else{ presentationMode.wrappedValue.dismiss() }
+                if !isNotValidForm{
+                    presentationMode.wrappedValue.dismiss()
+                }
             }
         })
         .navigationTitle("Create order for \(customer.name)")
@@ -42,6 +51,7 @@ struct AddOrderView: View {
         .toolbar {
             ToolbarItemGroup{
                 orderButton
+                    .disabled(showProgressOfUploadOrder)
             }
         }
     }
@@ -61,9 +71,7 @@ struct AddOrderView: View {
     }
     
     var orderButton: some View{
-        Button(action: { verifyAndUpload()
-            presentationMode.wrappedValue.dismiss()
-        }){
+        Button(action: { verifyAndUpload()}){
             Image(systemName: "square.and.arrow.up")
         }
     }
@@ -104,17 +112,17 @@ struct AddOrderView: View {
     
     private func verifyAndUpload(){
         guard let newOrder = getOrder() else{
-            setFormResult(.FORM_NOT_FILLED)
+            setFormResult(.ORDER_NOT_ACCEPTABLE)
             return
         }
       
-        let orderId = "added" + (qrCode.orderId ?? "")
-        guard let url = getPdfUrlPath(fileName: orderId),
+        let fileName = "added" + (qrCode.orderId ?? "")
+        guard let url = getPdfUrlPath(fileName: fileName),
               let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url) else{
             setFormResult(.USER_URL_ERROR)
             return
         }
-        
+        showProgressOfUploadOrder.toggle()
         firestoreVM.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId)
         firestoreVM.setOrderInProcessDocument(newOrder)
         firestoreVM.uploadFormPDf(
@@ -122,17 +130,30 @@ struct AddOrderView: View {
             orderType:.ORDER_IN_PROCESS,
             orderNumber:newOrder.orderId){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
-                sendMailVerificationToCustomer(fileUrl: fileUrl)
+                sendMailVerificationToCustomer(fileUrl: fileUrl,fileName:fileName)
             }
-            setFormResult(result)
+            else{
+                showProgressOfUploadOrder.toggle()
+                setFormResult(result)
+            }
         }
     }
     
-    private func sendMailVerificationToCustomer(fileUrl:URL){
+    private func sendMailVerificationToCustomer(fileUrl:URL,fileName:String){
         firestoreVM.getCredentials(){ credentials in
             guard let credentials = credentials else { return }
-            MailManager(credentials:credentials)
-                .sendOrderResponseMailTo(customer:customer,fileUrl:fileUrl)
+            let manager = MailManager(credentials:credentials)
+            manager.onResult = { result in
+                showProgressOfUploadOrder.toggle()
+                removeOneOrderFromFolder(fileName: fileName)
+                if result{
+                    setFormResult(.FORM_SAVED_SUCCESFULLY)
+                }
+                else{
+                    setFormResult(.FORM_SAVED_BUT_NO_MAIL_WAS_SENT)
+                }
+            }
+            manager.sendOrderResponseMailTo(customer:customer,fileUrl:fileUrl)
                 
         }
     }

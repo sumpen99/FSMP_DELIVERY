@@ -21,4 +21,17 @@ struct Order : Codable,Identifiable {
     var initDate : Date
     var dateOfCompletion : Date?
     
+    func getSignedVersion() ->Order{
+        return Order(id:id,
+                     ordername: ordername,
+                     details: details,
+                     customer: customer,
+                     orderId: orderId,
+                     assignedUser: assignedUser,
+                     isActivated: false,
+                     isCompleted: true,
+                     initDate: initDate,
+                     dateOfCompletion: Date())
+    }
+    
 }
