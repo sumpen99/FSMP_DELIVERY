@@ -77,15 +77,8 @@ struct MainView: View {
                 getListOrderButton(order: order)
             }
             .onReceive(firestoreVM.$orders) { (orders) in
-                guard !orders.isEmpty, let firstOrder = orders.first else { return }
-                guard let index = orders.firstIndex(where: {
-                    $0.isActivated
-                })
-                else{ updatePdfViewWithOrder(firstOrder); return }
-            
-                orderIsActivated = true
-                currentOrder = orders[index]
-                updatePdfViewWithOrder(orders[index])
+                guard !orders.isEmpty else { return }
+                findActivatedOrderOrSetFirst(orders: orders)
             }
         }
         .cornerRadius(16)
@@ -125,7 +118,7 @@ struct MainView: View {
     }
     
     var signOfOrderBtn: some View {
-        NavigationLink(destination:LazyDestination(destination: { SignOfOrderView() })) {
+        NavigationLink(destination:LazyDestination(destination: { SignOfOrderView(currentOrder:currentOrder) })) {
             Text(Image(systemName: "square.and.pencil"))
                 .font(.largeTitle)
         }
@@ -157,6 +150,21 @@ struct MainView: View {
                 .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
                 .foregroundColor(orderIsActivated ? .green : .gray)
         }
+    }
+    
+    func findActivatedOrderOrSetFirst(orders:[Order]){
+        guard let index = orders.firstIndex(where: {
+            $0.isActivated
+        })
+        else{
+            guard let firstOrder = orders.first else { return }
+            updatePdfViewWithOrder(firstOrder);
+            return
+        }
+    
+        orderIsActivated = true
+        currentOrder = orders[index]
+        updatePdfViewWithOrder(orders[index])
     }
     
     func callFirebaseAndTooggleOrderActivation(shouldActivate:Bool){
