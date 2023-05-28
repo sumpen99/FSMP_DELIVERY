@@ -31,10 +31,9 @@ class QrCameraPreView: UIView {
     }*/
     
     func createSimulatorView(delegate: QrCameraDelegate){
-        let qrCodeStr = UUID().uuidString
         self.delegate = delegate
-        self.delegate?.mockData = qrCodeStr
-        guard let imgView = getQrUIImageView(qrCodeStr:qrCodeStr) else { return }
+        self.delegate?.mockData = SIMULATED_QR_CODE
+        guard let imgView = getQrUIImageView(qrCodeStr:SIMULATED_QR_CODE) else { return }
         imageView = imgView
         addSubview(imageView)
         DispatchQueue.main.asyncAfter(deadline: .now()+1.0){
