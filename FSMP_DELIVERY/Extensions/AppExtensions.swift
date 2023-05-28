@@ -173,9 +173,8 @@ extension [[CGPoint]]{
 extension View {
     
     @MainActor
-    func exportAsPdf(documentDirectory:URL,filePath:String)->URL?{
-        let renderedUrl = documentDirectory.appending(path: filePath)
-     
+    func exportAsPdf(renderedUrl:URL)->URL?{
+      
         guard let consumer = CGDataConsumer(url: renderedUrl as CFURL),
               let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) else { return nil }
         
