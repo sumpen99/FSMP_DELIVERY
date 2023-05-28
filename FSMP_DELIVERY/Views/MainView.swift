@@ -86,7 +86,6 @@ struct MainView: View {
         }
         .cornerRadius(16)
         .padding()
-    
     }
     
     var bottomButtons: some View{
