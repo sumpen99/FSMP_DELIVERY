@@ -14,8 +14,6 @@ struct QrView: View {
     @State private var closeOnTappedToast:Bool = false
     let scannerView = QrScannerView()
     
-    static var SCANNED_QR_CODE: String = ""
-    
     /*init(){
         print("init qrview")
     }*/
@@ -24,7 +22,7 @@ struct QrView: View {
         ZStack {
             scannerView
             .found(r: scannerViewModel.onFoundQrCode)
-            .reset(r: scannerViewModel.onResetQrCode)
+            //.reset(r: scannerViewModel.onResetQrCode)
             .torchLight(isOn: scannerViewModel.torchIsOn)
             .interval(delay: scannerViewModel.scanInterval)
             .environmentObject(scannerViewModel)
@@ -40,9 +38,6 @@ struct QrView: View {
             ToolbarItemGroup{
                 lightButton
             }
-        }
-        .onAppear(){
-            QrView.SCANNED_QR_CODE = ""
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
@@ -105,7 +100,6 @@ struct QrView: View {
     var foundQrOkButton: some View{
         Button(action: {
             withAnimation(Animation.spring().speed(0.2)) {
-                QrView.SCANNED_QR_CODE = scannerViewModel.lastQrCode
                 closeOnTappedToast.toggle()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
                       closeScannerView()

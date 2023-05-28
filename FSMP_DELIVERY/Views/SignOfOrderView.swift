@@ -18,9 +18,9 @@ struct SignOfOrderView: View{
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []
     @State var addNewPoint = true
-    @State var qrCode = QrCode()
     @State var isFormSignedResult:Bool = false
     @State private var renderedImage:Image?
+    @State var scannedQrCode = ""
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     let currentDate = Date().toISO8601String()
@@ -34,8 +34,10 @@ struct SignOfOrderView: View{
             onResultAlert{ }
         })
         .onAppear(){
-            qrCode.verifiedCode = QrView.SCANNED_QR_CODE
-            qrCode.verified = !QrView.SCANNED_QR_CODE.isEmpty
+            scannedQrCode = SCANNED_QR_CODE
+        }
+        .onDisappear(){
+            SCANNED_QR_CODE = ""
         }
         .toolbar {
             ToolbarItemGroup{
@@ -58,7 +60,7 @@ struct SignOfOrderView: View{
                     .foregroundColor(.gray)
                 }
                 Section(header: Text("Verifierad Qr-Kod")){
-                    Text(qrCode.verifiedCode)
+                    Text(scannedQrCode)
                     .font(.title3)
                     .foregroundColor(.gray)
                 }
@@ -135,7 +137,7 @@ struct SignOfOrderView: View{
                         Text(currentDate)
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
-                        Text(qrCode.verifiedCode)
+                        Text(scannedQrCode)
                             .font(.caption)
                            
                     }
@@ -148,10 +150,46 @@ struct SignOfOrderView: View{
     }
     
     private func uploadSignedForm(){
-        if !qrCode.verified && renderedImage == nil{
+        guard let currentOrder = currentOrder else { return }
+        var validSignature = false
+        var validQrCode = false
+        
+        if !pointsList.isEmpty{
+            var signatureCount = 0
+            for p in pointsList{
+                signatureCount += p.count
+            }
+            validSignature = signatureCount >= 50
+        }
+        
+        if  renderedImage == nil && SCANNED_QR_CODE.isEmpty{
             setFormResult(.FORM_NOT_FILLED)
             return
         }
+        
+        else if renderedImage != nil && SCANNED_QR_CODE.isEmpty{
+            if !validSignature{
+                setFormResult(.SIGNATURE_IS_NOT_VALID)
+                return
+            }
+        }
+        
+        else if !SCANNED_QR_CODE.isEmpty && renderedImage == nil{
+            validQrCode = SCANNED_QR_CODE == currentOrder.orderId
+            if !validQrCode{
+                setFormResult(.QR_CODE_IS_NOT_A_MATCH)
+                return
+            }
+        }
+        
+        if !validSignature && !validQrCode{
+            setFormResult(.SIGNATURE_AND_QRCODE_MISSMATCH)
+            return
+        }
+        
+        print("accepted")
+        
+        return
       
         guard let documentDirectory = documentDirectory else {
             setFormResult(.USER_URL_ERROR)

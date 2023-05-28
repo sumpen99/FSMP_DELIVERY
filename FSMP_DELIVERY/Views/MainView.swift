@@ -73,10 +73,10 @@ struct MainView: View {
     
     var listOfOrders: some View{
         List{
-            ForEach(firestoreVM.orders, id: \.orderId) { order in
+            ForEach(firestoreVM.ordersInProcess, id: \.orderId) { order in
                 getListOrderButton(order: order)
             }
-            .onReceive(firestoreVM.$orders) { (orders) in
+            .onReceive(firestoreVM.$ordersInProcess) { (orders) in
                 guard !orders.isEmpty else { return }
                 findActivatedOrderOrSetFirst(orders: orders)
             }

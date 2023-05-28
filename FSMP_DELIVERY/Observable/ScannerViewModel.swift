@@ -7,20 +7,20 @@
 
 
 import SwiftUI
+
+var SCANNED_QR_CODE: String = ""
 class ScannerViewModel: ObservableObject {
-    
-    let scanInterval: Double = 1.0
-    
     @Published var torchIsOn: Bool = false
-    var lastQrCode: String = ""
     @Published var isPrivacyResult = false
     @Published var foundQrCode = false
- 
+    let scanInterval: Double = 1.0
+    var lastQrCode: String = ""
     var left:CGFloat = 1.0
     var top:CGFloat = 1.0
     var right:CGFloat = 1.0
     var bottom:CGFloat = 1.0
     
+    //static var SCANNED_QR_CODE: String = ""
     /*init() {
         print("init scannerviewmodel")
     }
@@ -36,13 +36,15 @@ class ScannerViewModel: ObservableObject {
         bottom = bounds.maxY
         lastQrCode = code
         foundQrCode = true
+        SCANNED_QR_CODE = code
     }
     
-    func onResetQrCode(_ value: Bool) {
+    /*func onResetQrCode(_ value: Bool) {
         self.foundQrCode = value
-    }
+    }*/
     
     func onReset(){
+        SCANNED_QR_CODE = ""
         lastQrCode = ""
         foundQrCode = false
     }
