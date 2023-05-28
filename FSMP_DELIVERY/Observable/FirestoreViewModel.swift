@@ -24,13 +24,25 @@ class FirestoreViewModel: ObservableObject{
         listenToOrdersSigned()
     }
     
+    func initializeListenerCustomers(){
+        listenToCustomers()
+    }
+    
+    func initializeListenerOrdersInProcess(){
+        listenToOrdersInProcess()
+    }
+    
+    func initializeListenerOrdersSigned(){
+        listenToOrdersSigned()
+    }
+    
     func closeAllListener(){
-        closeListenerCustomer()
+        closeListenerCustomers()
         closeListenerOrdersInProcess()
         closeListenerOrdersSigned()
     }
     
-    func closeListenerCustomer(){
+    func closeListenerCustomers(){
         listenerCustomers?.remove()
     }
     
@@ -113,6 +125,29 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func removeOrderInProcess(_ orderId:String){
+        let doc = repo.getOrderInProcessDocument(orderId)
+        doc.delete(){ err in
+            if let err = err {
+              print("Error removing document: \(err)")
+            }
+            else {
+              print("Order successfully removed!")
+            }
+        }
+    }
+    
+    func removeOrderPdfFromStorage(orderType:OrderType,orderNumber:String){
+        let fileRef = repo.getOrderReference(orderType: orderType,orderNumber: orderNumber)
+        fileRef.delete { error in
+            if let error = error {
+                print(error)
+            } else {
+                print("order deleted from storage")
+            }
+        }
+    }
+    
     // MARK: - FIREBASE SETDATA-FUNCTIONS
     func setCustomerDocument(_ customer : Customer) {
         let doc = repo.getCustomerDocument(customer.customerId)
@@ -128,6 +163,18 @@ class FirestoreViewModel: ObservableObject{
     
     func setOrderInProcessDocument(_ order : Order) {
         let doc = repo.getOrderInProcessDocument(order.orderId)
+        do{
+            try doc.setData(from:order){ err in
+                if let err = err { print("err ... \(err)") }
+            }
+        }
+        catch{
+            print("Caught error")
+        }
+    }
+    
+    func setOrderSignedDocument(_ order : Order) {
+        let doc = repo.getOrderSignedDocument(order.orderId)
         do{
             try doc.setData(from:order){ err in
                 if let err = err { print("err ... \(err)") }

@@ -44,6 +44,10 @@ class FirestoreRepository{
         return firestoreDB.collection(ORDER_IN_PROCESS_COLLECTION).document(docId)
     }
     
+    func getOrderSignedDocument(_ docId:String) -> DocumentReference{
+        return firestoreDB.collection(ORDER_SIGNED_COLLECTION).document(docId)
+    }
+    
     func getOrderInProcessCollection() -> CollectionReference{
         return firestoreDB.collection(ORDER_IN_PROCESS_COLLECTION)
     }

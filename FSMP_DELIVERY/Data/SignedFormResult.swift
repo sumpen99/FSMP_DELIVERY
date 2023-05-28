@@ -6,6 +6,7 @@
 //
 
 enum SignedFormResult {
+    case ORDER_NOT_ACCEPTABLE
     case FORM_NOT_FILLED
     case QR_CODE_IS_NOT_A_MATCH
     case SIGNATURE_IS_NOT_VALID
@@ -14,12 +15,18 @@ enum SignedFormResult {
     case USER_URL_ERROR
     case UPLOAD_FAILED
     case DOWNLOAD_FAILED
+    case FORM_SAVED_BUT_NO_MAIL_WAS_SENT
+    case FORM_SIGNED_BUT_NO_MAIL_WAS_SENT
     case FORM_SAVED_SUCCESFULLY
+    case FORM_SIGNED_SUCCESFULLY
 }
 
 extension SignedFormResult {
     var describeYourSelf : (title:String,message:String) {
         switch self {
+            case .ORDER_NOT_ACCEPTABLE:
+            return (title:"Saknar info",
+                    message:"Beställningen saknar viktig information")
             case .FORM_NOT_FILLED:
             return (title:"Saknar info",
                     message:"Beställningen måste signeras eller innehålla en verifierad Qr-kod")
@@ -47,7 +54,15 @@ extension SignedFormResult {
             case .FORM_SAVED_SUCCESFULLY:
             return (title:"Order sparad",
                     message:"Kunden har fått bekräftelse skickad på mail")
+            case .FORM_SIGNED_SUCCESFULLY:
+            return (title:"Order signerad",
+                    message:"Kunden har fått bekräftelse skickad på mail")
+            case .FORM_SAVED_BUT_NO_MAIL_WAS_SENT:
+            return (title:"Order sparad",
+                    message:"Orden har sparats men mail skickades inte ut till kund")
+            case .FORM_SIGNED_BUT_NO_MAIL_WAS_SENT:
+            return (title:"Order signerad",
+                    message:"Orden har signerats men mail skickades inte ut till kund")
             }
-        
     }
 }
