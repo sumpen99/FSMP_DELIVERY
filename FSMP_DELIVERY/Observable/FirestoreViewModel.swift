@@ -81,7 +81,6 @@ class FirestoreViewModel: ObservableObject{
             var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
-                if order.isActivated && order.assignedUser != FirebaseAuth.currentUserId { continue }
                 newOrders.append(order)
             }
             strongSelf.ordersSigned = newOrders
