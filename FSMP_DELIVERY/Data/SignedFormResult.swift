@@ -7,6 +7,9 @@
 
 enum SignedFormResult {
     case FORM_NOT_FILLED
+    case QR_CODE_IS_NOT_A_MATCH
+    case SIGNATURE_IS_NOT_VALID
+    case SIGNATURE_AND_QRCODE_MISSMATCH
     case IMAGE_DATA_ERROR
     case USER_URL_ERROR
     case UPLOAD_FAILED
@@ -20,6 +23,15 @@ extension SignedFormResult {
             case .FORM_NOT_FILLED:
             return (title:"Saknar info",
                     message:"Beställningen måste signeras eller innehålla en verifierad Qr-kod")
+            case .QR_CODE_IS_NOT_A_MATCH:
+            return (title:"Qr-Kod ej verifierad",
+                    message:"Scannad qr-kod överensstämmer inte med order-id")
+            case .SIGNATURE_IS_NOT_VALID:
+            return (title:"Signatur ej verifierad",
+                    message:"Signatur är ej godkänd, skaka och signera igen")
+            case .SIGNATURE_AND_QRCODE_MISSMATCH:
+            return (title:"ERROR",
+                    message:"Varken qr-kod eller signatur kan verifieras")
             case .IMAGE_DATA_ERROR:
             return (title:"Uppladdning Avbruten",
                     message:"Registrering av order misslyckades\nFelmeddelande: IMAGE_DATA")

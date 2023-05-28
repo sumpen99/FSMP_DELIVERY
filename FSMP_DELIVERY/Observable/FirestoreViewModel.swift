@@ -11,27 +11,35 @@ import SwiftUI
 class FirestoreViewModel: ObservableObject{
     let repo = FirestoreRepository()
     @Published var customers = [Customer]()
-    @Published var orders = [Order]()
+    @Published var ordersInProcess = [Order]()
+    @Published var ordersSigned = [Order]()
     var listenerCustomers: ListenerRegistration?
-    var listenerOrders: ListenerRegistration?
+    var listenerOrdersInProcess: ListenerRegistration?
+    var listenerOrdersSigned: ListenerRegistration?
         
     // MARK: - FIREBASE LISTENER-REGISTRATION
     func initializeListener(){
         listenToCustomers()
         listenToOrdersInProcess()
+        listenToOrdersSigned()
     }
     
     func closeAllListener(){
         closeListenerCustomer()
-        closeListenerOrders()
+        closeListenerOrdersInProcess()
+        closeListenerOrdersSigned()
     }
     
     func closeListenerCustomer(){
         listenerCustomers?.remove()
     }
     
-    func closeListenerOrders(){
-        listenerOrders?.remove()
+    func closeListenerOrdersInProcess(){
+        listenerOrdersInProcess?.remove()
+    }
+    
+    func closeListenerOrdersSigned(){
+        listenerOrdersSigned?.remove()
     }
     
     // MARK: - FIREBASE LISTENER-FUNCTIONS
@@ -52,7 +60,7 @@ class FirestoreViewModel: ObservableObject{
     
     func listenToOrdersInProcess() {
         let orders = repo.getOrderInProcessCollection()
-        listenerOrders = orders.addSnapshotListener() { [weak self] (snapshot, err) in
+        listenerOrdersInProcess = orders.addSnapshotListener() { [weak self] (snapshot, err) in
             guard let documents = snapshot?.documents,
                   let strongSelf = self else { return }
             var newOrders = [Order]()
@@ -61,7 +69,22 @@ class FirestoreViewModel: ObservableObject{
                 if order.isActivated && order.assignedUser != FirebaseAuth.currentUserId { continue }
                 newOrders.append(order)
             }
-            strongSelf.orders = newOrders
+            strongSelf.ordersInProcess = newOrders
+        }
+    }
+    
+    func listenToOrdersSigned() {
+        let orders = repo.getOrderSignedCollection()
+        listenerOrdersSigned = orders.addSnapshotListener() { [weak self] (snapshot, err) in
+            guard let documents = snapshot?.documents,
+                  let strongSelf = self else { return }
+            var newOrders = [Order]()
+            for document in documents {
+                guard let order = try? document.data(as : Order.self) else { continue }
+                if order.isActivated && order.assignedUser != FirebaseAuth.currentUserId { continue }
+                newOrders.append(order)
+            }
+            strongSelf.ordersSigned = newOrders
         }
     }
     
