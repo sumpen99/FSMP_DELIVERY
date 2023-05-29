@@ -32,14 +32,6 @@ struct SideMenuView: View {
                 .padding()
                 Button(action: {}){
                     NavigationLink(destination: CustomerView()) {
-                        Image(systemName: "checklist.checked")
-                        Text("Activer Orders")
-                    }
-                }
-                .buttonStyle(CustomButtonStyle1())
-                .padding()
-                Button(action: {}){
-                    NavigationLink(destination: CustomerView()) {
                         Image(systemName: "list.bullet.clipboard.fill")
                         Text("History")
                     }
