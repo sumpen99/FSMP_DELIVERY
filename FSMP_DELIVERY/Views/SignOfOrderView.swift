@@ -15,12 +15,15 @@ struct LazyDestination<Destination: View>: View {
 }
 
 struct SignOfOrderView: View{
+    @Environment(\.dismiss) private var dismiss
     let OFFSET = 10.0
     @State var pointsList:[[CGPoint]] = []
     @State var addNewPoint = true
     @State var isFormSignedResult:Bool = false
     @State private var renderedImage:Image?
     @State var scannedQrCode = ""
+    @State var showProgressOfUploadSigned:Bool = false
+    @State var closeWhenDone:Bool = false
     @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
     let currentDate = Date().toISO8601String()
@@ -28,10 +31,19 @@ struct SignOfOrderView: View{
    
     var body: some View{
         NavigationStack {
-            signedForm
+            ZStack{
+                signedForm
+                if showProgressOfUploadSigned{
+                    LoadingView(loadingtext: "Laddar upp...")
+                }
+            }
         }
         .alert(isPresented: $isFormSignedResult, content: {
-            onResultAlert{ }
+            onResultAlert{
+                if closeWhenDone{
+                    dismiss()
+                }
+            }
         })
         .onAppear(){
             scannedQrCode = SCANNED_QR_CODE
@@ -150,49 +162,20 @@ struct SignOfOrderView: View{
     }
     
     private func uploadSignedForm(){
-        guard let currentOrder = currentOrder else { return }
-        var validSignature = false
-        var validQrCode = false
-        
-        if !pointsList.isEmpty{
-            var signatureCount = 0
-            for p in pointsList{
-                signatureCount += p.count
-            }
-            validSignature = signatureCount >= 50
-        }
-        
-        if  renderedImage == nil && SCANNED_QR_CODE.isEmpty{
-            setFormResult(.FORM_NOT_FILLED)
-            return
-        }
-        
-        else if renderedImage != nil && SCANNED_QR_CODE.isEmpty{
-            if !validSignature{
-                setFormResult(.SIGNATURE_IS_NOT_VALID)
-                return
-            }
-        }
-        
-        else if !SCANNED_QR_CODE.isEmpty && renderedImage == nil{
-            validQrCode = (SCANNED_QR_CODE == currentOrder.orderId)
-            if !validQrCode{
-                setFormResult(.QR_CODE_IS_NOT_A_MATCH)
-                return
-            }
-        }
-        
-        if !validSignature && !validQrCode{
-            setFormResult(.SIGNATURE_AND_QRCODE_MISSMATCH)
-            return
-        }
-        
+        guard let currentOrder = currentOrder?.getSignedVersion() else { return }
+        if !formIsSignedCorrect(orderId: currentOrder.orderId){ return }
         let fileName = "signed" + currentOrder.orderId
         guard let url = getPdfUrlPath(fileName: fileName),
-              let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url) else{
+              let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url)
+        else{
             setFormResult(.USER_URL_ERROR)
             return
         }
+        showProgressOfUploadSigned.toggle()
+        closeWhenDone = true
+        firestoreViewModel.setOrderSignedDocument(currentOrder)
+        firestoreViewModel.removeOrderPdfFromStorage(orderType: .ORDER_IN_PROCESS, orderNumber: currentOrder.orderId)
+        firestoreViewModel.removeOrderInProcess(currentOrder.orderId)
         firestoreViewModel.uploadFormPDf(
             url:fileUrl,
             orderType:.ORDER_SIGNED,
@@ -200,7 +183,10 @@ struct SignOfOrderView: View{
             if result == .FORM_SAVED_SUCCESFULLY{
                 sendMailVerificationToCustomer(currentOrder.customer,fileUrl: fileUrl,fileName: fileName)
             }
-            setFormResult(result)
+            else{
+                showProgressOfUploadSigned.toggle()
+                setFormResult(result)
+            }
         }
     }
     
@@ -209,13 +195,18 @@ struct SignOfOrderView: View{
             guard let credentials = credentials else { return }
             let manager = MailManager(credentials:credentials)
             manager.onResult = { result in
-                print("hepp elli hepp")
+                showProgressOfUploadSigned.toggle()
+                removeOneOrderFromFolder(fileName: fileName)
+                if result{
+                    setFormResult(.FORM_SIGNED_SUCCESFULLY)
+                }
+                else{
+                    setFormResult(.FORM_SIGNED_BUT_NO_MAIL_WAS_SENT)
+                }
             }
             manager.sendSignedResponseMailTo(customer,fileUrl:fileUrl)
-                
         }
     }
-    
     
     
     private func renderCurrentSignaturePath(){
@@ -242,7 +233,46 @@ struct SignOfOrderView: View{
         let currentLine = max(0,pointsList.count - 1)
         pointsList[currentLine].append(value)
     }
-       
+    
+    private func formIsSignedCorrect(orderId:String) -> Bool{
+        var validSignature = false
+        var validQrCode = false
+        
+        if !pointsList.isEmpty{
+            var signatureCount = 0
+            for p in pointsList{
+                signatureCount += p.count
+            }
+            validSignature = signatureCount >= 50
+        }
+        
+        if  renderedImage == nil && SCANNED_QR_CODE.isEmpty{
+            setFormResult(.FORM_NOT_FILLED)
+            return false
+        }
+        
+        else if renderedImage != nil && SCANNED_QR_CODE.isEmpty{
+            if !validSignature{
+                setFormResult(.SIGNATURE_IS_NOT_VALID)
+                return false
+            }
+        }
+        
+        else if !SCANNED_QR_CODE.isEmpty && renderedImage == nil{
+            validQrCode = (SCANNED_QR_CODE == orderId)
+            if !validQrCode{
+                setFormResult(.QR_CODE_IS_NOT_A_MATCH)
+                return false
+            }
+        }
+        
+        if !validSignature && !validQrCode{
+            setFormResult(.SIGNATURE_AND_QRCODE_MISSMATCH)
+            return false
+        }
+        
+        return true
+    }
     
     private func insideViewFrame(_ frame:CGRect,newLocation:CGPoint) ->Bool{
         return newLocation.x >= frame.minX+OFFSET && newLocation.x <= frame.minX + frame.width - OFFSET &&
