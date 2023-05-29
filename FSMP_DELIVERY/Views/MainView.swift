@@ -64,8 +64,6 @@ struct MainView: View {
     var sideMenu: some View{
         GeometryReader { _ in
             SideMenuView()
-//              .offset(x: 0)
-//              .offset(x: UIScreen.main.bounds.width)
                 .offset(x: showSideMenu ? 0 : -300, y: 0)
             Spacer()
         }
@@ -135,6 +133,11 @@ struct MainView: View {
         .buttonStyle(CustomButtonStyle1())
         .padding(.trailing)
     }
+    
+    // func for edit highlighted order on longpress
+//    func getListEditOrderButton(order:Order) -> some View{
+//        
+//    }
     
     func getListOrderButton(order:Order) -> some View{
         return HStack {
@@ -219,6 +222,8 @@ struct MainView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
+        
         MainView()
+            .environmentObject(FirestoreViewModel())
     }
 }
