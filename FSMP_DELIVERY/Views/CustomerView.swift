@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomerView: View {
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State private var choosenCustomer : Customer? = nil
     @State var isRemoveCustomer:Bool = false
@@ -38,6 +39,13 @@ struct CustomerView: View {
                     ForEach(firestoreVM.customers,id: \.customerId) { customer in
                         getListButton(customer: customer)
                     }
+                    .onDelete() { indexSet in
+                        for index in indexSet {
+                                let customerToRemove = firestoreVM.customers[index]
+                                firestoreVM.removeCustomer(customerToRemove)
+                        }
+                    }
+                    .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
                     .onReceive(firestoreVM.$customers) { (customers) in
                         guard !customers.isEmpty else { return }
                         guard let choosenCustomer = choosenCustomer
