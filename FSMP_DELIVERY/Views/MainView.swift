@@ -8,12 +8,15 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var pdfUrl:URL?
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
     @State var currentOrder:Order?
+    
+//    @State var showAlert : Bool = false
     
     var body: some View {
         NavigationStack {
@@ -79,11 +82,24 @@ struct MainView: View {
             ForEach(firestoreVM.ordersInProcess, id: \.orderId) { order in
                 getListOrderButton(order: order)
             }
+            .onDelete() { indexSet in
+                for index in indexSet {
+                        let orderToRemove = firestoreVM.ordersInProcess[index]
+                        firestoreVM.removeOrderInProcess(orderToRemove.orderId)
+//                    showAlert = true
+                }
+            }
+            .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
             .onReceive(firestoreVM.$ordersInProcess) { (orders) in
                 guard !orders.isEmpty else { return }
                 findActivatedOrderOrSetFirst(orders: orders)
             }
         }
+//        .alert(isPresented: $showAlert) {
+//            Alert(title: Text("Remove Order"),
+//                  dismissButton: .default(Text("OK")))
+            
+//        }
         .cornerRadius(16)
         .padding()
     }
