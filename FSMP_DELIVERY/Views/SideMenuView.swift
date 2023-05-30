@@ -22,12 +22,6 @@ struct SideMenuView: View {
                 
                 Spacer()
                 
-                Button(action: {}){
-                    NavigationLink(destination: CustomerView()) {
-                        Image(systemName: "pencil.circle.fill")
-                        Text("Manage Orders")
-                    }
-                }
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
                 Button(action: {}){
@@ -77,6 +71,7 @@ struct SideMenuView: View {
     struct SideMenuView_Previews: PreviewProvider {
         static var previews: some View {
             SideMenuView()
+                .environmentObject(FirebaseAuth())
         }
     }
 }

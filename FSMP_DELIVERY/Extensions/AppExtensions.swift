@@ -27,6 +27,7 @@ var ordersFolder:URL? {
         }
         return ordersFolder
     }
+    
     /*let subFolderInsideOrders = documentDirectory.appendingPathComponent("orders/\(String("newFolder"))")
         
     if !FileManager.default.fileExists(atPath: subFolderInsideOrders.absoluteString) {
@@ -43,6 +44,13 @@ var ordersFolder:URL? {
     }*/
     
     return nil
+}
+
+func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
+    Binding(
+        get: { lhs.wrappedValue ?? rhs },
+        set: { lhs.wrappedValue = $0 }
+    )
 }
 
 func removeAllOrdersFromFolder(){

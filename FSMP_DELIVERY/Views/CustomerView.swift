@@ -65,16 +65,6 @@ struct CustomerView: View {
             })
             .navigationTitle("Customers")
         }
-        /*.alert(isPresented: $isRemoveCustomer, content: {
-            onConditionalAlert(actionPrimary: removeCustomer,
-                               actionSecondary: { })
-        })*/
-        /*.onAppear() {
-            firestoreVM.listenToFirestoreCustomers()
-            if let firstCustomer = firestoreVM.customers.first {
-                choosenCustomer = firstCustomer
-            }
-        }*/
     }
     
     func getListButton(customer:Customer) -> some View{
@@ -146,6 +136,7 @@ struct CustomerView: View {
 struct CustomerView_Previews: PreviewProvider {
     static var previews: some View {
         CustomerView()
+            .environmentObject(FirebaseAuth())
             .environmentObject(FirestoreViewModel())
     }
 }

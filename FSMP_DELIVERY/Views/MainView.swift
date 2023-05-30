@@ -11,12 +11,12 @@ struct MainView: View {
     @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var pdfUrl:URL?
+    @State private var showAlert: Bool = false
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
     @State var currentOrder:Order?
     
-//    @State var showAlert : Bool = false
     
     var body: some View {
         NavigationStack {
@@ -92,12 +92,29 @@ struct MainView: View {
                 guard !orders.isEmpty else { return }
                 findActivatedOrderOrSetFirst(orders: orders)
             }
+            .onTapGesture(count: 2) {
+                showAlert = true
+            }
         }
-//        .alert(isPresented: $showAlert) {
-//            Alert(title: Text("Remove Order"),
-//                  dismissButton: .default(Text("OK")))
-            
-//        }
+        .alert("Edit order?", isPresented: $showAlert) {
+
+            if let order = currentOrder {
+                    HStack{
+                        NavigationLink(destination:LazyDestination(destination: {
+                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))})){
+                                Text("Yes")
+                        }
+                    }
+                }
+
+            else{
+                Spacer()
+            }
+
+            Button("no") {
+                print("no")
+            }
+        }
         .cornerRadius(16)
         .padding()
     }
@@ -245,5 +262,6 @@ struct MainView_Previews: PreviewProvider {
         
         MainView()
             .environmentObject(FirestoreViewModel())
+            .environmentObject(FirebaseAuth())
     }
 }
