@@ -28,11 +28,15 @@ struct ManageOrdersView: View {
     }
 }
 
-//struct ManageOrdersView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let customer = Customer(customerId: "123123",name: "janne", phoneNumber: 123123123)
-//        let order = Order(ordername: "Fixa Vasken", details: "rensa vatten låset", customer: customer, orderId: "", initDate: Date())
-//        ManageOrdersView(choosenOrder: order)
-//            .environmentObject(FirestoreViewModel())
-//    }
-//}
+struct ManageOrdersView_Previews: PreviewProvider {
+    @State private var order = Order(ordername: "Fixa Vasken", details: "rensa vatten låset", customer: Customer(customerId: "123123", name: "janne", phoneNumber: 123123123), orderId: "", initDate: Date())
+
+    static var previews: some View {
+        ManageOrdersView_Previews().previewLayout()
+    }
+
+    func previewLayout() -> some View {
+        ManageOrdersView(choosenOrder: $order)
+            .environmentObject(FirestoreViewModel())
+    }
+}
