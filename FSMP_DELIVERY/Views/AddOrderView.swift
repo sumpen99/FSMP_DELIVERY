@@ -36,8 +36,13 @@ struct AddOrderView: View {
         .navigationBarBackButtonHidden(prVar.isShowing)
         .alert(isPresented: $prVar.isFormSignedResult, content: {
             onResultAlert(){
-                if !isNotValidForm{
-                    presentationMode.wrappedValue.dismiss()
+                if prVar.isEnabled{
+                    withAnimation(Animation.spring().speed(0.2)) {
+                        prVar.closeOnTapped.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
                 }
             }
         })
