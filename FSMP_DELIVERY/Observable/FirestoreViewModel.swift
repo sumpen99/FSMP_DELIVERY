@@ -100,20 +100,15 @@ class FirestoreViewModel: ObservableObject{
     }
     
     // MARK: - FIREBASE REMOVE-FUNCTIONS
-    func removeCustomer(_ customer:Customer){
+    func removeCustomer(_ customer:Customer,onResult:((Error?) -> Void)? = nil){
         removeCustomerOrderHistory(customer.orderIds)
         let doc = repo.getCustomerDocument(customer.customerId)
         doc.delete(){ err in
-            if let err = err {
-              print("Error removing document: \(err)")
-            }
-            else {
-              print("Customer successfully removed!")
-            }
+            onResult?(err)
         }
     }
     
-    func removeCustomerOrderHistory(_ orderIds:[String]?){
+    func removeCustomerOrderHistory(_ orderIds:[String]?,onResult:(() -> Void)? = nil){
         guard let orderIds = orderIds else { return }
         let collectionOrderInProcess = repo.getOrderInProcessCollection()
         let collectionOrderSigned = repo.getOrderSignedCollection()
@@ -122,91 +117,100 @@ class FirestoreViewModel: ObservableObject{
                 collectionOrderInProcess.document(id).delete()
                 collectionOrderSigned.document(id).delete()
             }
+            DispatchQueue.main.async {
+                onResult?()
+            }
         }
     }
     
-    func removeOrderInProcess(_ orderId:String){
+    func removeOrderInProcess(_ orderId:String,onResult:((Error?) -> Void)? = nil){
         let doc = repo.getOrderInProcessDocument(orderId)
         doc.delete(){ err in
-            if let err = err {
-              print("Error removing document: \(err)")
-            }
-            else {
-              print("Order successfully removed!")
-            }
+            onResult?(err)
         }
     }
     
-    func removeOrderPdfFromStorage(orderType:OrderType,orderNumber:String){
+    func removeOrderSigned(_ orderId:String,onResult:((Error?) -> Void)? = nil){
+        let doc = repo.getOrderSignedDocument(orderId)
+        doc.delete(){ err in
+            onResult?(err)
+        }
+    }
+    
+    func removeOrderPdfFromStorage(orderType:OrderType,orderNumber:String,onResult:((Error?) -> Void)? = nil){
         let fileRef = repo.getOrderReference(orderType: orderType,orderNumber: orderNumber)
         fileRef.delete { error in
-            if let error = error {
-                print(error)
-            } else {
-                print("order deleted from storage")
-            }
+            onResult?(error)
         }
     }
     
     // MARK: - FIREBASE SETDATA-FUNCTIONS
-    func setCustomerDocument(_ customer : Customer) {
+    func setCustomerDocument(_ customer : Customer,onResult:((Error?) -> Void)? = nil) {
         let doc = repo.getCustomerDocument(customer.customerId)
         do{
             try doc.setData(from:customer){ err in
-                if let err = err { print("err ... \(err)") }
+                onResult?(err)
             }
         }
         catch{
-            print("Caught error")
+            onResult?(FirebaseError.TRY_SET_DATA_FAILED)
         }
     }
     
-    func setOrderInProcessDocument(_ order : Order) {
+    func setOrderInProcessDocument(_ order : Order,onResult:((Error?) -> Void)? = nil) {
         let doc = repo.getOrderInProcessDocument(order.orderId)
         do{
             try doc.setData(from:order){ err in
-                if let err = err { print("err ... \(err)") }
+                onResult?(err)
             }
         }
         catch{
-            print("Caught error")
+            onResult?(FirebaseError.TRY_SET_DATA_FAILED)
         }
     }
     
-    func setOrderSignedDocument(_ order : Order) {
+    func setOrderSignedDocument(_ order : Order,onResult:((Error?) -> Void)? = nil) {
         let doc = repo.getOrderSignedDocument(order.orderId)
         do{
             try doc.setData(from:order){ err in
-                if let err = err { print("err ... \(err)") }
+                onResult?(err)
             }
         }
         catch{
-            print("Caught error")
+            onResult?(FirebaseError.TRY_SET_DATA_FAILED)
         }
     }
     
-    func activateOrderInProcess(_ orderId:String){
+    func activateOrderInProcess(_ orderId:String,onResult:((Error?) -> Void)? = nil){
         guard let employeeId = FirebaseAuth.currentUserId else { return }
         let orderDoc = repo.getOrderInProcessDocument(orderId)
-        orderDoc.updateData(["isActivated": true,"assignedUser":employeeId])
+        orderDoc.updateData(["isActivated": true,"assignedUser":employeeId]){ err in
+            onResult?(err)
+        }
         
     }
     
-    func deActivateOrderInProcess(_ orderId:String){
+    func deActivateOrderInProcess(_ orderId:String,onResult:((Error?) -> Void)? = nil){
         let orderDoc = repo.getOrderInProcessDocument(orderId)
-        orderDoc.updateData(["isActivated": false,"assignedUser":""])
+        orderDoc.updateData(["isActivated": false,"assignedUser":""]){ err in
+            onResult?(err)
+        }
         
     }
    
     // MARK: - FIREBASE ARRAY-FUNCTIONS
-    func updateCustomerWithNewOrder(_ customer:Customer,orderId:String){
+    func updateCustomerWithNewOrder(_ customer:Customer,orderId:String,onResult:((Error?) -> Void)? = nil){
         let customer = repo.getCustomerDocument(customer.customerId)
-        customer.updateData(["orderIds": FieldValue.arrayUnion([orderId])])
+        customer.updateData(["orderIds": FieldValue.arrayUnion([orderId])]){ err in
+            onResult?(err)
+        }
     }
     
-    func updateCustomerWithRemovedOrder(_ customer:Customer,orderId:String){
+    func updateCustomerWithRemovedOrder(_ customer:Customer,orderId:String,onResult:((Error?) -> Void)? = nil){
         let customer = repo.getCustomerDocument(customer.customerId)
-        customer.updateData(["orderIds": FieldValue.arrayRemove([orderId])])
+        customer.updateData(["orderIds": FieldValue.arrayRemove([orderId])]){ err in
+            onResult?(err)
+        }
     }
     
     // MARK: - FIREBASE PDF-FUNCTIONS
@@ -249,6 +253,61 @@ class FirestoreViewModel: ObservableObject{
             } catch {
                 completion(nil)
             }
+        }
+    }
+    
+    // MARK: - FIREBASE MULTIPLE ASYNC OPERATIONS
+    func moveOrderFromInProcessToSigned(currentOrder:Order,fileUrl:URL,onResult:((SignedFormResult) -> Void)? = nil) {
+        DispatchQueue.global(qos: .default).async {
+            let dpGroup = DispatchGroup()
+            var resultOfOperation:SignedFormResult = .FORM_NOT_FILLED
+            dpGroup.enter()
+            self.setOrderSignedDocument(currentOrder){ err in
+                dpGroup.leave()
+            }
+            dpGroup.enter()
+            self.removeOrderPdfFromStorage(orderType: .ORDER_IN_PROCESS,orderNumber: currentOrder.orderId){ err in
+                dpGroup.leave()
+            }
+            dpGroup.enter()
+            self.removeOrderInProcess(currentOrder.orderId){ err in
+                dpGroup.leave()
+            }
+            dpGroup.enter()
+            self.uploadFormPDf(url:fileUrl,orderType:.ORDER_SIGNED,orderNumber:currentOrder.orderId){ result in
+                resultOfOperation = result
+                dpGroup.leave()
+            }
+            
+            dpGroup.notify(queue: .main) {
+                onResult?(resultOfOperation)
+            }
+            
+        }
+    }
+    
+    func addNewOrderToCustomer(customer:Customer,newOrder:Order,fileUrl:URL,onResult:((SignedFormResult) -> Void)? = nil) {
+        DispatchQueue.global(qos: .default).async {
+            let dpGroup = DispatchGroup()
+            var resultOfOperation:SignedFormResult = .FORM_NOT_FILLED
+            dpGroup.enter()
+            self.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId){ err in
+                dpGroup.leave()
+            }
+            dpGroup.enter()
+            self.setOrderInProcessDocument(newOrder){ err in
+                dpGroup.leave()
+            }
+            dpGroup.enter()
+            self.uploadFormPDf(url:fileUrl,orderType:.ORDER_IN_PROCESS,orderNumber:newOrder.orderId){ result in
+                resultOfOperation = result
+                dpGroup.leave()
+            }
+            
+            dpGroup.notify(queue: .main) {
+                onResult?(resultOfOperation)
+            }
+            
         }
     }
     
