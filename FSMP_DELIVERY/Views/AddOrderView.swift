@@ -12,18 +12,15 @@ import Firebase
 struct AddOrderView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    @State private var orderName = ""
-    @State private var description = ""
-    @State var isUploadAttempt = false
-    @State var showProgressOfUploadOrder = false
-    var isValidForm = false
-    let currentDate = Date()
-    let currentDateString:String = Date().toISO8601String()
+    @State var prVar = ProgressViewVar()
     @Binding var customer : Customer
     let qrCode:(qrImage:Image?,orderId:String?) = getQrImage()
     
     var isNotValidForm:Bool {
-        return (orderName.isEmpty || description.isEmpty || qrCode.orderId == nil || qrCode.qrImage == nil)
+        return (prVar.orderName.isEmpty ||
+                prVar.description.isEmpty ||
+                qrCode.orderId == nil ||
+                qrCode.qrImage == nil)
     }
     
     var body: some View {
@@ -32,14 +29,12 @@ struct AddOrderView: View {
                 VStack {
                     formSections
                 }
-                if showProgressOfUploadOrder{
-                    LoadingView(loadingtext: "Laddar upp...")
-                    
-                }
+                if prVar.isShowing{ LoadingView(loadingtext: "Laddar upp...") }
             }
         }
-        .navigationBarBackButtonHidden(showProgressOfUploadOrder)
-        .alert(isPresented: $isUploadAttempt, content: {
+        .opacity(prVar.closeOnTapped ? 0.0 : 1.0)
+        .navigationBarBackButtonHidden(prVar.isShowing)
+        .alert(isPresented: $prVar.isFormSignedResult, content: {
             onResultAlert(){
                 if !isNotValidForm{
                     presentationMode.wrappedValue.dismiss()
@@ -51,7 +46,7 @@ struct AddOrderView: View {
         .toolbar {
             ToolbarItemGroup{
                 orderButton
-                    .disabled(showProgressOfUploadOrder)
+                    .disabled(prVar.isShowing)
             }
         }
     }
@@ -59,9 +54,9 @@ struct AddOrderView: View {
     var formSections: some View {
         Form{
             Section(header: Text("Order Details")) {
-                TextField("Order Name", text: $orderName)
-                TextField("Description", text: $description)
-                Text(currentDateString)
+                TextField("Order Name", text: $prVar.orderName)
+                TextField("Description", text: $prVar.description)
+                Text(prVar.currentDateISO8601String)
             }
             
             Section(header: Text("Qr-Code")) {
@@ -86,7 +81,7 @@ struct AddOrderView: View {
                     .padding()
                     Section(
                         header: Text("Bekräftelse av mottagen order").font(.title2),
-                        footer: Text("\(currentDateString)")){
+                        footer: Text("\(prVar.currentDateISO8601String)")){
                         Text("Namn")
                         Text(customer.name)
                             .font(.caption)
@@ -100,7 +95,7 @@ struct AddOrderView: View {
                             Text(qrCode.orderId ?? "")
                             .font(.caption)
                         Text("Information")
-                        Text(orderName + "\n" + description)
+                            Text(prVar.orderName + "\n" + prVar.description)
                             .font(.caption)
                     }
                     Spacer()
@@ -122,58 +117,53 @@ struct AddOrderView: View {
             setFormResult(.USER_URL_ERROR)
             return
         }
-        showProgressOfUploadOrder.toggle()
-        firestoreVM.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId)
-        firestoreVM.setOrderInProcessDocument(newOrder)
-        firestoreVM.uploadFormPDf(
-            url:fileUrl,
-            orderType:.ORDER_IN_PROCESS,
-            orderNumber:newOrder.orderId){ result in
+        prVar.setEnabled()
+        firestoreVM.addNewOrderToCustomer(customer: customer, newOrder:newOrder,fileUrl:fileUrl){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
-                sendMailVerificationToCustomer(fileUrl: fileUrl,fileName:fileName)
+                sendMailVerificationToCustomer(fileUrl: fileUrl,fileName: fileName){ sent in
+                    if sent{
+                        setFormResult(.FORM_SAVED_SUCCESFULLY)
+                    }
+                    else{
+                        setFormResult(.FORM_SIGNED_BUT_NO_MAIL_WAS_SENT)
+                    }
+                }
             }
             else{
-                showProgressOfUploadOrder.toggle()
                 setFormResult(result)
             }
         }
     }
     
-    private func sendMailVerificationToCustomer(fileUrl:URL,fileName:String){
-        firestoreVM.getCredentials(){ credentials in
-            guard let credentials = credentials else { return }
+    private func sendMailVerificationToCustomer(fileUrl:URL,
+                                                fileName:String,
+                                                completion:@escaping (Bool)->Void){
+            firestoreVM.getCredentials(){ credentials in
+            guard let credentials = credentials else { completion(false);return }
             let manager = MailManager(credentials:credentials)
-            manager.onResult = { result in
-                showProgressOfUploadOrder.toggle()
-                removeOneOrderFromFolder(fileName: fileName)
-                if result{
-                    setFormResult(.FORM_SAVED_SUCCESFULLY)
-                }
-                else{
-                    setFormResult(.FORM_SAVED_BUT_NO_MAIL_WAS_SENT)
-                }
-            }
+            manager.onResult = completion
             manager.sendOrderResponseMailTo(customer:customer,fileUrl:fileUrl)
-                
         }
     }
+    
     
     func getOrder() -> Order?{
         if isNotValidForm{
             return nil
         }
-        return Order(ordername: orderName,
-                     details: description,
-                     customer: customer,
+        return Order(ordername: prVar.orderName,
+                     details: prVar.description,
+                     customer: customer.lightVersion(),
                      orderId: qrCode.orderId ?? "",
-                     initDate:currentDate)
+                     initDate:prVar.currentDate)
     }
     
     private func setFormResult(_ signedFormResult:SignedFormResult){
         let desc = signedFormResult.describeYourSelf
         ALERT_TITLE = desc.title
         ALERT_MESSAGE = desc.message
-        isUploadAttempt.toggle()
+        if prVar.isShowing { prVar.isShowing = false }
+        prVar.isFormSignedResult.toggle()
     }
     
 }

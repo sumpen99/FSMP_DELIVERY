@@ -49,12 +49,14 @@ func removeAllOrdersFromFolder(){
     let fileManager = FileManager.default
     guard let ordersFolder = ordersFolder,
           let filePaths = try? fileManager.contentsOfDirectory(at: ordersFolder, includingPropertiesForKeys: nil, options: [])  else { return }
-    for filePath in filePaths {
-        do{
-            try fileManager.removeItem(at: filePath)
-        }
-        catch{
-            print(error)
+    DispatchQueue.global(qos: .background).async {
+        for filePath in filePaths {
+            do{
+                try fileManager.removeItem(at: filePath)
+            }
+            catch{
+                print(error)
+            }
         }
     }
 }
@@ -93,6 +95,10 @@ func generateQrCode(qrCodeStr:String) -> Data?{
     let scaledCIImage = ciimage.transformed(by: transform)
     let uiimage = UIImage(ciImage: scaledCIImage)
     return uiimage.pngData()
+}
+
+extension ButtonStyle where Self == CustomButtonStyleGradient {
+    static var gradient: CustomButtonStyleGradient { .init() }
 }
 
 extension UIDevice {

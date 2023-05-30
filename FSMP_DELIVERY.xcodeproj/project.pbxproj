@@ -56,6 +56,9 @@
 		7DE7607F2A20E881000F49CB /* OrderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607E2A20E881000F49CB /* OrderType.swift */; };
 		7DE760832A216279000F49CB /* PDFKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE760822A216279000F49CB /* PDFKitView.swift */; };
 		7DE760852A238425000F49CB /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE760842A238425000F49CB /* LoadingView.swift */; };
+		7DE760872A25398F000F49CB /* CustomButtonStyleGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE760862A25398F000F49CB /* CustomButtonStyleGradient.swift */; };
+		7DE760892A26684B000F49CB /* FirebaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE760882A26684B000F49CB /* FirebaseError.swift */; };
+		7DE7608B2A268B6C000F49CB /* ProgressViewVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7608A2A268B6C000F49CB /* ProgressViewVar.swift */; };
 		AFC1D9862A164A140065FCAD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9852A164A140065FCAD /* MapView.swift */; };
 		AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9872A164A4C0065FCAD /* Map.swift */; };
 		AFC1D98C2A166C8D0065FCAD /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */; };
@@ -106,6 +109,9 @@
 		7DE7607E2A20E881000F49CB /* OrderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderType.swift; sourceTree = "<group>"; };
 		7DE760822A216279000F49CB /* PDFKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitView.swift; sourceTree = "<group>"; };
 		7DE760842A238425000F49CB /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		7DE760862A25398F000F49CB /* CustomButtonStyleGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyleGradient.swift; sourceTree = "<group>"; };
+		7DE760882A26684B000F49CB /* FirebaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseError.swift; sourceTree = "<group>"; };
+		7DE7608A2A268B6C000F49CB /* ProgressViewVar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewVar.swift; sourceTree = "<group>"; };
 		AFC1D9852A164A140065FCAD /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		AFC1D9872A164A4C0065FCAD /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -159,11 +165,8 @@
 				5F8C2AB12A1B910500EAB420 /* createAccountView.swift */,
 				7D29E0FB2A1BC933003E0BE8 /* AdminView.swift */,
 				7DE760822A216279000F49CB /* PDFKitView.swift */,
-
 				0C75F82F2A24F88400CB6499 /* ManageOrdersView.swift */,
-
 				7DE760842A238425000F49CB /* LoadingView.swift */,
-
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				0CD28CE02A0D0FB200481B9D /* CustomButtonStyle1.swift */,
 				0CD28CE22A0D126900481B9D /* CustomButtonStyle2.swift */,
 				7D20F73B2A15158400C66167 /* CustomButtonStyleDisabledable.swift */,
+				7DE760862A25398F000F49CB /* CustomButtonStyleGradient.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -278,6 +282,8 @@
 				7D29E0F72A1BC866003E0BE8 /* UserRole.swift */,
 				7DE7607C2A1FD905000F49CB /* Credentials.swift */,
 				7DE7607E2A20E881000F49CB /* OrderType.swift */,
+				7DE760882A26684B000F49CB /* FirebaseError.swift */,
+				7DE7608A2A268B6C000F49CB /* ProgressViewVar.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -369,12 +375,14 @@
 			files = (
 				7D29E0EC2A17CDE3003E0BE8 /* QrScannerView.swift in Sources */,
 				7D29E0F82A1BC866003E0BE8 /* UserRole.swift in Sources */,
+				7DE760872A25398F000F49CB /* CustomButtonStyleGradient.swift in Sources */,
 				0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */,
 				7D20F74B2A15E51A00C66167 /* SignedFormResult.swift in Sources */,
 				7D29E0F22A1A4419003E0BE8 /* QrCode.swift in Sources */,
 				AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
+				7DE7608B2A268B6C000F49CB /* ProgressViewVar.swift in Sources */,
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
 				7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */,
 				0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */,
@@ -393,6 +401,7 @@
 				7D29E0E22A165FF2003E0BE8 /* AppDelegate.swift in Sources */,
 				7D5302A22A097422005EAAD0 /* Company.swift in Sources */,
 				7DE760832A216279000F49CB /* PDFKitView.swift in Sources */,
+				7DE760892A26684B000F49CB /* FirebaseError.swift in Sources */,
 				5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,

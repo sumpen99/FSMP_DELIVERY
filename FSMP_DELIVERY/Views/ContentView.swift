@@ -35,10 +35,12 @@ struct ContentView: View {
                      MainView()
              }
          }
-         /*.onChange(of: firebaseAuth.loggedInAs){ _ in
-             withAnimation(.linear(duration: 0.5)){
-             }
-         }*/
+         .onAppear{
+             removeAllOrdersFromFolder()
+         }
+         .onDisappear{
+             //removeAllOrdersFromFolder()
+         }
          .onReceive(memoryWarningPublisher) { warn in
              print(warn.debugDescription)
          }
