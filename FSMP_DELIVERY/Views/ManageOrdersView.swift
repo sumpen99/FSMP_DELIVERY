@@ -10,29 +10,29 @@ import SwiftUI
 struct ManageOrdersView: View {
     
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    @State private var choosenOrder : Order? = nil
+    @Binding var choosenOrder : Order
     
     var body: some View {
         VStack{
+            Text(choosenOrder.ordername)
             Form{
-                
-            }
-            List{
-                ForEach(firestoreVM.ordersInProcess,id: \.orderId){ order in
-                    Text(order.ordername)
+                Section(header: Text("Edit Order")) {
+                    Text(choosenOrder.customer.name)
+                    TextField(choosenOrder.ordername, text: $choosenOrder.ordername)
+                    TextField(choosenOrder.details, text: $choosenOrder.details)
+                    
                 }
-//                .onReceive(firestoreVM.ordersInProcess) { (order) in
-//                    guard !order.isEmpty else { return }
-//                    choosenOrder = order.first
-//                }
+                
             }
         }
     }
 }
 
-struct ManageOrdersView_Previews: PreviewProvider {
-    static var previews: some View {
-        ManageOrdersView()
-            .environmentObject(FirestoreViewModel())
-    }
-}
+//struct ManageOrdersView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let customer = Customer(customerId: "123123",name: "janne", phoneNumber: 123123123)
+//        let order = Order(ordername: "Fixa Vasken", details: "rensa vatten låset", customer: customer, orderId: "", initDate: Date())
+//        ManageOrdersView(choosenOrder: order)
+//            .environmentObject(FirestoreViewModel())
+//    }
+//}
