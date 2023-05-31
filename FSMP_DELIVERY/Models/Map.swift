@@ -8,83 +8,130 @@
 import SwiftUI
 import MapKit
 
-struct ShowRoute: UIViewRepresentable {
+struct ShowMap: UIViewRepresentable {
     
     @State var userLocation: CLLocationCoordinate2D?
+    @EnvironmentObject var locationViewModel : LocationSearchViewModel
     
     let destination = CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068)
+    let mapView = MKMapView()
     
     func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
+        mapView.isRotateEnabled = false
         mapView.showsUserLocation = true
-        mapView.delegate = context.coordinator
+        mapView.userTrackingMode = .follow
+        //mapView.delegate = context.coordinator
+        
         return mapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        if let coordinate = locationViewModel.selectedLocationCoordinate {
+            context.coordinator.addAndSelectAnnotaion(withCoordinate: coordinate)
+        }
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    func makeCoordinator() -> MapCoordinator {
+        return MapCoordinator(parent: self)
     }
     
-    class Coordinator: NSObject, MKMapViewDelegate {
-        var parent: ShowRoute
+//    class Coordinator: NSObject, MKMapViewDelegate {
+//        var parent: ShowMap
+//
+//        init(_ parent: ShowMap) {
+//            self.parent = parent
+//            super.init()
+//        }
+//
+//        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+//            parent.userLocation = userLocation.coordinate
+//        }
+//
+//        func makeCoordinator() -> MapCoordinator {
+//            return MapCoordinator(parent: self)
+//        }
+//    }
+}
+
+extension ShowMap {
+    
+    class MapCoordinator: NSObject, MKMapViewDelegate {
         
-        init(_ parent: ShowRoute) {
+        //MARK: - Properites
+        let parent: ShowMap
+        
+        //MARK: - Lifecycle
+        init(parent: ShowMap) {
             self.parent = parent
             super.init()
         }
         
+        // MARK: - MKMapViewDelegate
+        
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-            parent.userLocation = userLocation.coordinate
-        }
-    }
-    
-    class RouteCalculator {
-        
-        func calculateRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, completion: @escaping (MKRoute?, Error?) -> Void) {
-            
-            let sourcePlacemark = MKPlacemark(coordinate: source)
-            let destinationPlacemark = MKPlacemark(coordinate: destination)
-            
-            let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
-            let destinationMapItem = MKMapItem(placemark: destinationPlacemark)
-            
-            let request = MKDirections.Request()
-            request.source = sourceMapItem
-            request.destination = destinationMapItem
-            request.transportType = .automobile
-            
-            let directions = MKDirections(request: request)
-            directions.calculate { (response, error) in
-                completion(response?.routes.first, error)
-            }
-        }
-    }
-    
-     func calculateRoute() {
-        guard let userLocation = userLocation else {
-            // Handle when user location is not available
-            return
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+            parent.mapView.setRegion(region, animated: true)
         }
         
-        let routeCalculator = RouteCalculator()
-        routeCalculator.calculateRoute(from: userLocation, to: destination) { (route, error) in
-            if let error = error {
-                // Handle route calculation error
-                print("Error calculating route: \(error.localizedDescription)")
-            } else if let route = route {
-                // Handle the route, e.g., display it on the map
-                displayRoute(route)
-            }
+        //MARK: - Helpers
+        func addAndSelectAnnotaion(withCoordinate coordinate: CLLocationCoordinate2D) {
+            parent.mapView.removeAnnotation(parent.mapView.annotations as! MKAnnotation)
+            
+            let anno = MKPointAnnotation()
+            anno.coordinate = coordinate
+            self.parent.mapView.addAnnotation(anno)
+            self.parent.mapView.selectAnnotation(anno, animated: true)
+            
+            parent.mapView.showAnnotations(parent.mapView.annotations, animated: true)
         }
-    }
-    
-    private func displayRoute(_ route: MKRoute) {
-        // Add code to display the route on the map
+        
     }
 }
+    
+//    class RouteCalculator {
+//
+//        func calculateRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, completion: @escaping (MKRoute?, Error?) -> Void) {
+//
+//            let sourcePlacemark = MKPlacemark(coordinate: source)
+//            let destinationPlacemark = MKPlacemark(coordinate: destination)
+//
+//            let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
+//            let destinationMapItem = MKMapItem(placemark: destinationPlacemark)
+//
+//            let request = MKDirections.Request()
+//            request.source = sourceMapItem
+//            request.destination = destinationMapItem
+//            request.transportType = .automobile
+//
+//            let directions = MKDirections(request: request)
+//            directions.calculate { (response, error) in
+//                completion(response?.routes.first, error)
+//            }
+//        }
+//    }
+//
+//     func calculateRoute() {
+//        guard let userLocation = userLocation else {
+//            // Handle when user location is not available
+//            return
+//        }
+//
+//        let routeCalculator = RouteCalculator()
+//        routeCalculator.calculateRoute(from: userLocation, to: destination) { (route, error) in
+//            if let error = error {
+//                // Handle route calculation error
+//                print("Error calculating route: \(error.localizedDescription)")
+//            } else if let route = route {
+//                // Handle the route, e.g., display it on the map
+//                displayRoute(route)
+//            }
+//        }
+//    }
+//
+//    private func displayRoute(_ route: MKRoute) {
+//        // Add code to display the route on the map
+//    }
+//}
 
     
     
