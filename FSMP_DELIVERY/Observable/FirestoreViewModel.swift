@@ -16,7 +16,15 @@ class FirestoreViewModel: ObservableObject{
     var listenerCustomers: ListenerRegistration?
     var listenerOrdersInProcess: ListenerRegistration?
     var listenerOrdersSigned: ListenerRegistration?
-        
+    
+    // MARK: - FIREBASE RELEASE_DATA_WHEN_SIGNING_OUT
+    func releaseData(){
+        customers.removeAll()
+        ordersInProcess.removeAll()
+        ordersSigned.removeAll()
+        closeAllListener()
+    }
+    
     // MARK: - FIREBASE LISTENER-REGISTRATION
     func initializeListener(){
         listenToCustomers()
@@ -260,7 +268,7 @@ class FirestoreViewModel: ObservableObject{
     func moveOrderFromInProcessToSigned(currentOrder:Order,fileUrl:URL,onResult:((SignedFormResult) -> Void)? = nil) {
         DispatchQueue.global(qos: .default).async {
             let dpGroup = DispatchGroup()
-            var resultOfOperation:SignedFormResult = .FORM_NOT_FILLED
+            var resultOfOperation:SignedFormResult = .UPLOAD_STARTED
             dpGroup.enter()
             self.setOrderSignedDocument(currentOrder){ err in
                 dpGroup.leave()
@@ -289,7 +297,7 @@ class FirestoreViewModel: ObservableObject{
     func addNewOrderToCustomer(customer:Customer,newOrder:Order,fileUrl:URL,onResult:((SignedFormResult) -> Void)? = nil) {
         DispatchQueue.global(qos: .default).async {
             let dpGroup = DispatchGroup()
-            var resultOfOperation:SignedFormResult = .FORM_NOT_FILLED
+            var resultOfOperation:SignedFormResult = .UPLOAD_STARTED
             dpGroup.enter()
             self.updateCustomerWithNewOrder(customer,orderId: newOrder.orderId){ err in
                 dpGroup.leave()

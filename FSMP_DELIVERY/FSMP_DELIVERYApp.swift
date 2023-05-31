@@ -5,7 +5,6 @@
 //  Created by fredrik sundström on 2023-05-08.
 //
 import SwiftUI
-import FirebaseCore
 
 @main
 struct FSMP_DELIVERYApp: App {
@@ -25,19 +24,18 @@ struct FSMP_DELIVERYApp: App {
             .environmentObject(locationViewModel)
             .environmentObject(locationManager)
           }
+          /*.onChange(of: phase) { newPhase in
+              switch newPhase {
+                  case .active:
+                      print(phase)
+                  case .inactive:
+                      print(phase)
+                  case .background:
+                      print(phase)
+                  @unknown default:
+                      print("Unknown Future Options")
+              }
+          }*/
         }
-        /*.onChange(of: phase) { newPhase in
-            switch newPhase {
-                case .active:
-                    print(phase)
-                case .inactive:
-                    print(phase)
-                case .background:
-                    print(phase)
-                @unknown default:
-                    print("Unknown Future Options")
-            }
-        }*/
     }
-    
 }
