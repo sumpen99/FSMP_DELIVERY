@@ -76,12 +76,12 @@ class MailManager{
     
     func setSignedSubjectAndText(){
         EMAIL_SUBJECT = "Tack för förtroendet"
-        EMAIL_TEXT = "Din service är signerad och klar.\nHoppas arbetet var till belåtenhet \nFSMP_DELIVERY_SERVICE."
+        EMAIL_TEXT = "Din service är signerad och klar.\nHoppas arbetet var till belåtenhet \nFSMP_SERVICE."
     }
     
     func setAcceptedOrderSubjectAndText(){
         EMAIL_SUBJECT = "Din order är mottagen"
-        EMAIL_TEXT = "Den kommer behandlas så snart som möjligt.\nFSMP_DELIVERY_SERVICE."
+        EMAIL_TEXT = "Den kommer behandlas så snart som möjligt.\nFSMP_SERVICE."
     }
     
 }

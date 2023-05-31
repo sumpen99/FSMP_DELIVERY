@@ -11,35 +11,75 @@ import MapKit
 struct MapView: View {
     @StateObject var manager = LocationManager()
     @State private var userLocation: CLLocationCoordinate2D?
-    
-    
-//    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 62.390, longitude: 17.306), span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 15))
-    
+    @State private var showLocationSearchView = false
     
     var body: some View {
         ZStack(alignment: .top) {
-            ShowRoute(userLocation: userLocation)
+            ShowMap(userLocation: userLocation)
                 .edgesIgnoringSafeArea(.all)
-            Map(coordinateRegion: $manager.region, showsUserLocation: true)
-//                .edgesIgnoringSafeArea(.all)
-//                .accentColor(Color(.systemPink))
-//
+            
                 .onAppear {
                     manager.checkIfLocationServicesIsEnabled()
                 }
-            options()
+            if showLocationSearchView {
+                LocationSearchView(showLocationSearchView: $showLocationSearchView)
+            } else {
+                LocationSearchActivationView()
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            showLocationSearchView.toggle()
+                        }
+                    }
+            }
+            VStack{
+                Spacer()
+                
+                VStack {
+                    
+                    Button {
+                        //
+                    } label: {
+                        Image(systemName: "location.fill")
+                            .font(.title2)
+                            .padding(10)
+                            .background(Color.primary)
+                            .clipShape(Circle())
+                    }
+                    
+                    Button(action: manager.updateMapType,
+                     label: {
+                        Image(systemName: manager.mapType == .standard ? "network" : "map")
+                            .font(.title2)
+                            .padding(10)
+                            .background(Color.primary)
+                            .clipShape(Circle())
+                    })
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding()
+            }
         }
     }
-    
 }
 
-struct OvalTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding(10)
-            .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray]), startPoint: .topLeading, endPoint: .bottomTrailing))
-            .cornerRadius(20)
-            .shadow(color: .gray, radius: 10)
+struct LocationSearchActivationView: View {
+    var body: some View {
+        HStack {
+            Rectangle()
+                .fill(Color.black)
+                .frame(width: 8, height: 8)
+                .padding(.horizontal)
+            Text("Order address")
+                .foregroundColor(Color(.darkGray))
+            
+            Spacer()
+        }
+        .frame(width: UIScreen.main.bounds.width - 64, height: 50)
+        .background(
+        Rectangle()
+            .fill(Color.white)
+            .shadow(color: Color.black.opacity(0.3),
+                    radius: 3,x: 3,y: 3))
     }
 }
 
@@ -47,26 +87,18 @@ struct options : View {
     
     @StateObject var manager = LocationManager()
     @State private var userLocation: CLLocationCoordinate2D?
-    @State var calculateRoute = ShowRoute()
+    @State var calculateRoute = ShowMap()
     
     let destination = CLLocationCoordinate2D(latitude: 37.332331, longitude: -122.031219)
     
     //@StateObject var makeRoute =
     //@StateObject var startRoute =
     
-    @State var searchAddress = ""
-    
     var body: some View {
         
         VStack() {
-            HStack {
-                TextField("Search address...", text: $searchAddress)
-            }
-            .textFieldStyle(OvalTextFieldStyle())
-            .padding()
-            Spacer()
             Button {
-                ShowRoute.RouteCalculator()
+                //ShowMap.RouteCalculator()
             } label: {
                 Text("Show route")
                     .frame(minWidth: 0, maxWidth: 100)
@@ -98,6 +130,6 @@ struct options : View {
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        MapView()
+        options()
     }
 }

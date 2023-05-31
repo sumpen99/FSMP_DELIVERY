@@ -6,6 +6,7 @@
 //
 
 enum SignedFormResult {
+    case UPLOAD_STARTED
     case ORDER_NOT_ACCEPTABLE
     case FORM_NOT_FILLED
     case QR_CODE_IS_NOT_A_MATCH
@@ -24,6 +25,9 @@ enum SignedFormResult {
 extension SignedFormResult {
     var describeYourSelf : (title:String,message:String) {
         switch self {
+            case .UPLOAD_STARTED:
+            return (title:"Uppladdning startad",
+                    message:"Ser ni den här texten, kontakta support...")
             case .ORDER_NOT_ACCEPTABLE:
             return (title:"Saknar info",
                     message:"Beställningen saknar viktig information")

@@ -28,5 +28,20 @@ struct Customer : Codable,Identifiable,Hashable {
                 postcode.isEmpty ||
                 email.isEmpty)
     }
+    
+    func lightVersion() -> Customer{
+        return Customer(id: id,
+                        customerId: customerId,
+                        name: name,
+                        adress: adress,
+                        postcode: postcode,
+                        email: email,
+                        lat: lat,
+                        lon: lon,
+                        orderIds: nil,
+                        phoneNumber: phoneNumber,
+                        description: description,
+                        taxnumber: taxnumber)
+    }
         
 }

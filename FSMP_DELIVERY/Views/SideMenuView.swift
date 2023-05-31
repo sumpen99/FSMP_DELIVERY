@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SideMenuView: View {
     @EnvironmentObject var firebaseAuth: FirebaseAuth
+    var releaseFirebaseData: (() -> Void)? = nil
     var body: some View {
         
         NavigationStack {
@@ -51,7 +52,11 @@ struct SideMenuView: View {
                     .buttonStyle(CustomButtonStyle1())
                     .padding()
                 }
-                Button(action: {firebaseAuth.signOut()}){
+                Button(action: {
+                    releaseFirebaseData?()
+                    firebaseAuth.signOut()
+                    
+                }){
                     Text("Sign Out")
                 }
                 .foregroundColor(.white)
