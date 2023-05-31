@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct CustomerView: View {
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State private var choosenCustomer : Customer? = nil
     @State var isRemoveCustomer:Bool = false
+    @State private var showAlertForDelete = false
+    @State private var indexSetToDelete: IndexSet?
     
     var body: some View {
         NavigationStack {
@@ -26,7 +29,6 @@ struct CustomerView: View {
                             }
                             .buttonStyle(CustomButtonStyle1())
                             .padding(.leading, 20)
-                            //removeCustomerButton
                         }
                     }
                     
@@ -38,11 +40,32 @@ struct CustomerView: View {
                     ForEach(firestoreVM.customers,id: \.customerId) { customer in
                         getListButton(customer: customer)
                     }
+                    .onDelete() { indexSet in
+                        self.showAlertForDelete = true
+                        self.indexSetToDelete = indexSet
+                    }
+                    .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
                     .onReceive(firestoreVM.$customers) { (customers) in
                         guard !customers.isEmpty else { return }
                         guard let choosenCustomer = choosenCustomer
                         else { choosenCustomer = customers.first;return}
                         findActivatedLastCustomer(customerId: choosenCustomer.customerId, customers: customers)
+                    }
+                    .alert(isPresented: $showAlertForDelete) {
+                        let name = choosenCustomer?.name ?? "kunden"
+                        return Alert(title: Text("Ta bort Kunden"),
+                              message: Text("Allt information om \(name) kommer raderas!. Är du säker på att du vill fortsätta?"),
+                              primaryButton: .destructive(Text("Ta bort")) {
+                            if let indexSet = indexSetToDelete {
+                                for index in indexSet {
+                                        let customerToRemove = firestoreVM.customers[index]
+                                        firestoreVM.removeCustomer(customerToRemove)
+                                }
+                            }
+                        },
+                              secondaryButton: .cancel {
+                            showAlertForDelete = false
+                        })
                     }
                 }
             }
@@ -57,16 +80,6 @@ struct CustomerView: View {
             })
             .navigationTitle("Customers")
         }
-        /*.alert(isPresented: $isRemoveCustomer, content: {
-            onConditionalAlert(actionPrimary: removeCustomer,
-                               actionSecondary: { })
-        })*/
-        /*.onAppear() {
-            firestoreVM.listenToFirestoreCustomers()
-            if let firstCustomer = firestoreVM.customers.first {
-                choosenCustomer = firstCustomer
-            }
-        }*/
     }
     
     func getListButton(customer:Customer) -> some View{
@@ -138,6 +151,7 @@ struct CustomerView: View {
 struct CustomerView_Previews: PreviewProvider {
     static var previews: some View {
         CustomerView()
+            .environmentObject(FirebaseAuth())
             .environmentObject(FirestoreViewModel())
     }
 }

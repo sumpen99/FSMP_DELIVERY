@@ -15,38 +15,36 @@ struct LazyDestination<Destination: View>: View {
 }
 
 struct SignOfOrderView: View{
-    @Environment(\.dismiss) private var dismiss
-    let OFFSET = 10.0
-    @State var pointsList:[[CGPoint]] = []
-    @State var addNewPoint = true
-    @State var isFormSignedResult:Bool = false
-    @State private var renderedImage:Image?
-    @State var scannedQrCode = ""
-    @State var showProgressOfUploadSigned:Bool = false
-    @State var closeWhenDone:Bool = false
-    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
     @Environment(\.displayScale) var displayScale
-    let currentDate = Date().toISO8601String()
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var firestoreViewModel: FirestoreViewModel
+    @State private var renderedImage:Image?
+    @State var prVar = ProgressViewVar()
     let currentOrder:Order?
    
     var body: some View{
         NavigationStack {
             ZStack{
                 signedForm
-                if showProgressOfUploadSigned{
-                    LoadingView(loadingtext: "Laddar upp...")
-                }
+                if prVar.isShowing{ LoadingView(loadingtext: "Laddar upp...") }
             }
         }
-        .alert(isPresented: $isFormSignedResult, content: {
+        .opacity(prVar.closeOnTapped ? 0.0 : 1.0)
+        .navigationBarBackButtonHidden(prVar.isShowing)
+        .alert(isPresented: $prVar.isFormSignedResult, content: {
             onResultAlert{
-                if closeWhenDone{
-                    dismiss()
+                if prVar.isEnabled{
+                    withAnimation(Animation.spring().speed(0.2)) {
+                        prVar.closeOnTapped.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                              dismiss()
+                        }
+                    }
                 }
             }
         })
         .onAppear(){
-            scannedQrCode = SCANNED_QR_CODE
+            prVar.scannedQrCode = SCANNED_QR_CODE
         }
         .onDisappear(){
             SCANNED_QR_CODE = ""
@@ -55,10 +53,7 @@ struct SignOfOrderView: View{
             ToolbarItemGroup{
                 NavigationLink(destination:LazyDestination(destination: { QrView() })) {
                     Image(systemName: "qrcode.viewfinder")
-                }
-                Button(action: uploadSignedForm) {
-                    Image(systemName: "square.and.arrow.up")
-                }
+                }.disabled(prVar.isShowing)
             }
         }
     }
@@ -67,18 +62,22 @@ struct SignOfOrderView: View{
         return VStack{
             Form{
                 Section(header: Text("Datum")){
-                    Text(currentDate)
+                    Text(prVar.currentDateISO8601String)
                     .font(.title3)
                     .foregroundColor(.gray)
                 }
-                Section(header: Text("Verifierad Qr-Kod")){
-                    Text(scannedQrCode)
+                Section(header: Text("Qr-Kod")){
+                    Text(prVar.scannedQrCode)
                     .font(.title3)
                     .foregroundColor(.gray)
                 }
-                Section(header: Text("Signatur")){
-                    renderedImage
+                if renderedImage != nil{
+                    Section(header: Text("Signatur")){
+                        renderedImage
+                    }
                 }
+                
+                uploadSignedOrderButton
             }
             Spacer()
             selfSignedCanvas
@@ -97,13 +96,13 @@ struct SignOfOrderView: View{
                             }
                         })
                         .onEnded({ value in
-                            addNewPoint = true
+                            prVar.addNewPoint = true
                         }))
                 .onShake{
                     clearAllDrawnLines()
                 }
                 currentSignaturePath
-                Text(pointsList.isEmpty ? "Underskrift" : "")
+                Text(prVar.pointsList.isEmpty ? "Underskrift" : "")
                     .foregroundColor(.gray)
             }
         }
@@ -114,7 +113,7 @@ struct SignOfOrderView: View{
             RoundedRectangle(cornerRadius: 25)
                 .stroke(Color.gray,lineWidth: 2)
         )
-        .onChange(of: addNewPoint, perform: { _ in
+        .onChange(of: prVar.addNewPoint, perform: { _ in
             renderCurrentSignaturePath()
             
         })
@@ -124,8 +123,8 @@ struct SignOfOrderView: View{
     
     var currentSignaturePath:some View{
         return Path { path in
-            for i in 0..<pointsList.count {
-                let pointsToDraw = pointsList[i]
+            for i in 0..<prVar.pointsList.count {
+                let pointsToDraw = prVar.pointsList[i]
                 path.addPath(DrawShape(points:pointsToDraw).path())
             }
         }
@@ -143,13 +142,13 @@ struct SignOfOrderView: View{
                     .padding()
                     Section(header: Text("Bekräftelse av mottagen service")){
                         Text("Order")
-                        Text("insert details of order")
+                        Text(currentOrder?.ordername ?? "" + "\n" + (currentOrder?.details ?? ""))
                             .font(.caption)
                         Text("Datum")
-                        Text(currentDate)
+                        Text(prVar.currentDateISO8601String)
                             .font(.caption)
                         Text("Verifierad Qr-Kod")
-                        Text(scannedQrCode)
+                        Text(prVar.scannedQrCode)
                             .font(.caption)
                            
                     }
@@ -161,57 +160,58 @@ struct SignOfOrderView: View{
                 .frame(width:400,height:800)
     }
     
+    var uploadSignedOrderButton: some View{
+        HStack{
+            Button(action: uploadSignedForm ) {
+                Text("Spara")
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundColor(prVar.isShowing ? .accentColor : .blue)
+        }
+        .disabled(prVar.isShowing)
+    }
+    
     private func uploadSignedForm(){
         guard let currentOrder = currentOrder?.getSignedVersion() else { return }
         if !formIsSignedCorrect(orderId: currentOrder.orderId){ return }
         let fileName = "signed" + currentOrder.orderId
-        guard let url = getPdfUrlPath(fileName: fileName),
-              let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url)
-        else{
-            setFormResult(.USER_URL_ERROR)
-            return
-        }
-        showProgressOfUploadSigned.toggle()
-        closeWhenDone = true
-        firestoreViewModel.setOrderSignedDocument(currentOrder)
-        firestoreViewModel.removeOrderPdfFromStorage(orderType: .ORDER_IN_PROCESS, orderNumber: currentOrder.orderId)
-        firestoreViewModel.removeOrderInProcess(currentOrder.orderId)
-        firestoreViewModel.uploadFormPDf(
-            url:fileUrl,
-            orderType:.ORDER_SIGNED,
-            orderNumber:currentOrder.orderId){ result in
+        guard let url = getPdfUrlPath(fileName: fileName),let fileUrl = formAsPdf.exportAsPdf(renderedUrl: url)
+        else{ setFormResult(.USER_URL_ERROR); return }
+        
+        prVar.setEnabled()
+        firestoreViewModel.moveOrderFromInProcessToSigned(currentOrder: currentOrder, fileUrl: fileUrl){ result in
             if result == .FORM_SAVED_SUCCESFULLY{
-                sendMailVerificationToCustomer(currentOrder.customer,fileUrl: fileUrl,fileName: fileName)
+                sendMailVerificationToCustomer(currentOrder.customer,fileUrl: fileUrl,fileName: fileName){ sent in
+                    if sent{
+                        setFormResult(.FORM_SIGNED_SUCCESFULLY)
+                    }
+                    else{
+                        setFormResult(.FORM_SIGNED_BUT_NO_MAIL_WAS_SENT)
+                    }
+                }
             }
             else{
-                showProgressOfUploadSigned.toggle()
                 setFormResult(result)
             }
         }
     }
     
-    private func sendMailVerificationToCustomer(_ customer:Customer,fileUrl:URL,fileName:String){
+    private func sendMailVerificationToCustomer(_ customer:Customer,
+                                                fileUrl:URL,
+                                                fileName:String,
+                                                completion:@escaping (Bool)->Void){
         firestoreViewModel.getCredentials(){ credentials in
-            guard let credentials = credentials else { return }
+            guard let credentials = credentials else { completion(false);return }
             let manager = MailManager(credentials:credentials)
-            manager.onResult = { result in
-                showProgressOfUploadSigned.toggle()
-                removeOneOrderFromFolder(fileName: fileName)
-                if result{
-                    setFormResult(.FORM_SIGNED_SUCCESFULLY)
-                }
-                else{
-                    setFormResult(.FORM_SIGNED_BUT_NO_MAIL_WAS_SENT)
-                }
-            }
+            manager.onResult = completion
             manager.sendSignedResponseMailTo(customer,fileUrl:fileUrl)
         }
     }
     
-    
     private func renderCurrentSignaturePath(){
-        if pointsList.isEmpty { return }
-        let boundaries = pointsList.getBoundaries()
+        if prVar.pointsList.isEmpty { return }
+        let boundaries = prVar.pointsList.getBoundaries()
         let uiImage =   currentSignaturePath
                         .frame(width:boundaries.x,height:boundaries.y)
                         .padding([.trailing,.bottom])
@@ -220,27 +220,27 @@ struct SignOfOrderView: View{
     }
     
     private func clearAllDrawnLines(){
-        addNewPoint = true
-        pointsList.removeAll()
+        prVar.addNewPoint = true
+        prVar.pointsList.removeAll()
         renderedImage = nil
     }
     
     private func addNewPoint(_ value:CGPoint){
-        if addNewPoint{
-            pointsList.append([])
-            addNewPoint = false
+        if prVar.addNewPoint{
+            prVar.pointsList.append([])
+            prVar.addNewPoint = false
         }
-        let currentLine = max(0,pointsList.count - 1)
-        pointsList[currentLine].append(value)
+        let currentLine = max(0,prVar.pointsList.count - 1)
+        prVar.pointsList[currentLine].append(value)
     }
     
     private func formIsSignedCorrect(orderId:String) -> Bool{
         var validSignature = false
         var validQrCode = false
         
-        if !pointsList.isEmpty{
+        if !prVar.pointsList.isEmpty{
             var signatureCount = 0
-            for p in pointsList{
+            for p in prVar.pointsList{
                 signatureCount += p.count
             }
             validSignature = signatureCount >= 50
@@ -275,6 +275,7 @@ struct SignOfOrderView: View{
     }
     
     private func insideViewFrame(_ frame:CGRect,newLocation:CGPoint) ->Bool{
+        let OFFSET = 10.0
         return newLocation.x >= frame.minX+OFFSET && newLocation.x <= frame.minX + frame.width - OFFSET &&
                newLocation.y >= frame.minY+OFFSET && newLocation.y <= frame.minY + frame.height - OFFSET
     }
@@ -283,7 +284,8 @@ struct SignOfOrderView: View{
         let desc = signedFormResult.describeYourSelf
         ALERT_TITLE = desc.title
         ALERT_MESSAGE = desc.message
-        isFormSignedResult.toggle()
+        if prVar.isShowing { prVar.isShowing = false }
+        prVar.isFormSignedResult.toggle()
     }
     
 }
