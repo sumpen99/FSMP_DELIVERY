@@ -15,10 +15,12 @@ struct createAccountView: View {
     
     var body: some View {
             VStack{
+                Spacer()
                 Image ("delivery")
                     .resizable()
-                    .padding(.leading, 20.0)
-                    .scaledToFit()
+                    .scaledToFill()
+                    .padding()
+                    .frame(width: 550, height: 350)
                 HStack{
                     Image(systemName: "person.circle")
                         .foregroundColor(.black)
@@ -63,7 +65,6 @@ struct createAccountView: View {
                     Alert(title: Text("created account"),
                           dismissButton: .default(Text("Ok")))
                 }
-                Spacer()
                 Spacer()
             } .navigationTitle("Create an Account!")
     }
