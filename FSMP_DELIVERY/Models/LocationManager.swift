@@ -6,11 +6,21 @@
 //
 
 import MapKit
+import SwiftUI
 import CoreLocation
     
 final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
+    //private var locationManager = CLLocationManager()
+    
+    // Region
     @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 62.390, longitude: 17.306), span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 15))
+    
+    // MapView
+    @Published var mapView = MKMapView()
+    
+    // Map Type
+    @Published var mapType : MKMapType = .standard
     
     var locationManager: CLLocationManager?
     
@@ -18,6 +28,20 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
     
     // Göteborg PLACEMARK
     var p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
+    
+    // Updating Map Type
+    func updateMapType() {
+        
+        if mapType == .standard {
+            mapType = .hybrid
+            mapView.mapType = mapType
+            print("hybrid \(mapView)")
+        } else {
+            mapType = .standard
+            mapView.mapType = mapType
+            print("standard \(mapView)")
+        }
+    }
     
     func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
@@ -50,34 +74,35 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         checkLocationAuthorization()
     }
-    
-    func route() -> MKMapView {
-        let mapView = MKMapView()
-        
-        // Stockholm PLACEMARK
-        let p1 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068))
-        
-        // Göteborg PLACEMARK
-        let p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
-        
-        let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: p1)
-        request.source = MKMapItem(placemark: p2)
-        request.transportType = .automobile
-        
-        let directions = MKDirections(request: request)
-        directions.calculate { response, error in
-            guard let route = response?.routes.first else { return }
-            mapView.addAnnotation([p1,p2] as! MKAnnotation)
-            mapView.addOverlay(route.polyline)
-            mapView.setVisibleMapRect(route.polyline.boundingMapRect,
-            edgePadding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20),
-            animated: true)
-        }
-        return mapView
-    }
-    
-//    func updateUIView(_ uiView: MKMapView, context: Context) {
-//        directions()
-//    }
 }
+
+//extension LocationManager: CLLocationManagerDelegate {
+//    func locationmanager(_)
+//}
+    
+//    func route() -> MKMapView {
+//        let mapView = MKMapView()
+//
+//        // Stockholm PLACEMARK
+//        let p1 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068))
+//
+//        // Göteborg PLACEMARK
+//        let p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
+//
+//        let request = MKDirections.Request()
+//        request.source = MKMapItem(placemark: p1)
+//        request.source = MKMapItem(placemark: p2)
+//        request.transportType = .automobile
+//
+//        let directions = MKDirections(request: request)
+//        directions.calculate { response, error in
+//            guard let route = response?.routes.first else { return }
+//            mapView.addAnnotation([p1,p2] as! MKAnnotation)
+//            mapView.addOverlay(route.polyline)
+//            mapView.setVisibleMapRect(route.polyline.boundingMapRect,
+//            edgePadding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20),
+//            animated: true)
+//        }
+//        return mapView
+//    }
+
