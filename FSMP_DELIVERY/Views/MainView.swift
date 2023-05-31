@@ -12,6 +12,8 @@ struct MainView: View {
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var pdfUrl:URL?
     @State private var showAlert: Bool = false
+    @State private var showAlertForDelete = false
+    @State private var indexSetToDelete: IndexSet?
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
@@ -81,15 +83,29 @@ struct MainView: View {
                 getListOrderButton(order: order)
             }
             .onDelete() { indexSet in
-                for index in indexSet {
-                        let orderToRemove = firestoreVM.ordersInProcess[index]
-                        firestoreVM.removeOrderInProcess(orderToRemove.orderId)
-                }
+                self.showAlertForDelete = true
+                self.indexSetToDelete = indexSet
             }
             .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
             .onReceive(firestoreVM.$ordersInProcess) { (orders) in
                 guard !orders.isEmpty else { return }
                 findActivatedOrderOrSetFirst(orders: orders)
+            }
+            .alert(isPresented: $showAlertForDelete) {
+                Alert(title: Text("Ta bort Order"),
+                      message: Text("Är du säker på att du vill ta bort beställningen?"),
+                      primaryButton: .destructive(Text("Ta bort")) {
+                    if let indexSet = indexSetToDelete {
+                        for index in indexSet {
+                            let orderToRemove = firestoreVM.ordersInProcess[index]
+                            firestoreVM.removeOrderInProcess(orderToRemove.orderId)
+                        }
+                    }
+                },
+                      secondaryButton: .cancel {
+                    showAlertForDelete = false
+                }
+                )
             }
             .onTapGesture(count: 2) {
                 showAlert = true
