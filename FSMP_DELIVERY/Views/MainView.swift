@@ -84,7 +84,6 @@ struct MainView: View {
                 for index in indexSet {
                         let orderToRemove = firestoreVM.ordersInProcess[index]
                         firestoreVM.removeOrderInProcess(orderToRemove.orderId)
-//                    showAlert = true
                 }
             }
             .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
