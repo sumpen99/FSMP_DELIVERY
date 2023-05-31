@@ -8,11 +8,12 @@ import SwiftUI
 
 
 struct LoadingView: View {
-    let loadingtext:String
+    @Binding var loadingtext:String
     var body: some View {
         ZStack{
             ProgressView(loadingtext)
                 .progressViewStyle(.horizontal)
+                .padding()
         }
         .frame(width:200,height:50)
         .padding()

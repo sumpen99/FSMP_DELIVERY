@@ -71,8 +71,8 @@ struct MainView: View {
     
     var sideMenu: some View{
         GeometryReader { _ in
-            SideMenuView()
-                .offset(x: showSideMenu ? 0 : -300, y: 0)
+            SideMenuView(){ firestoreVM.releaseData() }
+            .offset(x: showSideMenu ? 0 : -300, y: 0)
             Spacer()
         }
     }
@@ -247,14 +247,6 @@ struct MainView: View {
                 pdfUrl = url
             }
         }
-        
-        /*
-            CLEAR ORDERS FOLDER AT SOME POINT
-            removeOneOrderFromFolder(fileName: order.orderId)
-            removeAllOrdersFromFolder()
-         
-         */
-        
     }
     
     private func setAlertActivateOrderMessage(){

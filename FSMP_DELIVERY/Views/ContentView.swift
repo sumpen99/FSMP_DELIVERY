@@ -36,7 +36,7 @@ struct ContentView: View {
              }
          }
          .onAppear{
-             removeAllOrdersFromFolder()
+             //removeAllOrdersFromFolder()
          }
          .onDisappear{
              //removeAllOrdersFromFolder()
