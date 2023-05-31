@@ -64,7 +64,6 @@ struct SignInView : View {
     @State private var password: String = ""
     
     var body: some View {
-    
         VStack{
             HStack{
                 Image(systemName: "wrench.and.screwdriver.fill")
@@ -77,16 +76,19 @@ struct SignInView : View {
                     .font(.largeTitle)
                     .bold()
             }
+            Spacer()
             Image ("delivery")
-                .resizable()
-                .padding(.leading, 20.0)
-                .scaledToFit()
+                    .resizable()
+                    .scaledToFill()
+                    .padding()
+                    .frame(width: 550, height: 350)
             HStack{
                 Image(systemName: "person.circle")
                     .foregroundColor(.black)
                     .font(.largeTitle)
                 TextField("Email", text: $email)
                     .font(.title)
+                    .frame(width: 280, height: 10) 
             }
             .padding()
             .overlay {
@@ -101,6 +103,7 @@ struct SignInView : View {
                     .font(.largeTitle)
                 SecureField("Password", text: $password)
                     .font(.title)
+                    .frame(width: 280, height: 10)
             }
             .padding()
             .overlay {
@@ -130,7 +133,6 @@ struct SignInView : View {
                     .background(Color(red: 239/256, green: 167/256, blue: 62/256))
                     .cornerRadius(40.0)
             }
-            Spacer()
             Spacer()
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Felaktig Login"),
