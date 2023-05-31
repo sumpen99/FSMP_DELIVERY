@@ -11,6 +11,7 @@ struct createAccountView: View {
     
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var showAlert: Bool = false
     
     var body: some View {
             VStack{
@@ -49,13 +50,6 @@ struct createAccountView: View {
               
                 Button(action: {
                     createUserButDontLoggIn()
-                    /*Auth.auth().createUser(withEmail: email, password: password) { result, error in
-                        if let _ = error {
-                            print("error create account")
-                        } else {
-                            print("created account")
-                        }
-                    }*/
                 }){
                     Text("Create New Account")
                         .font(.title2)
@@ -64,6 +58,10 @@ struct createAccountView: View {
                         .padding()
                         .background(Color(red: 239/256, green: 167/256, blue: 62/256))
                         .cornerRadius(40.0)
+                }
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("created account"),
+                          dismissButton: .default(Text("Ok")))
                 }
                 Spacer()
                 Spacer()
@@ -78,6 +76,7 @@ struct createAccountView: View {
             } else {
                 Auth.auth().updateCurrentUser(originalUser,completion:nil)
                 print("created account")
+                showAlert = true
             }
         }
     }

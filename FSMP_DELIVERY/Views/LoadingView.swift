@@ -9,10 +9,9 @@ import SwiftUI
 
 struct LoadingView: View {
     let loadingtext:String
-    @State var isLoading = false
     var body: some View {
         ZStack{
-            ProgressView("Loading")
+            ProgressView(loadingtext)
                 .progressViewStyle(.horizontal)
         }
         .frame(width:200,height:50)
