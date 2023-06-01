@@ -53,7 +53,7 @@ struct CustomerView: View {
                     }
                     .alert(isPresented: $showAlertForDelete) {
                         let name = choosenCustomer?.name ?? "kunden"
-                        return Alert(title: Text("Ta bort Kunden"),
+                        return Alert(title: Text("Vill du ta bort \(name)?"),
                               message: Text("Allt information om \(name) kommer raderas!. Är du säker på att du vill fortsätta?"),
                               primaryButton: .destructive(Text("Ta bort")) {
                             if let indexSet = indexSetToDelete {
