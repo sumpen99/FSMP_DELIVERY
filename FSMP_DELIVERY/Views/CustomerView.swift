@@ -25,10 +25,14 @@ struct CustomerView: View {
                         HStack{
                             NavigationLink(destination:LazyDestination(destination: {
                                 AddOrderView(customer: Binding(get: { customer }, set: { _ in }))})){
-                                    Text("Add order")
+                                    Text("Create order \(Image(systemName: "square.and.pencil"))")
                             }
                             .buttonStyle(CustomButtonStyle1())
                             .padding(.leading, 20)
+                            
+                            NavigationLink(destination: LazyDestination(destination: {ManageCustomerView(customerToEdit: Binding(get: {customer}, set: { _ in }))})){
+                                Image(systemName: "gearshape")
+                            }
                         }
                     }
                     

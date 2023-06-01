@@ -18,8 +18,8 @@ struct ManageCustomerView: View {
     @State var newPostcode : String = ""
     @State var newEmail : String = ""
     @State var newDescription : String = ""
-    @State var newPhoneNumber : Int = 0
-    @State var newTaxnumber : Int = 0
+    @State var newPhoneNumberString : String = ""
+    @State var newTaxnumberString : String = ""
     
     @Environment(\.dismiss) private var dismiss
     
@@ -35,14 +35,25 @@ struct ManageCustomerView: View {
                     TextField(customerToEdit.description, text: $newDescription)
                     
                     // walla fixa!!
-                    TextField(customerToEdit.phoneNumber, text: $newPhoneNumber)
-                    TextField(customerToEdit.newTaxnumber, text: $newTaxnumber)
+                    TextField(String(customerToEdit.phoneNumber), text: $newPhoneNumberString)
+                    TextField(String(customerToEdit.taxnumber), text: $newTaxnumberString)
                 }
             }
 
             Button("update order \(Image(systemName: "square.and.arrow.up"))"){
-                firestoreVM.editCustomer(customerToEdit, newName, newAdress, newPostcode, newEmail, newDescription, newPhoneNumber, newTaxnumber)
-                dismiss()
+                
+                let newPhoneNumber = NumberFormatter().number(from: newPhoneNumberString)
+                let newTaxnumber = NumberFormatter().number(from: newTaxnumberString)
+                
+                let testCustomer = Customer(customerId: UUID().uuidString, name: newName, adress: newAdress, postcode: newPostcode, email: newEmail)
+                
+                if testCustomer.isNotValid(){
+                    print("walla fel")
+                    return
+                } else {
+                    firestoreVM.editCustomer(customerToEdit, newName, newAdress, newPostcode, newEmail, newDescription, newPhoneNumber as! Int, newTaxnumber as! Int)
+                    dismiss()
+                }
             }
             .padding()
             Spacer()
@@ -59,8 +70,10 @@ struct ManageCustomerView: View {
             newPostcode = customerToEdit.postcode
             newEmail = customerToEdit.email
             newDescription = customerToEdit.description
-            newPhoneNumber = customerToEdit.phoneNumber
-            newTaxnumber = customerToEdit.taxnumber
+            var newPhoneNumber = NumberFormatter().number(from: newPhoneNumberString)
+            var newTaxnumber = NumberFormatter().number(from: newTaxnumberString)
+            newPhoneNumber = (customerToEdit.phoneNumber) as NSNumber
+            newTaxnumber = (customerToEdit.taxnumber) as NSNumber
         }
     }
 }
