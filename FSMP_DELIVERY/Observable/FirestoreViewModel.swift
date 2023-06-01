@@ -205,6 +205,10 @@ class FirestoreViewModel: ObservableObject{
         }
         
     }
+    func editOrder(_ order: Order, _ customer: Customer, _ details: String, orderName: String){
+        let orderDoc = repo.getOrderInProcessDocument(order.orderId)
+        orderDoc.updateData(["customer": customer, "ordername": orderName, "details": details])
+    }
    
     // MARK: - FIREBASE ARRAY-FUNCTIONS
     func updateCustomerWithNewOrder(_ customer:Customer,orderId:String,onResult:((Error?) -> Void)? = nil){

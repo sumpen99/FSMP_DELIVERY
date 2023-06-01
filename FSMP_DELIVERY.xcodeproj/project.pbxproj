@@ -174,17 +174,12 @@
 				7DE760822A216279000F49CB /* PDFKitView.swift */,
 				0C75F82F2A24F88400CB6499 /* ManageOrdersView.swift */,
 				7DE760842A238425000F49CB /* LoadingView.swift */,
+
 				AFC1D98D2A24EF710065FCAD /* LocationSearchView.swift */,
 				AFC1D98F2A24F9390065FCAD /* LocationSearchResultCell.swift */,
+
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		0CD28CDE2A0CD50400481B9D /* RowViews */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = RowViews;
 			sourceTree = "<group>";
 		};
 		0CD28CDF2A0D0F9900481B9D /* Styles */ = {
@@ -249,7 +244,6 @@
 				7D20F7382A15126C00C66167 /* Extensions */,
 				7D5302692A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift */,
 				0CD28CDF2A0D0F9900481B9D /* Styles */,
-				0CD28CDE2A0CD50400481B9D /* RowViews */,
 				0CD28CDB2A0CD45800481B9D /* Views */,
 				0CD28CD62A0CCB6B00481B9D /* Models */,
 				7D53029E2A097406005EAAD0 /* Data */,
