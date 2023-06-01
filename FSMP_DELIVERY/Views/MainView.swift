@@ -92,13 +92,14 @@ struct MainView: View {
                 findActivatedOrderOrSetFirst(orders: orders)
             }
             .alert(isPresented: $showAlertForDelete) {
-                Alert(title: Text("Ta bort Order"),
+                Alert(title: Text("Ta bort Order!"),
                       message: Text("Är du säker på att du vill ta bort beställningen?"),
                       primaryButton: .destructive(Text("Ta bort")) {
                     if let indexSet = indexSetToDelete {
                         for index in indexSet {
                             let orderToRemove = firestoreVM.ordersInProcess[index]
                             firestoreVM.removeOrderInProcess(orderToRemove.orderId)
+                            firestoreVM.removeOrderPdfFromStorage(orderType: .ORDER_IN_PROCESS,orderNumber: orderToRemove.orderId)
                         }
                     }
                 },
