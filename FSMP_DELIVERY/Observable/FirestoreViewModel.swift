@@ -125,14 +125,10 @@ class FirestoreViewModel: ObservableObject{
                 collectionOrderInProcess.document(id).delete()
                 collectionOrderSigned.document(id).delete()
             }
-
-        }  
-
             DispatchQueue.main.async {
                 onResult?()
             }
         }
-
     }
     
     func removeOrderInProcess(_ orderId:String,onResult:((Error?) -> Void)? = nil){
