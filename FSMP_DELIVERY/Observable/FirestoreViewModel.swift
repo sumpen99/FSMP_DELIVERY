@@ -205,9 +205,14 @@ class FirestoreViewModel: ObservableObject{
         }
         
     }
-    func editOrder(_ order: Order, _ customer: Customer, _ details: String, orderName: String){
+    func editOrder(_ order: Order, _ details: String, orderName: String){
         let orderDoc = repo.getOrderInProcessDocument(order.orderId)
-        orderDoc.updateData(["customer": customer, "ordername": orderName, "details": details])
+        orderDoc.updateData(["ordername": orderName, "details": details])
+    }
+    
+    func editCustomer(_ customer: Customer,_ newName: String,_ newAdress: String,_ newPostcode: String,_ newEmail: String,_ newDescription: String,_ newPhonenumber: Int,_ newTaxnumber: Int){
+        let customer = repo.getCustomerDocument(customer.customerId)
+        customer.updateData(["name": newName, "adress": newAdress, "postcode": newPostcode, "email": newEmail, "description": newDescription, "phoneNumber": newPhonenumber, "taxnumber": newTaxnumber])
     }
    
     // MARK: - FIREBASE ARRAY-FUNCTIONS

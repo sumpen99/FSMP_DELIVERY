@@ -13,7 +13,7 @@ struct ManageOrdersView: View {
     
     @Binding var choosenOrder : Order
     
-    @State var newCustomer: Customer
+//    @State var newCustomer: Customer
     @State var newDetails: String = ""
     @State var newOrderName: String = ""
     
@@ -25,45 +25,52 @@ struct ManageOrdersView: View {
         VStack{
             Form{
                 Section(header: Text("Edit Order")) {
-                    Picker("\(choosenOrder.customer.name)", selection: $newCustomer) {
-                        ForEach(firestoreVM.customers, id: \.customerId) { customer in
-                            Text(customer.name).tag(customer.customerId)
-                        }
-                    }
+                    
+                    // !!! Firebase klagar när jag försöker byta customer !!!
+                    
+//                    Picker("\(choosenOrder.customer.name)", selection: $newCustomer) {
+//                        ForEach(firestoreVM.customers, id: \.customerId) { customer in
+//                            Text(customer.name).tag(customer.customerId)
+//                        }
+//                    }
                     TextField(choosenOrder.ordername, text: $newOrderName)
                     TextField(choosenOrder.details, text: $newDetails)
                 }
             }
+
             Button("update order \(Image(systemName: "square.and.arrow.up"))"){
-                firestoreVM.editOrder(choosenOrder, newCustomer, newDetails, orderName: newOrderName)
+                firestoreVM.editOrder(choosenOrder, newDetails, orderName: newOrderName)
                 dismiss()
             }
             .padding()
             Spacer()
         }
-        .onChange(of: selectedCustomerId) { newCustomerId in
-            if let newCustomer = firestoreVM.customers.first(where: { $0.customerId == newCustomerId }) {
-                choosenOrder.customer = newCustomer
-            }
-        }
+//        .onChange(of: selectedCustomerId) { newCustomerId in
+//            if let newCustomer = firestoreVM.customers.first(where: { $0.customerId == newCustomerId }) {
+//                choosenOrder.customer = newCustomer
+//            }
+//        }
         .onDisappear(){
             firestoreVM.closeListenerCustomers()
         }
         .onAppear{
             firestoreVM.initializeListenerCustomers()
+            
+            newOrderName = choosenOrder.ordername
+            newDetails = choosenOrder.details
         }
     }
 }
 
-//struct ManageOrdersView_Previews: PreviewProvider {
-//    @State private var order = Order(ordername: "Fixa Vasken", details: "rensa vatten låset", customer: Customer(customerId: "123123", name: "janne", phoneNumber: 123123123), orderId: "", initDate: Date())
-//
-//    static var previews: some View {
-//        ManageOrdersView_Previews().previewLayout()
-//    }
-//
-//    func previewLayout() -> some View {
-//        ManageOrdersView(choosenOrder: $order)
-//            .environmentObject(FirestoreViewModel())
-//    }
-//}
+struct ManageOrdersView_Previews: PreviewProvider {
+    @State private var order = Order(ordername: "Fixa Vasken", details: "rensa vatten låset", customer: Customer(customerId: "123123", name: "janne", phoneNumber: 123123123), orderId: "", initDate: Date())
+
+    static var previews: some View {
+        ManageOrdersView_Previews().previewLayout()
+    }
+
+    func previewLayout() -> some View {
+        ManageOrdersView(choosenOrder: $order)
+            .environmentObject(FirestoreViewModel())
+    }
+}

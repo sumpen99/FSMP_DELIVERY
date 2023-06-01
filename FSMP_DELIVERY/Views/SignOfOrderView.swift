@@ -163,10 +163,10 @@ struct SignOfOrderView: View{
     var uploadSignedOrderButton: some View{
         HStack{
             Button(action: uploadSignedForm ) {
-                Text("Spara")
+                Text("Sign")
             }
             Spacer()
-            Image(systemName: "chevron.right")
+            Image(systemName: "checkmark.shield")
                 .foregroundColor(prVar.isShowing ? .accentColor : .blue)
         }
         .disabled(prVar.isShowing)
