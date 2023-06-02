@@ -8,7 +8,7 @@ import SwiftUI
 
 var ALERT_TITLE = ""
 var ALERT_MESSAGE = ""
-
+let FSMP_RELEASE_YEAR = 2023
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
 var ordersFolder:URL? {
@@ -105,6 +105,19 @@ func generateQrCode(qrCodeStr:String) -> Data?{
     return uiimage.pngData()
 }
 
+func daysInCurrentMonth(monthNumber: Int,year: Int) -> Int {
+    print(monthNumber)
+    print(year)
+    var dateComponents = DateComponents()
+    dateComponents.year = year
+    dateComponents.month = monthNumber
+    guard let d = Calendar.current.date(from: dateComponents),
+          let interval = Calendar.current.dateInterval(of: .month, for: d),
+          let days = Calendar.current.dateComponents([.day], from: interval.start, to: interval.end).day
+    else{ return 0 }
+    return days
+}
+
 extension ButtonStyle where Self == CustomButtonStyleGradient {
     static var gradient: CustomButtonStyleGradient { .init() }
 }
@@ -165,6 +178,50 @@ extension Date{
         
         return formatter.string(from: self)
     }
+    
+    func year() -> Int {
+        let calendar = Calendar.current
+        return calendar.component(.year, from: self)
+        
+    }
+    
+    func month() -> Int {
+        let calendar = Calendar.current
+        return calendar.component(.month, from: self)
+        
+    }
+    
+    func day() -> Int {
+        let calendar = Calendar.current
+        return calendar.component(.day, from: self)
+        
+    }
+    
+    func monthName() -> String{
+        if let monthInt = Calendar.current.dateComponents([.month], from: self).month {
+            return Calendar.current.shortMonthSymbols[monthInt-1]
+        }
+        return ""
+    }
+    
+    func dayName() -> String{
+        let df = DateFormatter()
+        df.setLocalizedDateFormatFromTemplate("EEEE")
+        return df.string(from: self)
+    }
+    
+    func getDaysInMonth() -> Int?{
+        let calendar = Calendar.current
+
+        let dateComponents = DateComponents(year: calendar.component(.year, from: self), month: calendar.component(.month, from: self))
+        guard let date = calendar.date(from: dateComponents),
+              let range = calendar.range(of: .day, in: .month, for: date)
+        else{
+            return nil
+        }
+        return range.count
+    }
+    
 }
 
 extension [[CGPoint]]{

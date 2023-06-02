@@ -93,6 +93,22 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func listenToOrdersInProcessNotSignedByOthers() {
+            let orders = repo.getOrderInProcessCollection()
+            let userId = FirebaseAuth.currentUserId ?? ""
+            listenerOrdersInProcess = orders.whereField("assignedUser", in: [userId,""]).addSnapshotListener() { [weak self] (snapshot, err) in
+                guard let documents = snapshot?.documents,
+                      let strongSelf = self else { return }
+                var newOrders = [Order]()
+                for document in documents {
+                    guard let order = try? document.data(as : Order.self) else { continue }
+                    newOrders.append(order)
+                }
+                strongSelf.ordersInProcess = newOrders
+            }
+    }
+
+    
     func listenToOrdersSigned() {
         let orders = repo.getOrderSignedCollection()
         listenerOrdersSigned = orders.addSnapshotListener() { [weak self] (snapshot, err) in
