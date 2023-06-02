@@ -117,7 +117,7 @@ struct MainView: View {
             if let order = currentOrder {
                     HStack{
                         NavigationLink(destination: LazyDestination(destination: {
-                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }), newCustomer: order.customer)
+                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))
                         })) {
                             Text("Yes")
                         }

@@ -11,6 +11,7 @@
 		0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */; };
 		0C64FB3D2A12753600AB9E8B /* CreateCustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */; };
 		0C75F8302A24F88400CB6499 /* ManageOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C75F82F2A24F88400CB6499 /* ManageOrdersView.swift */; };
+		0C75F8322A2893F700CB6499 /* ManageCustomerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C75F8312A2893F700CB6499 /* ManageCustomerView.swift */; };
 		0CD28CD82A0CCBB500481B9D /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD72A0CCBB500481B9D /* Customer.swift */; };
 		0CD28CDA2A0CCBCD00481B9D /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CD92A0CCBCD00481B9D /* Order.swift */; };
 		0CD28CDD2A0CD4A500481B9D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD28CDC2A0CD4A500481B9D /* MainView.swift */; };
@@ -72,6 +73,7 @@
 		0C64FB3A2A12522A00AB9E8B /* CustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerView.swift; sourceTree = "<group>"; };
 		0C64FB3C2A12753600AB9E8B /* CreateCustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCustomerView.swift; sourceTree = "<group>"; };
 		0C75F82F2A24F88400CB6499 /* ManageOrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageOrdersView.swift; sourceTree = "<group>"; };
+		0C75F8312A2893F700CB6499 /* ManageCustomerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageCustomerView.swift; sourceTree = "<group>"; };
 		0CD28CD72A0CCBB500481B9D /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		0CD28CD92A0CCBCD00481B9D /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		0CD28CDC2A0CD4A500481B9D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -174,10 +176,9 @@
 				7DE760822A216279000F49CB /* PDFKitView.swift */,
 				0C75F82F2A24F88400CB6499 /* ManageOrdersView.swift */,
 				7DE760842A238425000F49CB /* LoadingView.swift */,
-
 				AFC1D98D2A24EF710065FCAD /* LocationSearchView.swift */,
 				AFC1D98F2A24F9390065FCAD /* LocationSearchResultCell.swift */,
-
+				0C75F8312A2893F700CB6499 /* ManageCustomerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -385,6 +386,7 @@
 				AFC1D9882A164A4C0065FCAD /* Map.swift in Sources */,
 				7D5302942A0963C0005EAAD0 /* FirebaseAuth.swift in Sources */,
 				7D53029B2A097259005EAAD0 /* FirestoreViewModel.swift in Sources */,
+				0C75F8322A2893F700CB6499 /* ManageCustomerView.swift in Sources */,
 				7DE7608B2A268B6C000F49CB /* ProgressViewVar.swift in Sources */,
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
 				AFC1D9902A24F9390065FCAD /* LocationSearchResultCell.swift in Sources */,
