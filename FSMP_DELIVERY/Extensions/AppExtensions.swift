@@ -106,8 +106,6 @@ func generateQrCode(qrCodeStr:String) -> Data?{
 }
 
 func daysInCurrentMonth(monthNumber: Int,year: Int) -> Int {
-    print(monthNumber)
-    print(year)
     var dateComponents = DateComponents()
     dateComponents.year = year
     dateComponents.month = monthNumber
@@ -164,12 +162,46 @@ extension UIImage {
     }
 }
 
+extension Calendar {
+    func startOfMonth(_ date: Date) -> Date {
+        return self.date(from: self.dateComponents([.year, .month], from: date))!
+    }
+    
+    static func getSwedishWeekdayNames() -> [String]{
+        var calendar = Calendar(identifier: .gregorian)
+        //calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.locale = Locale(identifier: "sv")
+        return calendar.weekdaySymbols
+    }
+    
+    static func getSwedishShortWeekdayNames() -> [String]{
+        var calendar = Calendar(identifier: .gregorian)
+        //calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.locale = Locale(identifier: "sv")
+        return calendar.shortWeekdaySymbols
+    }
+    
+    static func getWeekdayName(_ weekday:Int) -> String{
+        return getSwedishWeekdayNames()[weekday-1]
+    }
+    
+    static func getShortWeekdayName(_ weekday:Int) -> String{
+        return getSwedishShortWeekdayNames()[weekday-1]
+    }
+}
+
+
 extension Date{
     
     static func fromISO8601StringToDate(_ dateToProcess:String) -> Date?{
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
         return formatter.date(from: dateToProcess)
+    }
+    
+    func getFirstWeekdayInMonth() -> Int{
+        let calendar = Calendar.current
+        return calendar.component(.weekday, from: calendar.startOfMonth(self))
     }
     
     func toISO8601String() -> String{
