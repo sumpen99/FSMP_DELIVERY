@@ -33,12 +33,21 @@ struct CustomCalendarView: View {
     
     
     var body: some View {
+        VStack(spacing:20){
+            calendar
+            Divider()
+            ordersLightVersion
+        }
+    }
+    
+    var calendar: some View{
         ScrollView{
-            VStack {
+            LazyVStack {
                 topButtonRow
                 monthGridView
                 weekdaysName
                 daysGridView
+                
                  
             }
             .onChange(of: selectedYear){ year in
@@ -55,11 +64,25 @@ struct CustomCalendarView: View {
             }*/
         }
         .onAppear{
-            queryOrdersSignedByYear()
+            //queryOrdersSignedByYear()
         }
         .onDisappear{
             firestoreVM.closeListenerOrdersSignedQuery()
         }
+    }
+    
+    var ordersLightVersion: some View{
+        ScrollView {
+            LazyVStack {
+                ForEach(100...120,id:\.self){ value in
+                    Text("\(value)").frame( maxWidth: .infinity)
+                }
+            }
+        }
+        //.frame( maxWidth: .infinity)
+        //.edgesIgnoringSafeArea(.all)
+        //.listStyle(GroupedListStyle())
+        .frame(height:150.0)
     }
     
     // MARK: - YEAR VIEW

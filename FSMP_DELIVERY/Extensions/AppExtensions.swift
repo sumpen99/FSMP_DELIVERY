@@ -46,11 +46,12 @@ var ordersFolder:URL? {
     return nil
 }
 
-func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
-    Binding(
-        get: { lhs.wrappedValue ?? rhs },
-        set: { lhs.wrappedValue = $0 }
-    )
+struct FillFormModifier: ViewModifier{
+    func body(content: Content) -> some View{
+        content
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+    }
 }
 
 func removeAllOrdersFromFolder(){
@@ -380,6 +381,10 @@ extension View {
         }
       )
       .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+    
+    func fillSection() -> some View{
+            self.modifier(FillFormModifier())
     }
     
     func hLeading() -> some View{
