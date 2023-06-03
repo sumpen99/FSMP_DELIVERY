@@ -9,6 +9,14 @@ import Foundation
 import FirebaseFirestoreSwift
 
 
+struct MappedOrders{
+    let year:Int
+    let months:[Int] = [Int]()
+    let days:[Int] = [Int]()
+    let orders:[Order] = [Order]()
+}
+
+
 struct Order : Codable,Identifiable {
     @DocumentID var id: String?
     var ordername : String
@@ -32,6 +40,14 @@ struct Order : Codable,Identifiable {
                      isCompleted: true,
                      initDate: initDate,
                      dateOfCompletion: Date())
+    }
+    
+    func getYearMontDay() -> (year:Int,month:Int,day:Int){
+        guard let date = dateOfCompletion else { return (year:0,month:0,day:0)}
+        let year = date.year()
+        let month = date.month()
+        let day = date.day()
+        return (year:year,month:month,day:day)
     }
     
 }

@@ -30,6 +30,12 @@ struct OrderHistoryView: View{
                 }
             }
         }
+        .onAppear{
+            //firestoreVM.initializeListenerOrdersSigned()
+        }
+        .onDisappear{
+            //firestoreVM.closeListenerOrdersSigned()
+        }
     }
     
     var fillSectionWithData: some View{

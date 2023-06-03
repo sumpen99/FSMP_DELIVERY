@@ -10,12 +10,17 @@ import SwiftUI
 
 class FirestoreViewModel: ObservableObject{
     let repo = FirestoreRepository()
+    typealias YEAR = String
+    typealias MONTH = String
+    typealias DAY = String
     @Published var customers = [Customer]()
     @Published var ordersInProcess = [Order]()
     @Published var ordersSigned = [Order]()
+    @Published var ordersSignedMap: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
     var listenerCustomers: ListenerRegistration?
     var listenerOrdersInProcess: ListenerRegistration?
     var listenerOrdersSigned: ListenerRegistration?
+    var listenerOrdersSignedMap: ListenerRegistration?
     
     // MARK: - FIREBASE RELEASE_DATA_WHEN_SIGNING_OUT
     func releaseData(){
@@ -44,10 +49,15 @@ class FirestoreViewModel: ObservableObject{
         listenToOrdersSigned()
     }
     
+    func initializeListenerOrdersSignedMap(){
+        listenToOrdersSigned()
+    }
+    
     func closeAllListener(){
         closeListenerCustomers()
         closeListenerOrdersInProcess()
         closeListenerOrdersSigned()
+        closeListenerOrdersSignedMap()
     }
     
     func closeListenerCustomers(){
@@ -60,6 +70,10 @@ class FirestoreViewModel: ObservableObject{
     
     func closeListenerOrdersSigned(){
         listenerOrdersSigned?.remove()
+    }
+    
+    func closeListenerOrdersSignedMap(){
+        listenerOrdersSignedMap?.remove()
     }
     
     // MARK: - FIREBASE LISTENER-FUNCTIONS
@@ -117,11 +131,63 @@ class FirestoreViewModel: ObservableObject{
             var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
+                print(order)
                 newOrders.append(order)
             }
             strongSelf.ordersSigned = newOrders
         }
     }
+    
+    // MARK: - FIREBASE QUERY-FUNCTIONS
+    func queryOrdersSignedByCustomer(_ customerId:String){
+        
+    }
+    
+    func queryOrdersSignedByEmployee(_ employeeId:String){
+        
+    }
+    
+    func queryOrdersSignedByDateRange(startDate:Date,endDate:Date){
+        listenerOrdersSignedMap?.remove()
+        print(startDate)
+        print(endDate)
+        let orders = repo.getOrderSignedCollection()
+        listenerOrdersSignedMap = orders
+            .whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
+            .whereField("dateOfCompletion", isLessThan: endDate)
+            .addSnapshotListener(){ [weak self] (snapshot, err) in
+                guard let documents = snapshot?.documents,
+                      let strongSelf = self else { return }
+             
+                var newOrders: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
+                for document in documents {
+                    guard let order = try? document.data(as : Order.self) else { continue }
+                    let o = order.getYearMontDay()
+                    
+                    guard let keyYear = newOrders["\(o.year)"] else{
+                        newOrders["\(o.year)"] = ["\(o.month)":["\(o.day)":[order]]]
+                        continue
+                    }
+                    guard let keyMonth = keyYear["\(o.month)"] else{
+                        newOrders["\(o.year)"]?["\(o.month)"] = ["\(o.day)":[order]]
+                        continue
+                    }
+                    
+                    guard let _ = keyMonth["\(o.day)"] else{
+                        newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"] = [order]
+                        continue
+                    }
+                    newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"]?.append(order)
+                }
+                
+                strongSelf.ordersSignedMap = newOrders
+                // strongSelf.ordersSignedMap.keys = 2023
+                // strongSelf.ordersSignedMap["2023"]?.keys = ["5", "6"] MAJ JUNI
+                // strongSelf.ordersSignedMap["2023"]?["5"]?.count = 4 -> ORDERS
+                //print(strongSelf.ordersSignedMap["2023"]?["5"]?.count)
+            }
+    }
+    
     
     // MARK: - FIREBASE REMOVE-FUNCTIONS
     func removeCustomer(_ customer:Customer,onResult:((Error?) -> Void)? = nil){

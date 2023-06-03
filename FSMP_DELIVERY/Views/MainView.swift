@@ -56,10 +56,10 @@ struct MainView: View {
             callFirebaseAndTooggleOrderActivation(shouldActivate: isActivated)
         }
         .onAppear() {
-            firestoreVM.initializeListenerOrdersInProcess()
+            //firestoreVM.initializeListenerOrdersInProcess()
         }
         .onDisappear{
-            firestoreVM.closeListenerOrdersInProcess()
+            //firestoreVM.closeListenerOrdersInProcess()
         }
         
     }
