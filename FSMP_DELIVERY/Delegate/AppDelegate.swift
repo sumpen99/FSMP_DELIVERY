@@ -56,7 +56,6 @@ class AppDelegate: NSObject,UIApplicationDelegate{
     
     func applicationWillTerminate(_ application: UIApplication) {
         removeAllOrdersFromFolder()
-        print("End App")
     }
    
 }

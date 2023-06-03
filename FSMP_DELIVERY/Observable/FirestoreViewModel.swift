@@ -10,19 +10,29 @@ import SwiftUI
 
 class FirestoreViewModel: ObservableObject{
     let repo = FirestoreRepository()
+    typealias YEAR = String
+    typealias MONTH = String
+    typealias DAY = String
     @Published var customers = [Customer]()
     @Published var ordersInProcess = [Order]()
     @Published var ordersSigned = [Order]()
+    @Published var ordersSignedQuery: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
     var listenerCustomers: ListenerRegistration?
     var listenerOrdersInProcess: ListenerRegistration?
     var listenerOrdersSigned: ListenerRegistration?
+    var listenerOrdersSignedQuery: ListenerRegistration?
     
     // MARK: - FIREBASE RELEASE_DATA_WHEN_SIGNING_OUT
     func releaseData(){
         customers.removeAll()
         ordersInProcess.removeAll()
         ordersSigned.removeAll()
+        ordersSignedQuery.removeAll()
         closeAllListener()
+    }
+    
+    func releaseOrderSignedQueryData(){
+        ordersSignedQuery.removeAll()
     }
     
     // MARK: - FIREBASE LISTENER-REGISTRATION
@@ -44,10 +54,15 @@ class FirestoreViewModel: ObservableObject{
         listenToOrdersSigned()
     }
     
+    func initializeListenerOrdersSignedQuery(){
+        
+    }
+    
     func closeAllListener(){
         closeListenerCustomers()
         closeListenerOrdersInProcess()
         closeListenerOrdersSigned()
+        closeListenerOrdersSignedQuery()
     }
     
     func closeListenerCustomers(){
@@ -60,6 +75,10 @@ class FirestoreViewModel: ObservableObject{
     
     func closeListenerOrdersSigned(){
         listenerOrdersSigned?.remove()
+    }
+    
+    func closeListenerOrdersSignedQuery(){
+        listenerOrdersSignedQuery?.remove()
     }
     
     // MARK: - FIREBASE LISTENER-FUNCTIONS
@@ -93,6 +112,22 @@ class FirestoreViewModel: ObservableObject{
         }
     }
     
+    func listenToOrdersInProcessNotSignedByOthers() {
+            let orders = repo.getOrderInProcessCollection()
+            let userId = FirebaseAuth.currentUserId ?? ""
+            listenerOrdersInProcess = orders.whereField("assignedUser", in: [userId,""]).addSnapshotListener() { [weak self] (snapshot, err) in
+                guard let documents = snapshot?.documents,
+                      let strongSelf = self else { return }
+                var newOrders = [Order]()
+                for document in documents {
+                    guard let order = try? document.data(as : Order.self) else { continue }
+                    newOrders.append(order)
+                }
+                strongSelf.ordersInProcess = newOrders
+            }
+    }
+
+    
     func listenToOrdersSigned() {
         let orders = repo.getOrderSignedCollection()
         listenerOrdersSigned = orders.addSnapshotListener() { [weak self] (snapshot, err) in
@@ -101,11 +136,60 @@ class FirestoreViewModel: ObservableObject{
             var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
+                print(order)
                 newOrders.append(order)
             }
             strongSelf.ordersSigned = newOrders
         }
     }
+    
+    // MARK: - FIREBASE QUERY-FUNCTIONS
+    func queryOrdersSignedByCustomer(_ customerId:String){
+        
+    }
+    
+    func queryOrdersSignedByEmployee(_ employeeId:String){
+        
+    }
+    
+    func queryOrdersSignedByDateRange(startDate:Date,endDate:Date){
+        let orders = repo.getOrderSignedCollection()
+        listenerOrdersSignedQuery = orders
+            .whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
+            .whereField("dateOfCompletion", isLessThan: endDate)
+            .addSnapshotListener(){ [weak self] (snapshot, err) in
+                guard let documents = snapshot?.documents,
+                      let strongSelf = self else { return }
+                var newOrders: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
+                for document in documents {
+                    guard let order = try? document.data(as : Order.self) else { continue }
+                    let o = order.getYearMontDay()
+                    
+                    guard let keyYear = newOrders["\(o.year)"] else{
+                        newOrders["\(o.year)"] = ["\(o.month)":["\(o.day)":[order]]]
+                        continue
+                    }
+                    guard let keyMonth = keyYear["\(o.month)"] else{
+                        newOrders["\(o.year)"]?["\(o.month)"] = ["\(o.day)":[order]]
+                        continue
+                    }
+                    
+                    guard let _ = keyMonth["\(o.day)"] else{
+                        newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"] = [order]
+                        continue
+                    }
+                    newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"]?.append(order)
+                }
+                
+                strongSelf.ordersSignedQuery = newOrders
+                // strongSelf.ordersSignedMap.keys = 2023
+                // strongSelf.ordersSignedMap["2023"]?.keys = ["5", "6"] MAJ JUNI
+                // strongSelf.ordersSignedMap["2023"]?["5"]?.count = 4 -> ORDERS
+                //print(strongSelf.ordersSignedMap["2023"]?["5"]?.count)
+                //strongSelf.queryOrdersSigned.splitData(newOrders)
+            }
+    }
+    
     
     // MARK: - FIREBASE REMOVE-FUNCTIONS
     func removeCustomer(_ customer:Customer,onResult:((Error?) -> Void)? = nil){
@@ -343,5 +427,15 @@ class FirestoreViewModel: ObservableObject{
     
     
     
+}
+
+extension FirestoreViewModel{
+    func ordersSignedMonthHaveData(_ month:Int,year:Int) -> Bool {
+        return ordersSignedQuery["\(year)"]?["\(month)"] != nil
+    }
+    
+    func ordersSignedDayHaveData(_ day:Int,month:Int,year:Int) -> Int {
+        return ordersSignedQuery["\(year)"]?["\(month)"]?["\(day)"]?.count ?? 0
+    }
 }
 
