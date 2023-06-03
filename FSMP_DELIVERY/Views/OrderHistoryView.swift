@@ -9,15 +9,12 @@ import SwiftUI
 
 struct OrderHistoryView: View{
     @EnvironmentObject var firestoreVM: FirestoreViewModel
-    @State var adress:String = ""
-    @State var selectedDate:Date = Date()
     @State var showingCalendar:Bool = false
     
     
     var body: some View{
         NavigationStack {
             Section{
-                TextField("Adress", text: $adress).padding()
             }
         }
         .sheet(isPresented: $showingCalendar){

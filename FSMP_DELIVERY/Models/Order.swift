@@ -8,15 +8,6 @@ import SwiftUI
 import Foundation
 import FirebaseFirestoreSwift
 
-
-struct MappedOrders{
-    let year:Int
-    let months:[Int] = [Int]()
-    let days:[Int] = [Int]()
-    let orders:[Order] = [Order]()
-}
-
-
 struct Order : Codable,Identifiable {
     @DocumentID var id: String?
     var ordername : String

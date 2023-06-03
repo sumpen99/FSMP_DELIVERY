@@ -45,20 +45,20 @@ struct CustomCalendarView: View {
                 if year > maxYear{ print("nej nej nej ");return}
                 queryOrdersSignedByYear()
             }
-            .onChange(of: selectedMonth){ month in
+            /*.onChange(of: selectedMonth){ month in
                 if selectedYear > maxYear{ print("nej nej nej ");return}
                 queryOrdersSignedByMonth()
             }
             .onChange(of: selectedDay){ day in
                 if selectedYear > maxYear{ print("nej nej nej ");return}
                 queryOrdersSignedByDay()
-            }
+            }*/
         }
         .onAppear{
             queryOrdersSignedByYear()
         }
         .onDisappear{
-            firestoreVM.closeListenerOrdersSignedMap()
+            firestoreVM.closeListenerOrdersSignedQuery()
         }
     }
     
@@ -68,9 +68,6 @@ struct CustomCalendarView: View {
             Button(action: {
                 if selectedYear > FSMP_RELEASE_YEAR{
                     selectedYear -= 1
-                    //var dateComponent = DateComponents()
-                    //dateComponent.year = -1
-                    //selectedDate = Calendar.current.date(byAdding: dateComponent, to: selectedDate)
                 }
             },label: {Text("\(Image(systemName: "chevron.left"))")})
             Text(String(selectedYear))
@@ -78,10 +75,6 @@ struct CustomCalendarView: View {
                      .transition(.move(edge: .trailing))
             Button(action: {
                 selectedYear += 1
-                //var dateComponent = DateComponents()
-                //dateComponent.year = 1
-                //selectedDate = Calendar.current.date(byAdding: dateComponent, to: selectedDate)
-                //print(selectedDate)
             },label: {Text("\(Image(systemName: "chevron.right"))")})
             Spacer()
             HStack(spacing:20){
@@ -102,7 +95,9 @@ struct CustomCalendarView: View {
            ForEach(months, id: \.self) { month in
                ZStack{
                    getMonthCell(month)
-                   getBadgeMonth(month)
+                   if firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selectedYear){
+                       getBadgeMonth(month)
+                   }
                   
                }
            }
@@ -127,15 +122,7 @@ struct CustomCalendarView: View {
              }
         )
         .foregroundStyle(month == selectedMonth ? .primary : .tertiary)
-        //.foregroundColor(item == selectedMonth ? .white : .black)
         .onTapGesture {
-            //var dateComponent = DateComponents()
-            //dateComponent.day = 1
-            //dateComponent.month =  months.firstIndex(of: item) ?? 0 + 1
-            //dateComponent.year = Int(selectedDate.year())
-            //print(item)
-            //selectedDate = Calendar.current.date(from: dateComponent)!
-            //print(selectedDate)
             withAnimation{
                 selectedMonth = month
             }
@@ -171,7 +158,12 @@ struct CustomCalendarView: View {
             ForEach(1...daysInCurrentMonth(), id: \.self) { day in
                 ZStack{
                     getDayCell(day)
-                    getBadgeDay(day)
+                    if let num = firestoreVM.ordersSignedDayHaveData(day-PAD_CALENDAR,
+                                                                 month:getSelectedMonthIndex(),
+                                                                 year: selectedYear)
+                        ,num != 0{
+                        getBadgeDay(day,num:num)
+                    }
                 }
            }
         }
@@ -199,14 +191,14 @@ struct CustomCalendarView: View {
                 }
     }
     
-    func getBadgeDay(_ day:Int) -> some View{
+    func getBadgeDay(_ day:Int,num:Int) -> some View{
         let newDay = day - PAD_CALENDAR
         let showDay = newDay >= 1
         return ZStack{
             Circle()
                 .fill(.red)
                 .frame(width: 20, height: 20,alignment: .trailing)
-            Text("1").font(.caption)
+            Text("\(num)").font(.caption)
         }
         .foregroundStyle(newDay == selectedDay ? .primary : .tertiary)
         .padding([.trailing],-5)
@@ -243,23 +235,33 @@ struct CustomCalendarView: View {
     
     func queryOrdersSignedByYear(){
         guard let startDate = Date.from(selectedYear, 1, 1),let endDate = Date.from(selectedYear+1,1,1) else { return }
+        firestoreVM.closeListenerOrdersSignedQuery()
+        firestoreVM.releaseOrderSignedQueryData()
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
     }
     
     func queryOrdersSignedByMonth(){
-        guard let selectedMonthIndex = months.firstIndex(of: selectedMonth) else { return }
-        let month = selectedMonthIndex + 1
+        let month = getSelectedMonthIndex()
         guard let startDate = Date.from(selectedYear, month, 1),
               let endDate = Date.from(selectedYear,month+1,1) else { return }
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
     }
     
     func queryOrdersSignedByDay(){
-        guard let selectedMonthIndex = months.firstIndex(of: selectedMonth) else { return }
-        let month = selectedMonthIndex + 1
+        let month = getSelectedMonthIndex()
         guard let startDate = Date.from(selectedYear, month, selectedDay),
               let endDate = Date.from(selectedYear,month,selectedDay+1) else { return }
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
+    }
+    
+    func getSelectedMonthIndex() -> Int{
+        guard let selectedMonthIndex = months.firstIndex(of: selectedMonth) else { return -1 }
+        return  selectedMonthIndex + 1
+    }
+    
+    func getSelectedMonthIndex(_ month:String) -> Int{
+        guard let selectedMonthIndex = months.firstIndex(of: month) else { return -1 }
+        return  selectedMonthIndex + 1
     }
     
 }

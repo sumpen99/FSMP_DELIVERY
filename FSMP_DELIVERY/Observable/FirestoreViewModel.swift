@@ -16,18 +16,23 @@ class FirestoreViewModel: ObservableObject{
     @Published var customers = [Customer]()
     @Published var ordersInProcess = [Order]()
     @Published var ordersSigned = [Order]()
-    @Published var ordersSignedMap: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
+    @Published var ordersSignedQuery: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
     var listenerCustomers: ListenerRegistration?
     var listenerOrdersInProcess: ListenerRegistration?
     var listenerOrdersSigned: ListenerRegistration?
-    var listenerOrdersSignedMap: ListenerRegistration?
+    var listenerOrdersSignedQuery: ListenerRegistration?
     
     // MARK: - FIREBASE RELEASE_DATA_WHEN_SIGNING_OUT
     func releaseData(){
         customers.removeAll()
         ordersInProcess.removeAll()
         ordersSigned.removeAll()
+        ordersSignedQuery.removeAll()
         closeAllListener()
+    }
+    
+    func releaseOrderSignedQueryData(){
+        ordersSignedQuery.removeAll()
     }
     
     // MARK: - FIREBASE LISTENER-REGISTRATION
@@ -49,15 +54,15 @@ class FirestoreViewModel: ObservableObject{
         listenToOrdersSigned()
     }
     
-    func initializeListenerOrdersSignedMap(){
-        listenToOrdersSigned()
+    func initializeListenerOrdersSignedQuery(){
+        
     }
     
     func closeAllListener(){
         closeListenerCustomers()
         closeListenerOrdersInProcess()
         closeListenerOrdersSigned()
-        closeListenerOrdersSignedMap()
+        closeListenerOrdersSignedQuery()
     }
     
     func closeListenerCustomers(){
@@ -72,8 +77,8 @@ class FirestoreViewModel: ObservableObject{
         listenerOrdersSigned?.remove()
     }
     
-    func closeListenerOrdersSignedMap(){
-        listenerOrdersSignedMap?.remove()
+    func closeListenerOrdersSignedQuery(){
+        listenerOrdersSignedQuery?.remove()
     }
     
     // MARK: - FIREBASE LISTENER-FUNCTIONS
@@ -148,17 +153,13 @@ class FirestoreViewModel: ObservableObject{
     }
     
     func queryOrdersSignedByDateRange(startDate:Date,endDate:Date){
-        listenerOrdersSignedMap?.remove()
-        print(startDate)
-        print(endDate)
         let orders = repo.getOrderSignedCollection()
-        listenerOrdersSignedMap = orders
+        listenerOrdersSignedQuery = orders
             .whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
             .whereField("dateOfCompletion", isLessThan: endDate)
             .addSnapshotListener(){ [weak self] (snapshot, err) in
                 guard let documents = snapshot?.documents,
                       let strongSelf = self else { return }
-             
                 var newOrders: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
                 for document in documents {
                     guard let order = try? document.data(as : Order.self) else { continue }
@@ -180,11 +181,12 @@ class FirestoreViewModel: ObservableObject{
                     newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"]?.append(order)
                 }
                 
-                strongSelf.ordersSignedMap = newOrders
+                strongSelf.ordersSignedQuery = newOrders
                 // strongSelf.ordersSignedMap.keys = 2023
                 // strongSelf.ordersSignedMap["2023"]?.keys = ["5", "6"] MAJ JUNI
                 // strongSelf.ordersSignedMap["2023"]?["5"]?.count = 4 -> ORDERS
                 //print(strongSelf.ordersSignedMap["2023"]?["5"]?.count)
+                //strongSelf.queryOrdersSigned.splitData(newOrders)
             }
     }
     
@@ -425,5 +427,15 @@ class FirestoreViewModel: ObservableObject{
     
     
     
+}
+
+extension FirestoreViewModel{
+    func ordersSignedMonthHaveData(_ month:Int,year:Int) -> Bool {
+        return ordersSignedQuery["\(year)"]?["\(month)"] != nil
+    }
+    
+    func ordersSignedDayHaveData(_ day:Int,month:Int,year:Int) -> Int {
+        return ordersSignedQuery["\(year)"]?["\(month)"]?["\(day)"]?.count ?? 0
+    }
 }
 
