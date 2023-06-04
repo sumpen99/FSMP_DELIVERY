@@ -46,14 +46,6 @@ var ordersFolder:URL? {
     return nil
 }
 
-struct FillFormModifier: ViewModifier{
-    func body(content: Content) -> some View{
-        content
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-    }
-}
-
 func removeAllOrdersFromFolder(){
     let fileManager = FileManager.default
     guard let ordersFolder = ordersFolder,
@@ -388,6 +380,17 @@ extension View {
         }
       )
       .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+    
+    func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
+        HStack{
+            Text(header).font(.headline).bold()
+            Text(subHeader).font(.body)
+            Spacer()
+        }
+        .foregroundColor(Color.systemGray)
+        .hLeading()
+        
     }
     
     func fillSection() -> some View{

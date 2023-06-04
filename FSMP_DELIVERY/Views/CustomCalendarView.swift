@@ -13,14 +13,16 @@ struct CustomCalendarView: View {
     @Namespace var animation
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @Environment(\.dismiss) private var dismiss
-    let maxYear = Date().year()
+    @Binding var queryOrderVar:QueryOrderVar
     @State var selectedYear: Int = Date().year()
     @State var selectedMonth: String = Date().monthName()
     @State var selectedDay: Int = Date().day()
+    let maxYear = Date().year()
     let months: [String] = Calendar.current.shortMonthSymbols
-    let columns = [ GridItem(.adaptive(minimum: 80))]
     let days = Calendar.getSwedishShortWeekdayNames()
     
+    let columns = [ GridItem(.adaptive(minimum: 80))]
+
     let layout = [
             GridItem(.flexible(minimum: 40)),
             GridItem(.flexible(minimum: 40)),
@@ -31,7 +33,7 @@ struct CustomCalendarView: View {
             GridItem(.flexible(minimum: 40))
         ]
     
-    
+   
     var body: some View {
         VStack(spacing:20){
             calendar
@@ -106,17 +108,6 @@ struct CustomCalendarView: View {
         //.hLeading()
     }
     
-    func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
-        HStack{
-            Text(header).font(.headline).bold()
-            Text(subHeader).font(.body)
-            Spacer()
-        }
-        .foregroundColor(Color.placeholderText)
-        .hLeading()
-        
-    }
-    
     // MARK: - YEAR VIEW
     var topButtonRow: some View{
         HStack {
@@ -171,7 +162,7 @@ struct CustomCalendarView: View {
              ZStack{
                  if month == selectedMonth{
                      RoundedRectangle(cornerRadius: 8)
-                      .stroke(.green)
+                      .stroke(.black)
                       .matchedGeometryEffect(id: "CURRENTMONTH", in: animation)
                  }
              }
@@ -231,7 +222,7 @@ struct CustomCalendarView: View {
                      ZStack{
                          if newDay == selectedDay{
                              Circle()
-                              .stroke(.green)
+                              .stroke(.black)
                               .matchedGeometryEffect(id: "CURRENTDAY", in: animation)
                          }
                      }
