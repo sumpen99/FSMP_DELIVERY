@@ -43,19 +43,17 @@ struct OrderHistoryView: View{
             GridItem(.flexible(minimum: 40)),
             GridItem(.flexible(minimum: 40)),
         ]
-    
-    private var mockData:[String] = ["Order 1","Order 2"]
-    
-    private var categorieItem = [
-        "Id-Anställd",
-        "Id-Order",
-        "Namn",
-        "Adress",
-        "Email",
-        "Titel",
-        "Mottagen",
-        "Fritext",
-        "Ingen",
+   
+    private var queryItem:[QueryOptions] = [
+        QueryOptions.QUERY_ID_EMPLOYEE,
+        QueryOptions.QUERY_ID_ORDER,
+        QueryOptions.QUERY_CUSTOMER_NAME,
+        QueryOptions.QUERY_CUSTOMER_ADRESS,
+        QueryOptions.QUERY_CUSTOMER_EMAIL,
+        QueryOptions.QUERY_CUSTOMER_PHONENUMBER,
+        QueryOptions.QUERY_ORDER_TITLE,
+        QueryOptions.QUERY_ORDER_CREATED,
+        QueryOptions.QUERY_NONE,
     ]
     
     var body: some View{
@@ -73,7 +71,7 @@ struct OrderHistoryView: View{
             }
         }
         .onSubmit(of: .search) {
-            print("searching \(queryOrderVar.searchText)")
+            print("searching \(queryOrderVar.searchText) \(queryOrderVar.queryOption)")
         }
         .sheet(isPresented: $showingCalendar){
             CustomCalendarView(queryOrderVar:$queryOrderVar)
@@ -87,6 +85,10 @@ struct OrderHistoryView: View{
         }
         .onChange(of: queryOrderVar.usertDidSelectDates){ value in
             showingCalendar.toggle()
+            firestoreVM.closeAndReleaseQueryData()
+            firestoreVM.listenToOrdersSignedWithOptions(
+                queryOptions: [.QUERY_DATE],
+                queryOrderVar: queryOrderVar)
         }
         .onAppear{
             //firestoreVM.initializeListenerOrdersSigned()
@@ -119,8 +121,8 @@ struct OrderHistoryView: View{
             ToggleBox(toogleIsOn: $categoriesIsShowing, label: "Kategorier")
             if categoriesIsShowing {
                 LazyVGrid(columns: layout, spacing: 20.0,pinnedViews: [.sectionHeaders]) {
-                    ForEach(categorieItem, id: \.self) { cat in
-                        getCategorieCell(cat)
+                    ForEach(queryItem, id: \.self) { query in
+                        getCategorieCell(query.rawValue)
                    }
                 }
                 .padding([.horizontal,.top])
@@ -135,10 +137,10 @@ struct OrderHistoryView: View{
     var ordersFound:some View{
         ZStack{
             ScrollView{
-                if mockData.count != 0{
+                if firestoreVM.ordersSigned.count != 0{
                     LazyVStack{
-                        ForEach(mockData, id: \.self) { item in
-                            Text("\(item)")
+                        ForEach(firestoreVM.ordersSigned, id: \.orderId) { order in
+                            Text("\(order.orderId)").hLeading()
                         }
                         
                     }
@@ -171,6 +173,7 @@ struct OrderHistoryView: View{
             .foregroundStyle(categorie == queryOrderVar.selectedCategorie ? .primary : .tertiary)
             .onTapGesture {
                 withAnimation{
+                    queryOrderVar.queryOption = QueryOptions(rawValue: categorie)
                     queryOrderVar.selectedCategorie = categorie
                 }
             }
