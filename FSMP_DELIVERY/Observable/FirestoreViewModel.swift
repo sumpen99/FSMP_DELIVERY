@@ -160,33 +160,40 @@ class FirestoreViewModel: ObservableObject{
             .addSnapshotListener(){ [weak self] (snapshot, err) in
                 guard let documents = snapshot?.documents,
                       let strongSelf = self else { return }
-                var newOrders: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
-                for document in documents {
-                    guard let order = try? document.data(as : Order.self) else { continue }
-                    let o = order.getYearMontDay()
-                    
-                    guard let keyYear = newOrders["\(o.year)"] else{
-                        newOrders["\(o.year)"] = ["\(o.month)":["\(o.day)":[order]]]
-                        continue
-                    }
-                    guard let keyMonth = keyYear["\(o.month)"] else{
-                        newOrders["\(o.year)"]?["\(o.month)"] = ["\(o.day)":[order]]
-                        continue
-                    }
-                    
-                    guard let _ = keyMonth["\(o.day)"] else{
-                        newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"] = [order]
-                        continue
-                    }
-                    newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"]?.append(order)
-                }
                 
-                strongSelf.ordersSignedQuery = newOrders
+                DispatchQueue.global(qos: .background).async {
+                    var newOrders: [YEAR:[MONTH:[DAY:[Order]]]] = [:]
+                    for document in documents {
+                        guard let order = try? document.data(as : Order.self) else { continue }
+                        
+                        let o = order.getYearMontDay()
+                        
+                        // If we have year else set
+                        guard let keyYear = newOrders["\(o.year)"] else{
+                            newOrders["\(o.year)"] = ["\(o.month)":["\(o.day)":[order]]]
+                            continue
+                        }
+                        // If we have year and month else set
+                        guard let keyMonth = keyYear["\(o.month)"] else{
+                            newOrders["\(o.year)"]?["\(o.month)"] = ["\(o.day)":[order]]
+                            continue
+                        }
+                        // If we have year and month and day else set
+                        guard let _ = keyMonth["\(o.day)"] else{
+                            newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"] = [order]
+                            continue
+                        }
+                        // Append to year/month/day
+                        newOrders["\(o.year)"]?["\(o.month)"]?["\(o.day)"]?.append(order)
+                    }
+                    
+                    DispatchQueue.main.sync {
+                        strongSelf.ordersSignedQuery = newOrders
+                    }
+                }
                 // strongSelf.ordersSignedMap.keys = 2023
                 // strongSelf.ordersSignedMap["2023"]?.keys = ["5", "6"] MAJ JUNI
                 // strongSelf.ordersSignedMap["2023"]?["5"]?.count = 4 -> ORDERS
-                //print(strongSelf.ordersSignedMap["2023"]?["5"]?.count)
-                //strongSelf.queryOrdersSigned.splitData(newOrders)
             }
     }
     
@@ -430,12 +437,17 @@ class FirestoreViewModel: ObservableObject{
 }
 
 extension FirestoreViewModel{
+    
     func ordersSignedMonthHaveData(_ month:Int,year:Int) -> Bool {
         return ordersSignedQuery["\(year)"]?["\(month)"] != nil
     }
     
     func ordersSignedDayHaveData(_ day:Int,month:Int,year:Int) -> Int {
         return ordersSignedQuery["\(year)"]?["\(month)"]?["\(day)"]?.count ?? 0
+    }
+    
+    func ordersFromThisDay(_ day:Int,month:Int,year:Int) -> [Order]? {
+        return ordersSignedQuery["\(year)"]?["\(month)"]?["\(day)"]
     }
 }
 

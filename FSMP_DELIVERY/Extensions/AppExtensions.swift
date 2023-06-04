@@ -274,6 +274,13 @@ extension Date{
         return formatter.string(from: self)
     }
     
+    func time() -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+         
+        return dateFormatter.string(from: self)
+    }
+    
     func year() -> Int {
         let calendar = Calendar.current
         return calendar.component(.year, from: self)
@@ -384,7 +391,7 @@ extension View {
     }
     
     func fillSection() -> some View{
-            self.modifier(FillFormModifier())
+        self.modifier(FillFormModifier())
     }
     
     func hLeading() -> some View{

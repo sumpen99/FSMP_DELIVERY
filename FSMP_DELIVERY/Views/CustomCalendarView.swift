@@ -10,13 +10,13 @@ import SwiftUI
 var PAD_CALENDAR: Int = 0
 
 struct CustomCalendarView: View {
+    @Namespace var animation
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @Environment(\.dismiss) private var dismiss
     let maxYear = Date().year()
     @State var selectedYear: Int = Date().year()
     @State var selectedMonth: String = Date().monthName()
     @State var selectedDay: Int = Date().day()
-    @Namespace var animation
     let months: [String] = Calendar.current.shortMonthSymbols
     let columns = [ GridItem(.adaptive(minimum: 80))]
     let days = Calendar.getSwedishShortWeekdayNames()
@@ -36,7 +36,7 @@ struct CustomCalendarView: View {
         VStack(spacing:20){
             calendar
             Divider()
-            ordersLightVersion
+            ordersInfo
         }
     }
     
@@ -47,11 +47,9 @@ struct CustomCalendarView: View {
                 monthGridView
                 weekdaysName
                 daysGridView
-                
-                 
             }
             .onChange(of: selectedYear){ year in
-                if year > maxYear{ print("nej nej nej ");return}
+                if year > maxYear{ return }
                 queryOrdersSignedByYear()
             }
             /*.onChange(of: selectedMonth){ month in
@@ -64,25 +62,59 @@ struct CustomCalendarView: View {
             }*/
         }
         .onAppear{
-            //queryOrdersSignedByYear()
+            queryOrdersSignedByYear()
         }
         .onDisappear{
             firestoreVM.closeListenerOrdersSignedQuery()
         }
     }
     
-    var ordersLightVersion: some View{
-        ScrollView {
-            LazyVStack {
-                ForEach(100...120,id:\.self){ value in
-                    Text("\(value)").frame( maxWidth: .infinity)
+    var ordersInfo: some View{
+        Form{
+            Section(header: Text(getDateAsText())){
+                if numberOfOrdersOnThisDay() != 0 {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(ordersFromSelectedDay() ?? [],id:\.orderId){ order in
+                                shortOrderInfo(order)
+                            }
+                        }
+                    }
+                }
+                else{
+                    Text("Ingen data att visa")
+                    .foregroundColor(Color.placeholderText)
                 }
             }
         }
+        .scrollContentBackground(.hidden)
         //.frame( maxWidth: .infinity)
         //.edgesIgnoringSafeArea(.all)
         //.listStyle(GroupedListStyle())
         .frame(height:150.0)
+    }
+    
+    func shortOrderInfo(_ order:Order) -> some View{
+        VStack(spacing:10){
+            getHeaderSubHeader("Kund: ", subHeader: order.customer.name)
+            getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
+            getHeaderSubHeader("Slutförd: ", subHeader: order.dateOfCompletion?.time() ?? "00:00:00")
+            Divider()
+        }
+        .padding()
+        //.foregroundColor(Color.placeholderText)
+        //.hLeading()
+    }
+    
+    func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
+        HStack{
+            Text(header).font(.headline).bold()
+            Text(subHeader).font(.body)
+            Spacer()
+        }
+        .foregroundColor(Color.placeholderText)
+        .hLeading()
+        
     }
     
     // MARK: - YEAR VIEW
@@ -106,7 +138,7 @@ struct CustomCalendarView: View {
                 },label: {Text("Avbryt")})
                 Button(action: {
                     saveDate()
-                },label: {Text("Spara")})
+                },label: {Text("Hämta")})
             }
         }
         .padding(15)
@@ -118,7 +150,7 @@ struct CustomCalendarView: View {
            ForEach(months, id: \.self) { month in
                ZStack{
                    getMonthCell(month)
-                   if firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selectedYear){
+                   if thisMonthHaveOrders(month){
                        getBadgeMonth(month)
                    }
                   
@@ -181,10 +213,7 @@ struct CustomCalendarView: View {
             ForEach(1...daysInCurrentMonth(), id: \.self) { day in
                 ZStack{
                     getDayCell(day)
-                    if let num = firestoreVM.ordersSignedDayHaveData(day-PAD_CALENDAR,
-                                                                 month:getSelectedMonthIndex(),
-                                                                 year: selectedYear)
-                        ,num != 0{
+                    if let num = numberOfOrdersOnThisDay(day),num != 0{
                         getBadgeDay(day,num:num)
                     }
                 }
@@ -247,6 +276,7 @@ struct CustomCalendarView: View {
     }
     
     func saveDate(){
+        dismiss()
         //queryOrdersSignedByYear()
         //queryOrdersSignedByMonth()
         //queryOrdersSignedByDay()
@@ -287,4 +317,34 @@ struct CustomCalendarView: View {
         return  selectedMonthIndex + 1
     }
     
+    func thisMonthHaveOrders(_ month:String) -> Bool{
+        return firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selectedYear)
+    }
+    
+    func numberOfOrdersOnThisDay(_ day:Int) -> Int {
+        return firestoreVM.ordersSignedDayHaveData(day-PAD_CALENDAR,
+                                                     month:getSelectedMonthIndex(),
+                                                     year: selectedYear)
+    }
+    
+    func numberOfOrdersOnThisDay() -> Int {
+        return firestoreVM.ordersSignedDayHaveData(selectedDay,
+                                                     month:getSelectedMonthIndex(),
+                                                     year: selectedYear)
+    }
+    
+    func ordersFromSelectedDay() -> [Order]? {
+        return firestoreVM.ordersFromThisDay(selectedDay,
+                                             month:getSelectedMonthIndex(),
+                                             year: selectedYear)
+    }
+    
+    func getDateAsText() -> String{
+        let month = getSelectedMonthIndex()
+        guard let startDate = Date.from(selectedYear, month, selectedDay) else {
+            return "\(selectedDay)" + " " + "\(selectedMonth)" + " " + "\(selectedYear)"
+        }
+        let weekday = startDate.dayName()
+        return "\(weekday)" + " " + "\(selectedDay)" + " " + "\(selectedMonth)" + " " + "\(selectedYear)"
+    }
 }
