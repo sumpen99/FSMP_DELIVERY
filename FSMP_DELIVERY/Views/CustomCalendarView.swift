@@ -9,14 +9,19 @@ import SwiftUI
 
 var PAD_CALENDAR: Int = 0
 
+struct Selected{
+    var year: Int = Date().year()
+    var month: String = Date().monthName()
+    var day: Int = Date().day()
+}
+
 struct CustomCalendarView: View {
     @Namespace var animation
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @Environment(\.dismiss) private var dismiss
     @Binding var queryOrderVar:QueryOrderVar
-    @State var selectedYear: Int = Date().year()
-    @State var selectedMonth: String = Date().monthName()
-    @State var selectedDay: Int = Date().day()
+    @State var selected:Selected = Selected()
+    @State var userWillSaveDates: Bool = false
     let maxYear = Date().year()
     let months: [String] = Calendar.current.shortMonthSymbols
     let days = Calendar.getSwedishShortWeekdayNames()
@@ -40,6 +45,9 @@ struct CustomCalendarView: View {
             Divider()
             ordersInfo
         }
+        .actionSheet(isPresented: $userWillSaveDates) {
+            getCorrectSaveActionSheet()
+        }
     }
     
     var calendar: some View{
@@ -50,7 +58,7 @@ struct CustomCalendarView: View {
                 weekdaysName
                 daysGridView
             }
-            .onChange(of: selectedYear){ year in
+            .onChange(of: selected.year){ year in
                 if year > maxYear{ return }
                 queryOrdersSignedByYear()
             }
@@ -112,15 +120,15 @@ struct CustomCalendarView: View {
     var topButtonRow: some View{
         HStack {
             Button(action: {
-                if selectedYear > FSMP_RELEASE_YEAR{
-                    selectedYear -= 1
+                if selected.year > FSMP_RELEASE_YEAR{
+                    selected.year -= 1
                 }
             },label: {Text("\(Image(systemName: "chevron.left"))")})
-            Text(String(selectedYear))
+            Text(String(selected.year))
                      .fontWeight(.bold)
                      .transition(.move(edge: .trailing))
             Button(action: {
-                selectedYear += 1
+                selected.year += 1
             },label: {Text("\(Image(systemName: "chevron.right"))")})
             Spacer()
             HStack(spacing:20){
@@ -160,17 +168,17 @@ struct CustomCalendarView: View {
         .cornerRadius(8)
         .background(
              ZStack{
-                 if month == selectedMonth{
+                 if month == selected.month{
                      RoundedRectangle(cornerRadius: 8)
                       .stroke(.black)
                       .matchedGeometryEffect(id: "CURRENTMONTH", in: animation)
                  }
              }
         )
-        .foregroundStyle(month == selectedMonth ? .primary : .tertiary)
+        .foregroundStyle(month == selected.month ? .primary : .tertiary)
         .onTapGesture {
             withAnimation{
-                selectedMonth = month
+                selected.month = month
             }
         }
     }
@@ -178,10 +186,10 @@ struct CustomCalendarView: View {
     func getBadgeMonth(_ month:String) -> some View{
         return ZStack{
             Circle()
-                .fill(month == selectedMonth ? .black : Color.tertiarySystemFill)
+                .fill(month == selected.month ? .black : Color.tertiarySystemFill)
                 .frame(width: 10, height: 10,alignment: .trailing)
         }
-        .foregroundStyle(month == selectedMonth ? .primary : .tertiary)
+        .foregroundStyle(month == selected.month ? .primary : .tertiary)
         .padding([.trailing],10)
         //.padding([.bottom],5)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
@@ -220,7 +228,7 @@ struct CustomCalendarView: View {
                 .frame(width: 30, height: 30)
                 .background(
                      ZStack{
-                         if newDay == selectedDay{
+                         if newDay == selected.day{
                              Circle()
                               .stroke(.black)
                               .matchedGeometryEffect(id: "CURRENTDAY", in: animation)
@@ -229,7 +237,7 @@ struct CustomCalendarView: View {
                 )
                 .onTapGesture {
                     withAnimation{
-                        selectedDay = day - PAD_CALENDAR
+                        selected.day = day - PAD_CALENDAR
                     }
                 }
     }
@@ -243,19 +251,48 @@ struct CustomCalendarView: View {
                 .frame(width: 20, height: 20,alignment: .trailing)
             Text("\(num)").font(.caption)
         }
-        .foregroundStyle(newDay == selectedDay ? .primary : .tertiary)
+        .foregroundStyle(newDay == selected.day ? .primary : .tertiary)
         .padding([.trailing],-5)
         .padding([.bottom],-5)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         .opacity(showDay ? 1.0 : 0.0)
     }
     
+    // MARK: - ACTIONSHEET
+    func getCorrectSaveActionSheet() -> ActionSheet{
+        if numberOfOrdersOnThisDay() != 0{
+            return ActionSheet(title: Text("Välj tidsperiod"), message: Text("Ni kan välja att hämta data från år,månad eller dag."), buttons: [
+                .default(Text("Hela året")) { setDateThisYear() },
+                .default(Text(getCapitalizedMonth())) { setDateThisMonth() },
+                .default(Text(getDateAsText())) { setDateThisDay() },
+                .cancel()
+            ])
+        }
+        else if thisMonthHaveOrders(selected.month){
+            return ActionSheet(title: Text("Välj tidsperiod"), message: Text("Ni kan välja att hämta data från år eller månad."), buttons: [
+                .default(Text("Hela året")) { setDateThisYear() },
+                .default(Text(getCapitalizedMonth())) { setDateThisMonth() },
+                .cancel()
+            ])
+        }
+        else if thisYearHaveOrders(selected.year){
+            return ActionSheet(title: Text("Välj tidsperiod"), message: Text("Det finns ingen data att hämta från \(selected.month) månad men ni kan välja hela året istället"), buttons: [
+                .default(Text("Hämta hela året")) { setDateThisYear() },
+                .cancel()
+            ])
+        }
+        else {
+            return ActionSheet(title: Text("Välj tidsperiod"), message: Text("Det finns ingen data att hämta från det här året"), buttons: [
+                .default(Text("Ok")) {  },
+            ])
+        }
+    }
     
     // MARK: - HELPER METHODS
     func daysInCurrentMonth() -> Int {
-        let monthNumber = (months.firstIndex(of: selectedMonth) ?? 0) + 1
+        let monthNumber = (months.firstIndex(of: selected.month) ?? 0) + 1
         var dateComponents = DateComponents()
-        dateComponents.year = selectedYear
+        dateComponents.year = selected.year
         dateComponents.month = monthNumber
         guard let date = Calendar.current.date(from: dateComponents),
               let interval = Calendar.current.dateInterval(of: .month, for: date),
@@ -267,7 +304,7 @@ struct CustomCalendarView: View {
     }
     
     func saveDate(){
-        dismiss()
+        userWillSaveDates.toggle()
         //queryOrdersSignedByYear()
         //queryOrdersSignedByMonth()
         //queryOrdersSignedByDay()
@@ -278,7 +315,8 @@ struct CustomCalendarView: View {
     }
     
     func queryOrdersSignedByYear(){
-        guard let startDate = Date.from(selectedYear, 1, 1),let endDate = Date.from(selectedYear+1,1,1) else { return }
+        guard let startDate = Date.from(selected.year, 1, 1),
+              let endDate = Date.from(selected.year+1,1,1) else { return }
         firestoreVM.closeListenerOrdersSignedQuery()
         firestoreVM.releaseOrderSignedQueryData()
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
@@ -286,20 +324,45 @@ struct CustomCalendarView: View {
     
     func queryOrdersSignedByMonth(){
         let month = getSelectedMonthIndex()
-        guard let startDate = Date.from(selectedYear, month, 1),
-              let endDate = Date.from(selectedYear,month+1,1) else { return }
+        guard let startDate = Date.from(selected.year, month, 1),
+              let endDate = Date.from(selected.year,month+1,1) else { return }
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
     }
     
     func queryOrdersSignedByDay(){
         let month = getSelectedMonthIndex()
-        guard let startDate = Date.from(selectedYear, month, selectedDay),
-              let endDate = Date.from(selectedYear,month,selectedDay+1) else { return }
+        guard let startDate = Date.from(selected.year, month, selected.day),
+              let endDate = Date.from(selected.year,month,selected.day+1) else { return }
         firestoreVM.queryOrdersSignedByDateRange(startDate: startDate, endDate: endDate)
     }
     
+    func setDateThisYear(){
+        guard let startDate = Date.from(selected.year, 1, 1),
+              let endDate = Date.from(selected.year+1,1,1) else { return }
+        queryOrderVar.setNewDates(startDate, endDate: endDate)
+    }
+    
+    func setDateThisMonth(){
+        let month = getSelectedMonthIndex()
+        guard let startDate = Date.from(selected.year, month, 1),
+              let endDate = Date.from(selected.year,month+1,1) else { return }
+        queryOrderVar.setNewDates(startDate, endDate: endDate)
+    }
+    
+    func setDateThisDay(){
+        let month = getSelectedMonthIndex()
+        guard let startDate = Date.from(selected.year, month, selected.day),
+              let endDate = Date.from(selected.year,month,selected.day+1) else { return }
+        queryOrderVar.setNewDates(startDate, endDate: endDate)
+        
+    }
+    
+    func getCapitalizedMonth() -> String{
+        return selected.month.capitalizingFirstLetter()
+    }
+    
     func getSelectedMonthIndex() -> Int{
-        guard let selectedMonthIndex = months.firstIndex(of: selectedMonth) else { return -1 }
+        guard let selectedMonthIndex = months.firstIndex(of: selected.month) else { return -1 }
         return  selectedMonthIndex + 1
     }
     
@@ -308,34 +371,38 @@ struct CustomCalendarView: View {
         return  selectedMonthIndex + 1
     }
     
+    func thisYearHaveOrders(_ year:Int) -> Bool{
+        return firestoreVM.ordersSignedYearHaveData(year)
+    }
+    
     func thisMonthHaveOrders(_ month:String) -> Bool{
-        return firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selectedYear)
+        return firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selected.year)
     }
     
     func numberOfOrdersOnThisDay(_ day:Int) -> Int {
         return firestoreVM.ordersSignedDayHaveData(day-PAD_CALENDAR,
                                                      month:getSelectedMonthIndex(),
-                                                     year: selectedYear)
+                                                     year: selected.year)
     }
     
     func numberOfOrdersOnThisDay() -> Int {
-        return firestoreVM.ordersSignedDayHaveData(selectedDay,
+        return firestoreVM.ordersSignedDayHaveData(selected.day,
                                                      month:getSelectedMonthIndex(),
-                                                     year: selectedYear)
+                                                     year: selected.year)
     }
     
     func ordersFromSelectedDay() -> [Order]? {
-        return firestoreVM.ordersFromThisDay(selectedDay,
+        return firestoreVM.ordersFromThisDay(selected.day,
                                              month:getSelectedMonthIndex(),
-                                             year: selectedYear)
+                                             year: selected.year)
     }
     
     func getDateAsText() -> String{
         let month = getSelectedMonthIndex()
-        guard let startDate = Date.from(selectedYear, month, selectedDay) else {
-            return "\(selectedDay)" + " " + "\(selectedMonth)" + " " + "\(selectedYear)"
+        guard let startDate = Date.from(selected.year, month, selected.day) else {
+            return "\(selected.day)" + " " + "\(selected.month)" + " " + "\(selected.year)"
         }
         let weekday = startDate.dayName()
-        return "\(weekday)" + " " + "\(selectedDay)" + " " + "\(selectedMonth)" + " " + "\(selectedYear)"
+        return "\(weekday)" + " " + "\(selected.day)" + " " + "\(selected.month)" + " " + "\(selected.year)"
     }
 }
