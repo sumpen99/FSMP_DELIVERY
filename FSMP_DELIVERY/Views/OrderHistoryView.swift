@@ -58,7 +58,43 @@ struct OrderHistoryView: View{
         "Ingen",
     ]
     
-    
+    var body: some View{
+        NavigationView {
+            VStack{
+                searchRange
+                categories
+                ordersFound
+            }
+        }
+        .searchable(text: $queryOrderVar.searchText, placement: .navigationBarDrawer(displayMode: .always))
+        .onChange(of: queryOrderVar.searchText) { value in
+            if queryOrderVar.searchText.isEmpty && !isSearching {
+                //Search cancelled here
+            }
+        }
+        .onSubmit(of: .search) {
+            print("searching \(queryOrderVar.searchText)")
+        }
+        .sheet(isPresented: $showingCalendar){
+            CustomCalendarView(queryOrderVar:$queryOrderVar)
+        }
+        .toolbar {
+            ToolbarItemGroup{
+                Button(action: {showingCalendar.toggle()}) {
+                    Label("", systemImage: "calendar")
+                }
+            }
+        }
+        .onChange(of: queryOrderVar.usertDidSelectDates){ value in
+            showingCalendar.toggle()
+        }
+        .onAppear{
+            //firestoreVM.initializeListenerOrdersSigned()
+        }
+        .onDisappear{
+            //firestoreVM.closeListenerOrdersSigned()
+        }
+    }
     
     var searchRange: some View {
         VStack(spacing:10.0){
@@ -114,41 +150,6 @@ struct OrderHistoryView: View{
             }
         }
         .matchedGeometryEffect(id: "ORDERSFOUND", in: animationOrder)
-    }
-    
-    var body: some View{
-        NavigationView {
-            VStack{
-                searchRange
-                categories
-                ordersFound
-            }
-        }
-        .searchable(text: $queryOrderVar.searchText, placement: .navigationBarDrawer(displayMode: .always))
-        .onChange(of: queryOrderVar.searchText) { value in
-            if queryOrderVar.searchText.isEmpty && !isSearching {
-                //Search cancelled here
-            }
-        }
-        .onSubmit(of: .search) {
-            print("searching \(queryOrderVar.searchText)")
-        }
-        .sheet(isPresented: $showingCalendar){
-            CustomCalendarView(queryOrderVar:$queryOrderVar)
-        }
-        .toolbar {
-            ToolbarItemGroup{
-                Button(action: {showingCalendar.toggle()}) {
-                    Label("", systemImage: "calendar")
-                }
-            }
-        }
-        .onAppear{
-            //firestoreVM.initializeListenerOrdersSigned()
-        }
-        .onDisappear{
-            //firestoreVM.closeListenerOrdersSigned()
-        }
     }
     
     func getCategorieCell(_ categorie:String) -> some View{

@@ -10,4 +10,11 @@ struct QueryOrderVar{
     var endDate:Date?
     var searchText:String = ""
     var selectedCategorie:String = ""
+    var usertDidSelectDates:Bool = false
+    
+    mutating func setNewDates(_ startDate:Date,endDate:Date){
+        self.startDate = startDate
+        self.endDate = endDate
+        usertDidSelectDates.toggle()
+    }
 }

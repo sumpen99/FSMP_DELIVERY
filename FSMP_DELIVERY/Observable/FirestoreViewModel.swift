@@ -438,6 +438,10 @@ class FirestoreViewModel: ObservableObject{
 
 extension FirestoreViewModel{
     
+    func ordersSignedYearHaveData(_ year:Int) -> Bool {
+        return ordersSignedQuery["\(year)"] != nil
+    }
+    
     func ordersSignedMonthHaveData(_ month:Int,year:Int) -> Bool {
         return ordersSignedQuery["\(year)"]?["\(month)"] != nil
     }
