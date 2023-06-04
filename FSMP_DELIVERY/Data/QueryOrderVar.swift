@@ -8,6 +8,7 @@ import SwiftUI
 struct QueryOrderVar{
     var startDate:Date?
     var endDate:Date?
+    var queryOption:QueryOptions? = QueryOptions.QUERY_NONE
     var searchText:String = ""
     var selectedCategorie:String = ""
     var usertDidSelectDates:Bool = false

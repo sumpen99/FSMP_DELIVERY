@@ -35,11 +35,15 @@ class FirestoreViewModel: ObservableObject{
         ordersSignedQuery.removeAll()
     }
     
+    func closeAndReleaseQueryData(){
+        closeListenerOrdersSignedQuery()
+        releaseOrderSignedQueryData()
+    }
+    
     // MARK: - FIREBASE LISTENER-REGISTRATION
     func initializeListener(){
         listenToCustomers()
         listenToOrdersInProcess()
-        listenToOrdersSigned()
     }
     
     func initializeListenerCustomers(){
@@ -47,15 +51,8 @@ class FirestoreViewModel: ObservableObject{
     }
     
     func initializeListenerOrdersInProcess(){
-        listenToOrdersInProcess()
-    }
-    
-    func initializeListenerOrdersSigned(){
-        listenToOrdersSigned()
-    }
-    
-    func initializeListenerOrdersSignedQuery(){
-        
+        //listenToOrdersInProcess()
+        listenToOrdersInProcessNotSignedByOthers()
     }
     
     func closeAllListener(){
@@ -127,20 +124,24 @@ class FirestoreViewModel: ObservableObject{
             }
     }
 
-    
-    func listenToOrdersSigned() {
+    func listenToOrdersSignedWithOptions(
+        queryOptions:[QueryOptions],
+        queryOrderVar:QueryOrderVar){
         let orders = repo.getOrderSignedCollection()
-        listenerOrdersSigned = orders.addSnapshotListener() { [weak self] (snapshot, err) in
+        listenerOrdersSigned = addQueryToQuery(orders,
+                                               queryOptions: queryOptions,
+                                               queryOrderVar:queryOrderVar)
+        .addSnapshotListener(){ [weak self] (snapshot, err) in
             guard let documents = snapshot?.documents,
                   let strongSelf = self else { return }
             var newOrders = [Order]()
             for document in documents {
                 guard let order = try? document.data(as : Order.self) else { continue }
-                print(order)
                 newOrders.append(order)
             }
             strongSelf.ordersSigned = newOrders
         }
+        
     }
     
     // MARK: - FIREBASE QUERY-FUNCTIONS
@@ -438,6 +439,79 @@ class FirestoreViewModel: ObservableObject{
 
 extension FirestoreViewModel{
     
+    func addQueryToQuery(_ query:Query,
+                        queryOptions:[QueryOptions],
+                        queryOrderVar:QueryOrderVar) -> Query{
+        var q:Query = query
+        for options in queryOptions{
+            switch options{
+                case .QUERY_DATE:
+                    guard let startDate = queryOrderVar.startDate,
+                          let endDate = queryOrderVar.endDate else { continue }
+                    q = getDateQuery(q,startDate: startDate,endDate: endDate)
+                case .QUERY_ID_EMPLOYEE:
+                    q = getIdEmployeeQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_ID_ORDER:
+                    q = getIdOrderQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_CUSTOMER_NAME:
+                    q = getCustomerNameQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_CUSTOMER_ADRESS:
+                    q = getCustomerAdressQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_CUSTOMER_EMAIL:
+                    q = getCustomerEmailQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_ORDER_TITLE:
+                    q = getOrderTitleQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_ORDER_CREATED:
+                    q = getOrderCreatedQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_CUSTOMER_PHONENUMBER:
+                    q = getCustomerPhonenumberQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_NONE:
+                    print("QUERY_NONE")
+            }
+        }
+        return q
+    }
+    
+    func getDateQuery(_ q:Query,startDate:Date,endDate:Date) -> Query{
+        return q
+            .whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
+            .whereField("dateOfCompletion", isLessThan: endDate)
+    }
+    
+    func getIdEmployeeQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("assignedUser",isEqualTo: searchtext)
+    }
+    
+    func getIdOrderQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("orderId",isEqualTo: searchtext)
+    }
+    
+    func getCustomerNameQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("customer.name", isEqualTo: searchtext)
+    }
+    
+    func getCustomerAdressQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("customer.adress", isEqualTo: searchtext)
+    }
+    
+    func getCustomerEmailQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("customer.email", isEqualTo: searchtext)
+    }
+    
+    func getCustomerPhonenumberQuery(_ q:Query,searchtext:String) -> Query{
+        // CHANGE STRING TO INT
+        return q.whereField("customer.phoneNumber", isEqualTo: searchtext)
+    }
+    
+    func getOrderTitleQuery(_ q:Query,searchtext:String) -> Query{
+        return q.whereField("ordername", isEqualTo: searchtext)
+    }
+    
+    func getOrderCreatedQuery(_ q:Query,searchtext:String) -> Query{
+        // CHANGE STRING TO DATE
+        return q
+    }
+   
     func ordersSignedYearHaveData(_ year:Int) -> Bool {
         return ordersSignedQuery["\(year)"] != nil
     }

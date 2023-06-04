@@ -57,6 +57,7 @@
 		7DB101012A2C729100927BDC /* QueryOrderVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB101002A2C729100927BDC /* QueryOrderVar.swift */; };
 		7DB101032A2CA26C00927BDC /* CardModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB101022A2CA26C00927BDC /* CardModifier.swift */; };
 		7DB101052A2CA29A00927BDC /* ButtonToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB101042A2CA29A00927BDC /* ButtonToggleStyle.swift */; };
+		7DB101072A2CCA6100927BDC /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB101062A2CCA6100927BDC /* QueryOptions.swift */; };
 		7DD720162A2AA03200B6C9DE /* CustomCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD720152A2AA03200B6C9DE /* CustomCalendarView.swift */; };
 		7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607C2A1FD905000F49CB /* Credentials.swift */; };
 		7DE7607F2A20E881000F49CB /* OrderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7607E2A20E881000F49CB /* OrderType.swift */; };
@@ -120,6 +121,7 @@
 		7DB101002A2C729100927BDC /* QueryOrderVar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOrderVar.swift; sourceTree = "<group>"; };
 		7DB101022A2CA26C00927BDC /* CardModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModifier.swift; sourceTree = "<group>"; };
 		7DB101042A2CA29A00927BDC /* ButtonToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonToggleStyle.swift; sourceTree = "<group>"; };
+		7DB101062A2CCA6100927BDC /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		7DD720152A2AA03200B6C9DE /* CustomCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarView.swift; sourceTree = "<group>"; };
 		7DE7607C2A1FD905000F49CB /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		7DE7607E2A20E881000F49CB /* OrderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderType.swift; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 				7DE760882A26684B000F49CB /* FirebaseError.swift */,
 				7DE7608A2A268B6C000F49CB /* ProgressViewVar.swift */,
 				7DB101002A2C729100927BDC /* QueryOrderVar.swift */,
+				7DB101062A2CCA6100927BDC /* QueryOptions.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				5F8C2AB22A1B910500EAB420 /* createAccountView.swift in Sources */,
 				7D29E0EE2A17CE51003E0BE8 /* QrCameraDelegate.swift in Sources */,
 				7D29E0E42A1782BD003E0BE8 /* QrCameraPreView.swift in Sources */,
+				7DB101072A2CCA6100927BDC /* QueryOptions.swift in Sources */,
 				AFC1D9922A251DAA0065FCAD /* LocationSearchViewModel.swift in Sources */,
 				7DE7608D2A2A2660000F49CB /* OrderHistoryView.swift in Sources */,
 				7D29E0FC2A1BC933003E0BE8 /* AdminView.swift in Sources */,
