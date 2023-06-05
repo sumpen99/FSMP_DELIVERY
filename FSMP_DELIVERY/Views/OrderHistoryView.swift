@@ -143,8 +143,7 @@ struct OrderHistoryView: View{
                 if firestoreVM.ordersSigned.count != 0{
                     LazyVStack{
                         ForEach(firestoreVM.ordersSigned, id: \.orderId) { order in
-                            //Text("\(order.orderId)").hLeading()
-                            mediumOrderInfo(order)
+                            MediumOrderView(order:order)
                         }
                         
                     }
@@ -156,31 +155,6 @@ struct OrderHistoryView: View{
             }
         }
         .matchedGeometryEffect(id: "ORDERSFOUND", in: animationOrder)
-    }
-    
-    func mediumOrderInfo(_ order:Order) -> some View{
-        NavigationLink(destination:LazyDestination(destination: { QrView() })) {
-            ZStack(alignment:.center){
-                Color.white
-                Image(systemName: "chevron.right")
-                .foregroundColor(Color.systemBlue)
-                .hTrailing()
-                .padding(.trailing)
-                VStack{
-                    getVertHeaderMessage("Kund",message: order.customer.name)
-                    getVertHeaderMessage("Adress",message: order.customer.adress)
-                    getVertHeaderMessage("Order registrerades",message: order.getInitDateWithTime())
-                    getVertHeaderMessage("Order slutfördes",message: order.getcompletionDateWithTime())
-                    getVertHeaderMessage("Order utfördes av",message: order.assignedUser ?? "Okänd")
-                }
-                .hLeading()
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color.systemGray,lineWidth: 1)
-            )
-            .padding([.leading,.trailing,.bottom])
-        }
     }
     
     func getCategorieCell(_ query:QueryOptions) -> some View{
@@ -241,4 +215,61 @@ struct OrderHistoryView: View{
     }
 }
 
+struct MediumOrderView:View{
+    let order:Order
+    @State var showMoreInfo:Bool = false
+    
+    var body: some View{
+        VStack(spacing:10.0){
+            Color.white
+            ToggleBox(toogleIsOn: $showMoreInfo, label: order.orderId)
+            if showMoreInfo {
+                NavigationLink(destination:LazyDestination(destination: { FullOrderView(order:order) })) {
+                    ZStack(alignment:.center){
+                        Color.white
+                        rightAlignChevronIcon(label: "chevron.right")
+                        VStack{
+                            getVertHeaderMessage("Kund",message: order.customer.name)
+                            getVertHeaderMessage("Adress",message: order.customer.adress)
+                            getVertHeaderMessage("Order registrerades",message: order.getInitDateWithTime())
+                            getVertHeaderMessage("Order slutfördes",message: order.getcompletionDateWithTime())
+                            getVertHeaderMessage("Order utfördes av",message: order.assignedUser ?? "Okänd")
+                        }
+                        .hLeading()
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color.systemGray,lineWidth: 1)
+                    )
+                    .padding([.leading,.trailing,.bottom])
+                }
+                
+            }
+        }
+        .hLeading()
+        .padding(.leading)
+        .modifier(CardModifier(size: getCardSize() ))
+    }
+    
+    func rightAlignChevronIcon(label:String) -> some View{
+        return Image(systemName: label)
+            .foregroundColor(Color.systemBlue)
+            .hTrailing()
+            .padding(.trailing)
+    }
+    
+    func getCardSize() -> CGFloat{
+        return showMoreInfo ? 350.0 : 50.0
+    }
+}
 
+struct FullOrderView: View{
+    let order:Order
+    
+    var body: some View{
+        ZStack{
+            Color.white
+            Text(order.orderId)
+        }
+    }
+}
