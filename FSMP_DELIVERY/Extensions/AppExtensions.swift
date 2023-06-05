@@ -312,6 +312,11 @@ extension Date{
         return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())"
     }
     
+    func formattedStringWithTime() -> String{
+        let weekday = dayName()
+        return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())" + " " + time()
+    }
+    
     func time() -> String{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm:ss"

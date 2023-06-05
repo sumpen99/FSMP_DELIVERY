@@ -18,5 +18,6 @@ enum QueryOptions : String {
     case QUERY_CUSTOMER_PHONENUMBER = "Tel.nr"
     case QUERY_ORDER_TITLE = "Titel"
     case QUERY_ORDER_CREATED = "Mottagen"
+    case QUERY_SORT_BY_DATE_COMPLETION = "Sortera på utfört datum"
     case QUERY_NONE = "Ingen"
 }

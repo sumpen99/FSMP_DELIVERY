@@ -482,8 +482,10 @@ extension FirestoreViewModel{
                     q = getOrderCreatedQuery(q,searchtext: queryOrderVar.searchText)
                 case .QUERY_CUSTOMER_PHONENUMBER:
                     q = getCustomerPhonenumberQuery(q,searchtext: queryOrderVar.searchText)
+                case .QUERY_SORT_BY_DATE_COMPLETION:
+                    q = sortQueryByDate(q)
                 case .QUERY_NONE:
-                    print("QUERY_NONE")
+                    continue
             }
         }
         return q
@@ -535,6 +537,10 @@ extension FirestoreViewModel{
     func getOrderCreatedQuery(_ q:Query,searchtext:String) -> Query{
         // CHANGE STRING TO DATE
         return q
+    }
+    
+    func sortQueryByDate(_ q:Query) -> Query{
+        return q.order(by: "dateOfCompletion")
     }
    
     func ordersSignedYearHaveData(_ year:Int) -> Bool {
