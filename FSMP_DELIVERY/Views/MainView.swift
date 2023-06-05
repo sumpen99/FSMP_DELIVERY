@@ -143,18 +143,15 @@ struct MainView: View {
     
     var bottomButtons: some View{
         HStack(spacing:20){
-            activateOrderButton
+            deAndActivateOrderButton
             mapviewButton
             signOfOrderBtn
             Spacer()
-//            if orderIsActivated{
-//                deActivateOrderButton
-//            }
         }
         .padding(.leading)
     }
     
-    var activateOrderButton: some View {
+    var deAndActivateOrderButton: some View {
         
         Button(action: {
             if !orderIsActivated{
@@ -171,14 +168,15 @@ struct MainView: View {
             
         }
         
-        .buttonStyle(CustomButtonStyleDisabledable())
+        .buttonStyle(CustomButtonStyleActivateDeactivate(isActivated: !orderIsActivated))
     }
     
     var mapviewButton: some View{
         NavigationLink(destination: MapView()){
             Image(systemName: "map")
         }
-        .buttonStyle(CustomButtonStyle2())
+        .buttonStyle(CustomButtonStyleDisabledable())
+        .disabled(!orderIsActivated)
     }
     
     var signOfOrderBtn: some View {
@@ -188,21 +186,6 @@ struct MainView: View {
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(!orderIsActivated)
     }
-    
-//    var deActivateOrderButton: some View {
-//        Button(action: {setAlertDeActivateOrderMessage()})
-//        {
-//            Text(Image(systemName: "hand.raised.slash"))
-//                .font(.largeTitle)
-//        }
-//        .buttonStyle(CustomButtonStyle1())
-//        .padding(.trailing)
-//    }
-    
-    // func for edit highlighted order on longpress
-//    func getListEditOrderButton(order:Order) -> some View{
-//        
-//    }
     
     func getListOrderButton(order:Order) -> some View{
         return HStack {
