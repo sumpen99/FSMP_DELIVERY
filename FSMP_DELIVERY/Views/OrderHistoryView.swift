@@ -140,8 +140,9 @@ struct OrderHistoryView: View{
     var ordersFound:some View{
         ZStack{
             ScrollView{
-                if firestoreVM.ordersSigned.count != 0{
+                if firestoreVM.ordersSigned.count > 0{
                     LazyVStack{
+                        getSearchTitleResult()
                         ForEach(firestoreVM.ordersSigned, id: \.orderId) { order in
                             MediumOrderView(order:order)
                         }
@@ -181,6 +182,15 @@ struct OrderHistoryView: View{
             }
     }
     
+    func getSearchTitleResult() -> some View{
+        return VStack{
+            Text("Sökresultat").font(.title).bold()
+            Divider()
+        }
+        .foregroundColor(Color.systemGray)
+        .hCenter()
+    }
+    
     func getDateRangeSize()->CGFloat{
         return dateRangeIsShowing ? 90.0 : 50.0
     }
@@ -201,7 +211,7 @@ struct OrderHistoryView: View{
                                  message: "Välj kategori eller en tidsintervall")
             return
         }
-        let queryOptions = [dateQuery,queryOrderVar.queryOption]
+        let queryOptions = [dateQuery,queryOrderVar.queryOption,.QUERY_SORT_BY_DATE_COMPLETION]
         firestoreVM.closeAndReleaseQueryData()
         firestoreVM.listenToOrdersSignedWithOptions(
             queryOptions: queryOptions,
@@ -241,7 +251,7 @@ struct MediumOrderView:View{
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.systemGray,lineWidth: 1)
                     )
-                    .padding([.leading,.trailing,.bottom])
+                    .padding([.trailing,.bottom])
                 }
                 
             }
@@ -264,12 +274,118 @@ struct MediumOrderView:View{
 }
 
 struct FullOrderView: View{
+    @Namespace var animationFullOrder
     let order:Order
+    @State var showMoreInfoAboutOrder:Bool = false
+    @State var showMoreInfoAboutCustomer:Bool = false
+    @State var showMoreInfoAboutEmployee:Bool = false
     
-    var body: some View{
+    func getSectionText(label:String,text:String) -> some View{
+        return getHeaderSubHeader(label, subHeader: text)
+    }
+    
+    var getSectionCustomer: some View{
         ZStack{
             Color.white
-            Text(order.orderId)
+            VStack(spacing:10.0){
+                ToggleBox(toogleIsOn: $showMoreInfoAboutCustomer, label: "Kund-Info")
+                if showMoreInfoAboutCustomer {
+                    LazyVStack{
+                        getVertHeaderMessage("Namn", message: order.customer.name)
+                        getVertHeaderMessage("Adress", message: order.customer.adress)
+                        getVertHeaderMessage("Poskod", message: order.customer.postcode)
+                        getVertHeaderMessage("Email", message: order.customer.email)
+                        getVertHeaderMessage("Telefonnummer", message: "\(order.customer.phoneNumber)")
+                        getVertHeaderMessage("Information", message: order.customer.description)
+                        
+                    }
+                    .hLeading()
+                    .matchedGeometryEffect(id: "SELECTEDSECTIONCUSTOMER", in: animationFullOrder)
+                }
+                Divider()
+            }
         }
+        .hLeading()
+        .padding(.leading)
+        .modifier(CardModifier(size: getSectionCustomerSize() ))
+    }
+    
+    var getSectionOrder: some View{
+        ZStack{
+            Color.white
+            VStack(spacing:10.0){
+                ToggleBox(toogleIsOn: $showMoreInfoAboutOrder, label: "Order-Info")
+                if showMoreInfoAboutOrder {
+                    LazyVStack{
+                        getVertHeaderMessage("Titel", message: order.ordername)
+                        getVertHeaderMessage("Info", message: order.details)
+                        getVertHeaderMessage("Id", message: order.orderId)
+                        getVertHeaderMessage("Registrerades", message: order.initDate.formattedStringWithTime())
+                        getVertHeaderMessage("Slutfördes", message: order.dateOfCompletion?.formattedStringWithTime() ?? "")
+                    }
+                    .hLeading()
+                    .matchedGeometryEffect(id: "SELECTEDSECTIONORDER", in: animationFullOrder)
+                }
+                Divider()
+            }
+        }
+        .hLeading()
+        .padding(.leading)
+        .modifier(CardModifier(size: getSectionOrderSize() ))
+    }
+    
+    var getSectionEmployee: some View{
+        ZStack{
+            Color.white
+            VStack(spacing:10.0){
+                ToggleBox(toogleIsOn: $showMoreInfoAboutEmployee, label: "Anställd-Info")
+                if showMoreInfoAboutEmployee {
+                    LazyVStack{
+                        getVertHeaderMessage("Id", message: order.assignedUser ?? "")
+                    }
+                    .hLeading()
+                    .matchedGeometryEffect(id: "SELECTEDSECTIONEMPLOYEE", in: animationFullOrder)
+                }
+                Divider()
+            }
+        }
+        .hLeading()
+        .padding(.leading)
+        .modifier(CardModifier(size: getSectionEmployeeSize() ))
+    }
+    
+    var body: some View{
+        VStack {
+            ScrollView{
+                LazyVStack {
+                    getSectionOrder
+                    getSectionCustomer
+                    getSectionEmployee
+                }
+            }
+        }
+        .modifier(NavigationViewModifier(title: order.orderId))
+    }
+    
+    func getSectionOrderSize() ->CGFloat{
+        return showMoreInfoAboutOrder ? 400 : 50
+    }
+    
+    func getSectionCustomerSize() ->CGFloat{
+        return showMoreInfoAboutCustomer ? 400 : 50
+    }
+    
+    func getSectionEmployeeSize() ->CGFloat{
+        return showMoreInfoAboutEmployee ? 90 : 50
+    }
+}
+
+struct NavigationViewModifier: ViewModifier {
+    let title:String
+    func body(content: Content) -> some View {
+        content
+        .scrollContentBackground(.hidden)
+        .background( .white)
+        .navigationBarTitle(Text(title),displayMode: .inline)
     }
 }
