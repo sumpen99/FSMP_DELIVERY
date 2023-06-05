@@ -109,6 +109,47 @@ func daysInCurrentMonth(monthNumber: Int,year: Int) -> Int {
     return days
 }
 
+func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
+    HStack{
+        Text(header).font(.headline).bold()
+        Text(subHeader).font(.body)
+        Spacer()
+    }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    
+}
+
+func getHeaderSubHeaderWithClearOption(_ header:String,subHeader:String,action:(() -> Void)? = nil) -> some View{
+    HStack{
+        Text(header).font(.headline).bold()
+        Text(subHeader).font(.body)
+        Spacer()
+        Button(action: { action?() },label: {
+            Text("Rensa").foregroundColor(Color.systemBlue)
+            //Image(systemName: "clear")
+        })
+        .padding(.trailing)
+    }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    
+}
+
+func getVertHeaderMessage(_ header:String,message:String) -> some View{
+    VStack(spacing:2){
+        Text(header)
+            .font(.headline).bold()
+            .hLeading()
+        Text(message).font(.body).hLeading()
+        //Spacer()
+   }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    .padding([.leading,.bottom],5)
+    
+}
+
 extension ButtonStyle where Self == CustomButtonStyleGradient {
     static var gradient: CustomButtonStyleGradient { .init() }
 }
@@ -385,32 +426,6 @@ extension View {
         }
       )
       .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
-    }
-    
-    func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
-        HStack{
-            Text(header).font(.headline).bold()
-            Text(subHeader).font(.body)
-            Spacer()
-        }
-        .foregroundColor(Color.systemGray)
-        .hLeading()
-        
-    }
-    
-    func getHeaderSubHeaderWithClearOption(_ header:String,subHeader:String,action:(() -> Void)? = nil) -> some View{
-        HStack{
-            Text(header).font(.headline).bold()
-            Text(subHeader).font(.body)
-            Spacer()
-            Button(action: { action?() },label: {
-                Image(systemName: "clear")
-            })
-            .padding(.trailing)
-        }
-        .foregroundColor(Color.systemGray)
-        .hLeading()
-        
     }
     
     func fillSection() -> some View{

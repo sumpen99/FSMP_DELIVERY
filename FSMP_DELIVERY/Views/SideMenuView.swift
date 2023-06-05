@@ -26,7 +26,7 @@ struct SideMenuView: View {
                 .buttonStyle(CustomButtonStyle1())
                 .padding()
                 Button(action: {}){
-                    NavigationLink(destination: OrderHistoryView()) {
+                    NavigationLink(destination:LazyDestination(destination: { OrderHistoryView() })) {
                         Image(systemName: "list.bullet.clipboard.fill")
                         Text("History")
                     }

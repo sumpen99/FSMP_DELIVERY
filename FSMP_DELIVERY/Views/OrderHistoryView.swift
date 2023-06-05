@@ -27,6 +27,7 @@ struct ToggleBox: View{
 
 struct OrderHistoryView: View{
     @EnvironmentObject var firestoreVM: FirestoreViewModel
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.isSearching)
     private var isSearching: Bool
     @Environment(\.dismissSearch)
@@ -56,20 +57,6 @@ struct OrderHistoryView: View{
         QueryOptions.QUERY_NONE,
     ]
     
-    func executeNewSearchQuery(){
-        let dateQuery = queryOrderVar.getDateQuery()
-        if dateQuery == .QUERY_ALL_DATES && queryOrderVar.queryOption == .QUERY_NONE{
-            setQueryAlertMessage(title: "Sökning avbruten",
-                                 message: "Välj kategori eller en tidsintervall")
-            return
-        }
-        let queryOptions = [dateQuery,queryOrderVar.queryOption]
-        firestoreVM.closeAndReleaseQueryData()
-        firestoreVM.listenToOrdersSignedWithOptions(
-            queryOptions: queryOptions,
-            queryOrderVar: queryOrderVar)
-    }
-    
     var body: some View{
         NavigationView {
             VStack{
@@ -79,40 +66,32 @@ struct OrderHistoryView: View{
             }
             .alert(isPresented: $queryOrderVar.searchIsDissmissed, content: { onResultAlert() })
         }
+        .navigationBarBackButtonHidden(true)
         .searchable(text: $queryOrderVar.searchText, placement: .navigationBarDrawer(displayMode: .always))
-        .onChange(of: queryOrderVar.searchText) { value in
-            if queryOrderVar.searchText.isEmpty && !isSearching {
-                //Search cancelled here
-            }
-        }
         .onSubmit(of: .search) {
-            //let queryOptions = [queryOrderVar.getDateQuery(),queryOrderVar.queryOption]
-            //print("searching \(queryOrderVar.searchText) \(queryOrderVar.queryOption)")
             executeNewSearchQuery()
         }
         .sheet(isPresented: $showingCalendar){
             CustomCalendarView(queryOrderVar:$queryOrderVar)
         }
         .toolbar {
-            ToolbarItemGroup{
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: closeAndRelaseData ) {
+                    HStack{
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {showingCalendar.toggle()}) {
-                    Label("", systemImage: "calendar")
+                    Image(systemName: "calendar")
                 }
             }
         }
         .onChange(of: queryOrderVar.usertDidSelectDates){ value in
             showingCalendar.toggle()
             executeNewSearchQuery()
-            /*firestoreVM.closeAndReleaseQueryData()
-            firestoreVM.listenToOrdersSignedWithOptions(
-                queryOptions: [.QUERY_DATE],
-                queryOrderVar: queryOrderVar)*/
-        }
-        .onAppear{
-            //firestoreVM.initializeListenerOrdersSigned()
-        }
-        .onDisappear{
-            firestoreVM.closeAndReleaseOrderSignedData()
         }
     }
     
@@ -164,7 +143,8 @@ struct OrderHistoryView: View{
                 if firestoreVM.ordersSigned.count != 0{
                     LazyVStack{
                         ForEach(firestoreVM.ordersSigned, id: \.orderId) { order in
-                            Text("\(order.orderId)").hLeading()
+                            //Text("\(order.orderId)").hLeading()
+                            mediumOrderInfo(order)
                         }
                         
                     }
@@ -176,6 +156,31 @@ struct OrderHistoryView: View{
             }
         }
         .matchedGeometryEffect(id: "ORDERSFOUND", in: animationOrder)
+    }
+    
+    func mediumOrderInfo(_ order:Order) -> some View{
+        NavigationLink(destination:LazyDestination(destination: { QrView() })) {
+            ZStack(alignment:.center){
+                Color.white
+                Image(systemName: "chevron.right")
+                .foregroundColor(Color.systemBlue)
+                .hTrailing()
+                .padding(.trailing)
+                VStack{
+                    getVertHeaderMessage("Kund",message: order.customer.name)
+                    getVertHeaderMessage("Adress",message: order.customer.adress)
+                    getVertHeaderMessage("Order registrerades",message: order.getInitDateWithTime())
+                    getVertHeaderMessage("Order slutfördes",message: order.getcompletionDateWithTime())
+                    getVertHeaderMessage("Order utfördes av",message: order.assignedUser ?? "Okänd")
+                }
+                .hLeading()
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.systemGray,lineWidth: 1)
+            )
+            .padding([.leading,.trailing,.bottom])
+        }
     }
     
     func getCategorieCell(_ query:QueryOptions) -> some View{
@@ -210,9 +215,30 @@ struct OrderHistoryView: View{
         return categoriesIsShowing ? 200.0 : 50.0
     }
     
+    func closeAndRelaseData(){
+        firestoreVM.closeAndReleaseOrderSignedData()
+        dismiss()
+    }
+    
+    func executeNewSearchQuery(){
+        let dateQuery = queryOrderVar.getDateQuery()
+        if dateQuery == .QUERY_ALL_DATES && queryOrderVar.queryOption == .QUERY_NONE{
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Välj kategori eller en tidsintervall")
+            return
+        }
+        let queryOptions = [dateQuery,queryOrderVar.queryOption]
+        firestoreVM.closeAndReleaseQueryData()
+        firestoreVM.listenToOrdersSignedWithOptions(
+            queryOptions: queryOptions,
+            queryOrderVar: queryOrderVar)
+    }
+    
     private func setQueryAlertMessage(title:String,message:String){
         ALERT_TITLE = title
         ALERT_MESSAGE = message
         queryOrderVar.searchIsDissmissed.toggle()
     }
 }
+
+

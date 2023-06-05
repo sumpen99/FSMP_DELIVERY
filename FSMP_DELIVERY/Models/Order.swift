@@ -41,4 +41,12 @@ struct Order : Codable,Identifiable {
         return (year:year,month:month,day:day)
     }
     
+    func getInitDateWithTime() -> String{
+        return initDate.formattedString() + " " + initDate.time()
+    }
+    
+    func getcompletionDateWithTime() -> String{
+        return (dateOfCompletion?.formattedString() ?? "") + " " + (dateOfCompletion?.time() ?? "00:00:00")
+    }
+    
 }
