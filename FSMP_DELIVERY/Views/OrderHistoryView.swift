@@ -56,6 +56,20 @@ struct OrderHistoryView: View{
         QueryOptions.QUERY_NONE,
     ]
     
+    func executeNewSearchQuery(){
+        let dateQuery = queryOrderVar.getDateQuery()
+        if dateQuery == .QUERY_ALL_DATES && queryOrderVar.queryOption == .QUERY_NONE{
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Välj kategori eller en tidsintervall")
+            return
+        }
+        let queryOptions = [dateQuery,queryOrderVar.queryOption]
+        firestoreVM.closeAndReleaseQueryData()
+        firestoreVM.listenToOrdersSignedWithOptions(
+            queryOptions: queryOptions,
+            queryOrderVar: queryOrderVar)
+    }
+    
     var body: some View{
         NavigationView {
             VStack{
@@ -63,6 +77,7 @@ struct OrderHistoryView: View{
                 categories
                 ordersFound
             }
+            .alert(isPresented: $queryOrderVar.searchIsDissmissed, content: { onResultAlert() })
         }
         .searchable(text: $queryOrderVar.searchText, placement: .navigationBarDrawer(displayMode: .always))
         .onChange(of: queryOrderVar.searchText) { value in
@@ -71,7 +86,9 @@ struct OrderHistoryView: View{
             }
         }
         .onSubmit(of: .search) {
-            print("searching \(queryOrderVar.searchText) \(queryOrderVar.queryOption)")
+            //let queryOptions = [queryOrderVar.getDateQuery(),queryOrderVar.queryOption]
+            //print("searching \(queryOrderVar.searchText) \(queryOrderVar.queryOption)")
+            executeNewSearchQuery()
         }
         .sheet(isPresented: $showingCalendar){
             CustomCalendarView(queryOrderVar:$queryOrderVar)
@@ -85,16 +102,17 @@ struct OrderHistoryView: View{
         }
         .onChange(of: queryOrderVar.usertDidSelectDates){ value in
             showingCalendar.toggle()
-            firestoreVM.closeAndReleaseQueryData()
+            executeNewSearchQuery()
+            /*firestoreVM.closeAndReleaseQueryData()
             firestoreVM.listenToOrdersSignedWithOptions(
                 queryOptions: [.QUERY_DATE],
-                queryOrderVar: queryOrderVar)
+                queryOrderVar: queryOrderVar)*/
         }
         .onAppear{
             //firestoreVM.initializeListenerOrdersSigned()
         }
         .onDisappear{
-            //firestoreVM.closeListenerOrdersSigned()
+            firestoreVM.closeAndReleaseOrderSignedData()
         }
     }
     
@@ -104,8 +122,14 @@ struct OrderHistoryView: View{
             ToggleBox(toogleIsOn: $dateRangeIsShowing, label: "Tidsintervall")
             if dateRangeIsShowing {
                 VStack(spacing:10){
-                    getHeaderSubHeader("Start datum: ", subHeader: "230602")
-                    getHeaderSubHeader("Slut datum: ", subHeader: "230602")
+                    getHeaderSubHeaderWithClearOption("Start datum: ",
+                                                      subHeader: queryOrderVar.getStartDateString()){
+                        queryOrderVar.clearStartDate()
+                    }
+                    getHeaderSubHeaderWithClearOption("Slut datum: ",
+                                                      subHeader: queryOrderVar.getEndDateString()){
+                        queryOrderVar.clearEndDate()
+                    }
                 }
             }
         }
@@ -122,7 +146,7 @@ struct OrderHistoryView: View{
             if categoriesIsShowing {
                 LazyVGrid(columns: layout, spacing: 20.0,pinnedViews: [.sectionHeaders]) {
                     ForEach(queryItem, id: \.self) { query in
-                        getCategorieCell(query.rawValue)
+                        getCategorieCell(query)
                    }
                 }
                 .padding([.horizontal,.top])
@@ -154,15 +178,15 @@ struct OrderHistoryView: View{
         .matchedGeometryEffect(id: "ORDERSFOUND", in: animationOrder)
     }
     
-    func getCategorieCell(_ categorie:String) -> some View{
-        return Text(categorie)
+    func getCategorieCell(_ query:QueryOptions) -> some View{
+        return Text(query.rawValue)
             .frame(height: 33)
             .padding([.leading,.trailing],5.0)
             .background(.white)
             .cornerRadius(8)
             .background(
                  ZStack{
-                     if categorie == queryOrderVar.selectedCategorie{
+                     if query == queryOrderVar.queryOption{
                          RoundedRectangle(cornerRadius: 8)
                          .stroke(.black)
                          .matchedGeometryEffect(id: "SELECTEDCATEGORIE", in: animationOrder)
@@ -170,11 +194,10 @@ struct OrderHistoryView: View{
                      
                  }
             )
-            .foregroundStyle(categorie == queryOrderVar.selectedCategorie ? .primary : .tertiary)
+            .foregroundStyle(query == queryOrderVar.queryOption ? .primary : .tertiary)
             .onTapGesture {
                 withAnimation{
-                    queryOrderVar.queryOption = QueryOptions(rawValue: categorie)
-                    queryOrderVar.selectedCategorie = categorie
+                    queryOrderVar.queryOption = query
                 }
             }
     }
@@ -185,5 +208,11 @@ struct OrderHistoryView: View{
     
     func getCategoriesSize()->CGFloat{
         return categoriesIsShowing ? 200.0 : 50.0
+    }
+    
+    private func setQueryAlertMessage(title:String,message:String){
+        ALERT_TITLE = title
+        ALERT_MESSAGE = message
+        queryOrderVar.searchIsDissmissed.toggle()
     }
 }

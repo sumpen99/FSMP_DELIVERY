@@ -35,9 +35,18 @@ class FirestoreViewModel: ObservableObject{
         ordersSignedQuery.removeAll()
     }
     
+    func releaseOrderSignedData(){
+        ordersSigned.removeAll()
+    }
+    
     func closeAndReleaseQueryData(){
         closeListenerOrdersSignedQuery()
         releaseOrderSignedQueryData()
+    }
+    
+    func closeAndReleaseOrderSignedData(){
+        closeListenerOrdersSigned()
+        releaseOrderSignedData()
     }
     
     // MARK: - FIREBASE LISTENER-REGISTRATION
@@ -445,10 +454,18 @@ extension FirestoreViewModel{
         var q:Query = query
         for options in queryOptions{
             switch options{
-                case .QUERY_DATE:
+                case .QUERY_DATES:
                     guard let startDate = queryOrderVar.startDate,
                           let endDate = queryOrderVar.endDate else { continue }
                     q = getDateQuery(q,startDate: startDate,endDate: endDate)
+                case .QUERY_FROM_START_DATE:
+                    guard let startDate = queryOrderVar.startDate else { continue }
+                    q = getFromStartDateQuery(q,startDate: startDate)
+                case .QUERY_TO_END_DATE:
+                    guard let endDate = queryOrderVar.endDate else { continue }
+                    q = getToEndDateQuery(q,endDate: endDate)
+                case .QUERY_ALL_DATES:
+                    continue
                 case .QUERY_ID_EMPLOYEE:
                     q = getIdEmployeeQuery(q,searchtext: queryOrderVar.searchText)
                 case .QUERY_ID_ORDER:
@@ -476,6 +493,14 @@ extension FirestoreViewModel{
         return q
             .whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
             .whereField("dateOfCompletion", isLessThan: endDate)
+    }
+    
+    func getFromStartDateQuery(_ q:Query,startDate:Date) -> Query{
+        return q.whereField("dateOfCompletion",isGreaterThanOrEqualTo: startDate)
+    }
+    
+    func getToEndDateQuery(_ q:Query,endDate:Date) -> Query{
+        return q.whereField("dateOfCompletion", isLessThan: endDate)
     }
     
     func getIdEmployeeQuery(_ q:Query,searchtext:String) -> Query{

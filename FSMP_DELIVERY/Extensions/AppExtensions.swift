@@ -266,6 +266,11 @@ extension Date{
         return formatter.string(from: self)
     }
     
+    func formattedString() -> String{
+        let weekday = dayName()
+        return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())"
+    }
+    
     func time() -> String{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm:ss"
@@ -393,6 +398,21 @@ extension View {
         
     }
     
+    func getHeaderSubHeaderWithClearOption(_ header:String,subHeader:String,action:(() -> Void)? = nil) -> some View{
+        HStack{
+            Text(header).font(.headline).bold()
+            Text(subHeader).font(.body)
+            Spacer()
+            Button(action: { action?() },label: {
+                Image(systemName: "clear")
+            })
+            .padding(.trailing)
+        }
+        .foregroundColor(Color.systemGray)
+        .hLeading()
+        
+    }
+    
     func fillSection() -> some View{
         self.modifier(FillFormModifier())
     }
@@ -435,11 +455,11 @@ extension View {
         )
     }
     
-    func onResultAlert(action:@escaping (()-> Void)) -> Alert{
+    func onResultAlert(action:(()-> Void)? = nil) -> Alert{
         return Alert(
                 title: Text(ALERT_TITLE),
                 message: Text(ALERT_MESSAGE),
-                dismissButton: .cancel(Text("OK"), action: { action() } )
+                dismissButton: .cancel(Text("OK"), action: { action?() } )
         )
     }
     
