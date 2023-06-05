@@ -62,6 +62,7 @@ struct OrderHistoryView: View{
             VStack{
                 searchRange
                 categories
+                clearAndResetButton
                 ordersFound
             }
             .alert(isPresented: $queryOrderVar.searchIsDissmissed, content: { onResultAlert() })
@@ -95,12 +96,26 @@ struct OrderHistoryView: View{
         }
     }
     
+    var clearAndResetButton: some View{
+        HStack{
+            //Text("Återställ").foregroundColor(Color.systemGray)
+            Spacer()
+            Button(action: { print("återställ") }, label: {
+                Text("Rensa").foregroundColor(Color.systemBlue)
+            })
+        }
+        .modifier(CardModifier(size: 50.0 ))
+        .opacity(firestoreVM.ordersSigned.count <= 0 ? 0.0 : 1.0)
+        .disabled(firestoreVM.ordersSigned.count <= 0)
+        .padding([.leading,.trailing])
+    }
+    
     var searchRange: some View {
         VStack(spacing:10.0){
             Color.white
             ToggleBox(toogleIsOn: $dateRangeIsShowing, label: "Tidsintervall")
             if dateRangeIsShowing {
-                VStack(spacing:10){
+                VStack(spacing:20){
                     getHeaderSubHeaderWithClearOption("Start datum: ",
                                                       subHeader: queryOrderVar.getStartDateString()){
                         queryOrderVar.clearStartDate()
@@ -113,7 +128,7 @@ struct OrderHistoryView: View{
             }
         }
         .hLeading()
-        .padding(.leading)
+        .padding([.leading])
         .modifier(CardModifier(size: getDateRangeSize() ))
    }
     
@@ -192,7 +207,7 @@ struct OrderHistoryView: View{
     }
     
     func getDateRangeSize()->CGFloat{
-        return dateRangeIsShowing ? 90.0 : 50.0
+        return dateRangeIsShowing ? 120.0 : 50.0
     }
     
     func getCategoriesSize()->CGFloat{
