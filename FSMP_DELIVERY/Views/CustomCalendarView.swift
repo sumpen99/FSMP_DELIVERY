@@ -379,7 +379,7 @@ struct CustomCalendarView: View {
         return firestoreVM.ordersSignedMonthHaveData(getSelectedMonthIndex(month), year: selected.year)
     }
     
-    func numberOfOrdersOnThisDay(_ day:Int) -> Int {
+    func numberOfOrdersOnThisDay(_ day:Int) -> Int? {
         return firestoreVM.ordersSignedDayHaveData(day-PAD_CALENDAR,
                                                      month:getSelectedMonthIndex(),
                                                      year: selected.year)
