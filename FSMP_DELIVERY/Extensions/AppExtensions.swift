@@ -122,12 +122,12 @@ func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
 
 func getHeaderSubHeaderWithClearOption(_ header:String,subHeader:String,action:(() -> Void)? = nil) -> some View{
     HStack{
-        Text(header).font(.headline).bold()
+        Text(header)
         Text(subHeader).font(.body)
         Spacer()
         Button(action: { action?() },label: {
-            Text("Rensa").foregroundColor(Color.systemBlue)
-            //Image(systemName: "clear")
+            //Text("Rensa").foregroundColor(Color.systemBlue)
+            Image(systemName: "xmark.circle")
         })
         .padding(.trailing)
     }
