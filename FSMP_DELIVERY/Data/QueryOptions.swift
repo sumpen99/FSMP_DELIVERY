@@ -6,7 +6,10 @@
 //
 
 enum QueryOptions : String {
-    case QUERY_DATE = "Tidsintervall"
+    case QUERY_DATES = "Tidsintervall"
+    case QUERY_FROM_START_DATE = "Från startdatum"
+    case QUERY_TO_END_DATE = "Till slutdatum"
+    case QUERY_ALL_DATES = "All datum"
     case QUERY_ID_EMPLOYEE = "Id-Anställd"
     case QUERY_ID_ORDER = "Id-Order"
     case QUERY_CUSTOMER_NAME = "Namn"
