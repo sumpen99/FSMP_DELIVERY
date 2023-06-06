@@ -93,7 +93,7 @@ struct OrderHistoryView: View{
         }
         .onChange(of: queryOrderVar.usertDidSelectDates){ value in
             showingCalendar.toggle()
-            executeNewSearchQuery()
+            collectSearchFromCalendar()
         }
     }
     
@@ -246,12 +246,21 @@ struct OrderHistoryView: View{
         let dateQuery = queryOrderVar.getDateQuery()
         queryOrderVar.removeWhiteSpace()
         if searchIsAccepted(dateQuery: dateQuery){
-            let queryOptions = [dateQuery,queryOrderVar.queryOption,.QUERY_SORT_BY_DATE_COMPLETION]
+            let queryOptions = [dateQuery,queryOrderVar.queryOption]
             firestoreVM.closeAndReleaseOrderSignedData()
             firestoreVM.listenToOrdersSignedWithOptions(
                 queryOptions: queryOptions,
                 queryOrderVar: queryOrderVar)
         }
+    }
+    
+    func collectSearchFromCalendar(){
+        let dateQuery = queryOrderVar.getDateQuery()
+        let queryOptions = [dateQuery]
+        firestoreVM.closeAndReleaseOrderSignedData()
+        firestoreVM.listenToOrdersSignedWithOptions(
+            queryOptions: queryOptions,
+            queryOrderVar: queryOrderVar)
     }
     
     func searchIsAccepted(dateQuery:QueryOptions) -> Bool{
@@ -274,7 +283,10 @@ struct OrderHistoryView: View{
         }
         
         if queryOrderVar.queryOption == .QUERY_CUSTOMER_PHONENUMBER{
-            return queryOrderVar.tryBuildSearchTextAsPhoneNumber()
+            if queryOrderVar.tryBuildSearchTextAsPhoneNumber(){ return true}
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Använd enbart siffror\ntex. 701122333")
+            return false
         }
         return true
         
