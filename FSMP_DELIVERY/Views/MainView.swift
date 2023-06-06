@@ -18,6 +18,8 @@ struct MainView: View {
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
     @State var currentOrder:Order?
+    @State private var mapState = MapViewState.noInput
+
     
     
     var body: some View {
@@ -158,7 +160,7 @@ struct MainView: View {
     }
     
     var mapviewButton: some View{
-        NavigationLink(destination: MapView()){
+        NavigationLink(destination: MapView(showMap: ShowMap(mapState: $mapState))){
             Text(Image(systemName: "map"))
                 .font(.largeTitle)
         }

@@ -19,7 +19,6 @@ class LocationSearchViewModel: NSObject, ObservableObject {
             searchCompleter.queryFragment = queryFragment
         }
     }
-    
     override init() {
         super.init()
         searchCompleter.delegate = self
@@ -49,9 +48,8 @@ class LocationSearchViewModel: NSObject, ObservableObject {
         let search = MKLocalSearch(request: searchRequest)
         search.start(completionHandler: completion)
     }
-    
 }
-    // MARK: - MKLocalSearchCompleterDelegate
+// MARK: - MKLocalSearchCompleterDelegate
 
 extension LocationSearchViewModel: MKLocalSearchCompleterDelegate {
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {

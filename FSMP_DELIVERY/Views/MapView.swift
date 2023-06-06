@@ -10,50 +10,64 @@ import MapKit
 
 struct MapView: View {
     @StateObject var manager = LocationManager()
+    @State var showMap : ShowMap
     @State private var userLocation: CLLocationCoordinate2D?
-    @State private var showLocationSearchView = false
+    @State private var mapState = MapViewState.noInput
     
     var body: some View {
         ZStack(alignment: .top) {
-            ShowMap(userLocation: userLocation)
+            ShowMap(userLocation: userLocation, mapState: $mapState)
                 .edgesIgnoringSafeArea(.all)
             
                 .onAppear {
                     manager.checkIfLocationServicesIsEnabled()
                 }
-            if showLocationSearchView {
-                LocationSearchView(showLocationSearchView: $showLocationSearchView)
-            } else {
-                LocationSearchActivationView()
+            if mapState == .searchingForLocation {
+                LocationSearchView(mapState: $mapState)
+            } else if mapState == .noInput {
+                LocationSearchActivationView(mapState: mapState)
                     .onTapGesture {
                         withAnimation(.spring()) {
-                            showLocationSearchView.toggle()
+                            mapState = .searchingForLocation
                         }
                     }
             }
-            VStack{
+            
+            VStack {
                 Spacer()
                 
                 VStack {
-                    
-                    Button {
-                        //
-                    } label: {
-                        Image(systemName: "location.fill")
-                            .font(.title2)
-                            .padding(10)
-                            .background(Color.primary)
-                            .clipShape(Circle())
+                    if mapState == .locationSelected {
+                        MapViewActionButton(mapState: $mapState)
+                            .padding(.top, 50)
+                    } else if mapState == .searchingForLocation {
+                        MapViewActionButton(mapState: $mapState)
+                            .padding(.top, 50)
                     }
-                    
-                    Button(action: manager.updateMapType,
-                     label: {
-                        Image(systemName: manager.mapType == .standard ? "network" : "map")
-                            .font(.title2)
-                            .padding(10)
-                            .background(Color.primary)
-                            .clipShape(Circle())
-                    })
+                    Spacer()
+                    //Spacer()
+                    VStack {
+                        Button(action: manager.focusLocation,
+                               label: {
+                            Image(systemName: "location.fill")
+                                .font(.title2)
+                                .padding(10)
+                                .background(.white)
+                                .clipShape(Circle())
+                        })
+                        
+                        Button {
+                            manager.toggleMapType()
+                        } label: {
+                            Image(systemName: "map")
+                                .font(.title2)
+                                .padding(10)
+                                .background(.white)
+                                .clipShape(Circle())
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding()
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding()
@@ -63,6 +77,8 @@ struct MapView: View {
 }
 
 struct LocationSearchActivationView: View {
+    @State var mapState: MapViewState
+    
     var body: some View {
         HStack {
             Rectangle()
@@ -76,60 +92,16 @@ struct LocationSearchActivationView: View {
         }
         .frame(width: UIScreen.main.bounds.width - 64, height: 50)
         .background(
-        Rectangle()
-            .fill(Color.white)
-            .shadow(color: Color.black.opacity(0.3),
-                    radius: 3,x: 3,y: 3))
+            Rectangle()
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.3),
+                        radius: 3,x: 3,y: 3))
     }
 }
 
-struct options : View {
-    
-    @StateObject var manager = LocationManager()
-    @State private var userLocation: CLLocationCoordinate2D?
-    @State var calculateRoute = ShowMap()
-    
-    let destination = CLLocationCoordinate2D(latitude: 37.332331, longitude: -122.031219)
-    
-    //@StateObject var makeRoute =
-    //@StateObject var startRoute =
-    
-    var body: some View {
-        
-        VStack() {
-            Button {
-                //ShowMap.RouteCalculator()
-            } label: {
-                Text("Show route")
-                    .frame(minWidth: 0, maxWidth: 100)
-                    .font(.system(size: 18))
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(25)
-                    .shadow(color: Color.black.opacity(0.3),
-                            radius: 3,x: 3,y: 3)
-            }
-            
-            Button {
-                // START ROUTE
-            } label: {
-                Text("Start route")
-                    .frame(minWidth: 0, maxWidth: 100)
-                    .font(.system(size: 18))
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.green)
-                    .cornerRadius(25)
-                    .shadow(color: Color.black.opacity(0.3),
-                            radius: 3,x: 3,y: 3)
-            }
-        }
-    }
-}
-
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        options()
-    }
-}
+//struct MapView_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//        MapView()
+//    }
+//}

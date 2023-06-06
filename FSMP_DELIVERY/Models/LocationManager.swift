@@ -9,40 +9,44 @@ import MapKit
 import SwiftUI
 import CoreLocation
     
-final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject, MKMapViewDelegate {
     
     //private var locationManager = CLLocationManager()
     
     // Region
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 62.390, longitude: 17.306), span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 15))
+    @Published var region : MKCoordinateRegion!
     
     // MapView
     @Published var mapView = MKMapView()
     
     // Map Type
-    @Published var mapType : MKMapType = .standard
+    //@Published private var elevationStyle: MKMapConfiguration.ElevationStyle = .flat
+    @Published var mapType: MKMapType = .standard
     
+    // LocationManager
     var locationManager: CLLocationManager?
     
-    var p1 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068))
-    
-    // Göteborg PLACEMARK
-    var p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
-    
     // Updating Map Type
-    func updateMapType() {
-        
+    func toggleMapType() {
         if mapType == .standard {
             mapType = .hybrid
-            mapView.mapType = mapType
-            print("hybrid \(mapView)")
+            print("DEBUG: mapType is HYBRID")
         } else {
             mapType = .standard
-            mapView.mapType = mapType
-            print("standard \(mapView)")
+            print("DEBUG: mapType is STANDARD")
         }
     }
     
+    // Focusing users current Location
+    func focusLocation() {
+        guard let _ = region else {return}
+            
+            mapView.setRegion(region, animated: true)
+            mapView.setVisibleMapRect(mapView.visibleMapRect, animated: true)
+        print("DEBUG: focusing current location \(mapView.showsUserLocation)")
+    }
+    
+    // Checks for the user permission for current location
     func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager = CLLocationManager()
@@ -75,34 +79,3 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         checkLocationAuthorization()
     }
 }
-
-//extension LocationManager: CLLocationManagerDelegate {
-//    func locationmanager(_)
-//}
-    
-//    func route() -> MKMapView {
-//        let mapView = MKMapView()
-//
-//        // Stockholm PLACEMARK
-//        let p1 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068))
-//
-//        // Göteborg PLACEMARK
-//        let p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
-//
-//        let request = MKDirections.Request()
-//        request.source = MKMapItem(placemark: p1)
-//        request.source = MKMapItem(placemark: p2)
-//        request.transportType = .automobile
-//
-//        let directions = MKDirections(request: request)
-//        directions.calculate { response, error in
-//            guard let route = response?.routes.first else { return }
-//            mapView.addAnnotation([p1,p2] as! MKAnnotation)
-//            mapView.addOverlay(route.polyline)
-//            mapView.setVisibleMapRect(route.polyline.boundingMapRect,
-//            edgePadding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20),
-//            animated: true)
-//        }
-//        return mapView
-//    }
-
