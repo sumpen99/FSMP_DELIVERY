@@ -189,7 +189,7 @@ struct MainView: View {
                     getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
                     getHeaderSubHeader("Inkom: ", subHeader: order.initDate.formattedString())
                     getHeaderSubHeader("Väntat: ", subHeader:
-                                        "\(Calendar.numberOfDaysBetween(order.initDate, and: Date()))")
+                                        "\(Calendar.numberOfDaysBetween(order.initDate, and: Date())) dagar")
                 }
                 Spacer()
                 Text(Image(systemName: "checkmark.circle.fill"))
