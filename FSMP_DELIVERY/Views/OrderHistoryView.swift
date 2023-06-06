@@ -317,7 +317,7 @@ struct MediumOrderView:View{
                             getVertHeaderMessage("Adress",message: order.customer.adress)
                             getVertHeaderMessage("Order registrerades",message: order.getInitDateWithTime())
                             getVertHeaderMessage("Order slutfördes",message: order.getcompletionDateWithTime())
-                            getVertHeaderMessage("Order utfördes av",message: order.assignedUser ?? "Okänd")
+                            getVertHeaderMessage("Order utfördes av",message: order.assignedUser)
                         }
                         .hLeading()
                     }
@@ -415,7 +415,7 @@ struct FullOrderView: View{
                 ToggleBox(toogleIsOn: $showMoreInfoAboutEmployee, label: "Anställd-Info")
                 if showMoreInfoAboutEmployee {
                     LazyVStack{
-                        getVertHeaderMessage("Id", message: order.assignedUser ?? "")
+                        getVertHeaderMessage("Id", message: order.assignedUser)
                     }
                     .hLeading()
                     .matchedGeometryEffect(id: "SELECTEDSECTIONEMPLOYEE", in: animationFullOrder)

@@ -183,19 +183,48 @@ struct MainView: View {
     }
     
     func getListOrderButton(order:Order) -> some View{
-        return HStack {
-            Button(action: {
-                if orderIsActivated { return }
-                currentOrder = order
-                updatePdfViewWithOrder(order)
-            }){
-                Text("\(order.customer.name) - \(order.ordername)")
+        return HStack{
+                VStack(spacing:10){
+                    getHeaderSubHeader("Kund: ", subHeader: order.customer.name)
+                    getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
+                    getHeaderSubHeader("Inkom: ", subHeader: order.initDate.formattedString())
+                    getHeaderSubHeader("Väntat: ", subHeader:
+                                        "\(Calendar.numberOfDaysBetween(order.initDate, and: Date()))")
+                }
+                Spacer()
+                Text(Image(systemName: "checkmark.circle.fill"))
+                    .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
+                    .foregroundColor(orderIsActivated ? .green : .gray)
             }
-            Spacer()
-            Image(systemName: "checkmark.circle.fill")
-                .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
-                .foregroundColor(orderIsActivated ? .green : .gray)
-        }
+            .foregroundColor(.white)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: 5)
+                    .background(.clear)
+                    .foregroundColor(.white)
+                    .padding([.top,.bottom],2.0)
+            )
+            .listRowSeparator(.hidden)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if orderIsActivated { return }
+                withAnimation{
+                    currentOrder = order
+                    updatePdfViewWithOrder(order)
+                }
+            }
+            /*return HStack {
+                Button(action: {
+                    if orderIsActivated { return }
+                    currentOrder = order
+                    updatePdfViewWithOrder(order)
+                }){
+                    shortestOrderInfo(order)
+                }
+                Spacer()
+                Image(systemName: "checkmark.circle.fill")
+                    .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
+                    .foregroundColor(orderIsActivated ? .green : .gray)
+            }*/
     }
     
     func findActivatedOrderOrSetFirst(orders:[Order]){
@@ -240,6 +269,14 @@ struct MainView: View {
                 guard let url = url else { return }
                 pdfUrl = url
             }
+        }
+    }
+    
+    func shortestOrderInfo(_ order:Order) -> some View{
+        VStack(spacing:10){
+            getHeaderSubHeader("Kund: ", subHeader: order.customer.name)
+            getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
+            getHeaderSubHeader("Inkom: ", subHeader: order.initDate.formattedString())
         }
     }
     

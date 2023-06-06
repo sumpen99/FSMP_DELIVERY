@@ -277,6 +277,15 @@ extension Calendar {
     static func getShortWeekdayName(_ weekday:Int) -> String{
         return getSwedishShortWeekdayNames()[weekday-1]
     }
+    
+    static func numberOfDaysBetween(_ from: Date, and to: Date) -> Int {
+        var calendar = Calendar.current
+        let fromDate = calendar.startOfDay(for: from)
+        let toDate = calendar.startOfDay(for: to)
+        let numberOfDays = calendar.dateComponents([.day], from: fromDate, to: toDate)
+        
+        return numberOfDays.day ?? 0
+    }
 }
 
 
