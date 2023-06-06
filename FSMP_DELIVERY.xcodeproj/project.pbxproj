@@ -74,6 +74,8 @@
 		AFC1D98E2A24EF710065FCAD /* LocationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98D2A24EF710065FCAD /* LocationSearchView.swift */; };
 		AFC1D9902A24F9390065FCAD /* LocationSearchResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D98F2A24F9390065FCAD /* LocationSearchResultCell.swift */; };
 		AFC1D9922A251DAA0065FCAD /* LocationSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9912A251DAA0065FCAD /* LocationSearchViewModel.swift */; };
+		AFC1D9942A28A5FE0065FCAD /* MapViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9932A28A5FE0065FCAD /* MapViewState.swift */; };
+		AFC1D9962A2A2E4A0065FCAD /* MapViewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC1D9952A2A2E4A0065FCAD /* MapViewActionButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,6 +141,8 @@
 		AFC1D98D2A24EF710065FCAD /* LocationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchView.swift; sourceTree = "<group>"; };
 		AFC1D98F2A24F9390065FCAD /* LocationSearchResultCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchResultCell.swift; sourceTree = "<group>"; };
 		AFC1D9912A251DAA0065FCAD /* LocationSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchViewModel.swift; sourceTree = "<group>"; };
+		AFC1D9932A28A5FE0065FCAD /* MapViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewState.swift; sourceTree = "<group>"; };
+		AFC1D9952A2A2E4A0065FCAD /* MapViewActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewActionButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +173,7 @@
 				AFC1D98B2A166C8D0065FCAD /* LocationManager.swift */,
 				7D29E1002A1FBB18003E0BE8 /* MailManager.swift */,
 				AFC1D9912A251DAA0065FCAD /* LocationSearchViewModel.swift */,
+				AFC1D9932A28A5FE0065FCAD /* MapViewState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -194,6 +199,7 @@
 				7DE760842A238425000F49CB /* LoadingView.swift */,
 				AFC1D98D2A24EF710065FCAD /* LocationSearchView.swift */,
 				AFC1D98F2A24F9390065FCAD /* LocationSearchResultCell.swift */,
+				AFC1D9952A2A2E4A0065FCAD /* MapViewActionButton.swift */,
 				0C75F8312A2893F700CB6499 /* ManageCustomerView.swift */,
 				7DE7608C2A2A2660000F49CB /* OrderHistoryView.swift */,
 				7DD720152A2AA03200B6C9DE /* CustomCalendarView.swift */,
@@ -417,6 +423,7 @@
 				7D5302A02A097417005EAAD0 /* User.swift in Sources */,
 				AFC1D9902A24F9390065FCAD /* LocationSearchResultCell.swift in Sources */,
 				7D20F7432A15224500C66167 /* ToastModifier.swift in Sources */,
+				AFC1D9962A2A2E4A0065FCAD /* MapViewActionButton.swift in Sources */,
 				0C64FB392A0E1E1600AB9E8B /* SideMenuView.swift in Sources */,
 				0C64FB3B2A12522A00AB9E8B /* CustomerView.swift in Sources */,
 				7D29E1012A1FBB18003E0BE8 /* MailManager.swift in Sources */,
@@ -449,6 +456,7 @@
 				7D53026A2A0952D4005EAAD0 /* FSMP_DELIVERYApp.swift in Sources */,
 				7D20F7372A15122900C66167 /* SignOfOrderView.swift in Sources */,
 				7DE7607F2A20E881000F49CB /* OrderType.swift in Sources */,
+				AFC1D9942A28A5FE0065FCAD /* MapViewState.swift in Sources */,
 				7D29E0E82A17CCF0003E0BE8 /* ScannerViewModel.swift in Sources */,
 				0CD28CE12A0D0FB200481B9D /* CustomButtonStyle1.swift in Sources */,
 				7DE7607D2A1FD905000F49CB /* Credentials.swift in Sources */,

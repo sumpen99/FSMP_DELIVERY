@@ -12,6 +12,7 @@ struct ShowMap: UIViewRepresentable {
     
     @State var userLocation: CLLocationCoordinate2D?
     @EnvironmentObject var locationViewModel : LocationSearchViewModel
+    @Binding var mapState: MapViewState
     
     let destination = CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068)
     let mapView = MKMapView()
@@ -20,37 +21,31 @@ struct ShowMap: UIViewRepresentable {
         mapView.isRotateEnabled = false
         mapView.showsUserLocation = true
         mapView.userTrackingMode = .follow
-        //mapView.delegate = context.coordinator
-        
+        mapView.delegate = context.coordinator
         return mapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        if let coordinate = locationViewModel.selectedLocationCoordinate {
-            context.coordinator.addAndSelectAnnotaion(withCoordinate: coordinate)
+        print("DEBUG: Map state is \(mapState)")
+        switch mapState {
+        case .noInput:
+            context.coordinator.clearMapViewAndRecenterUserLocation()
+            break
+        case .searchingForLocation:
+            break
+        case .locationSelected:
+            if let coordinate = locationViewModel.selectedLocationCoordinate {
+                print("DEBUG: Coordinate is \(coordinate)")
+                context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
+                context.coordinator.addAndSelectAnnotaion(withCoordinate: coordinate)
+            }
         }
+        uiView.mapType = mapView.mapType
     }
     
     func makeCoordinator() -> MapCoordinator {
         return MapCoordinator(parent: self)
     }
-    
-//    class Coordinator: NSObject, MKMapViewDelegate {
-//        var parent: ShowMap
-//
-//        init(_ parent: ShowMap) {
-//            self.parent = parent
-//            super.init()
-//        }
-//
-//        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-//            parent.userLocation = userLocation.coordinate
-//        }
-//
-//        func makeCoordinator() -> MapCoordinator {
-//            return MapCoordinator(parent: self)
-//        }
-//    }
 }
 
 extension ShowMap {
@@ -59,6 +54,8 @@ extension ShowMap {
         
         //MARK: - Properites
         let parent: ShowMap
+        var userLocationCoordinate: CLLocationCoordinate2D?
+        var currentRegion: MKCoordinateRegion?
         
         //MARK: - Lifecycle
         init(parent: ShowMap) {
@@ -69,13 +66,25 @@ extension ShowMap {
         // MARK: - MKMapViewDelegate
         
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+            self.userLocationCoordinate = userLocation.coordinate
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            )
+            
+            self.currentRegion = region
+            
             parent.mapView.setRegion(region, animated: true)
+        }
+        
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            let polyline = MKPolylineRenderer(overlay: overlay)
+            polyline.strokeColor = .systemBlue
+            polyline.lineWidth = 6
+            return polyline
         }
         
         //MARK: - Helpers
         func addAndSelectAnnotaion(withCoordinate coordinate: CLLocationCoordinate2D) {
-            parent.mapView.removeAnnotation(parent.mapView.annotations as! MKAnnotation)
+            parent.mapView.removeAnnotations(parent.mapView.annotations)
             
             let anno = MKPointAnnotation()
             anno.coordinate = coordinate
@@ -85,101 +94,41 @@ extension ShowMap {
             parent.mapView.showAnnotations(parent.mapView.annotations, animated: true)
         }
         
+        func configurePolyline(withDestinationCoordinate coordinate: CLLocationCoordinate2D) {
+            guard let userLocationCoordinate = self.userLocationCoordinate else { return }
+            getDestinationRoute(from: userLocationCoordinate,
+                                to: coordinate) { route in
+                self.parent.mapView.addOverlay(route.polyline)
+            }
+        }
+        
+        func getDestinationRoute(from userLocation: CLLocationCoordinate2D,
+                                 to destination: CLLocationCoordinate2D,
+                                 completion: @escaping(MKRoute) -> Void) {
+            
+            let userPlacemark = MKPlacemark(coordinate: userLocation)
+            let destPlaceMark = MKPlacemark(coordinate: destination)
+            let request = MKDirections.Request()
+            request.source = MKMapItem(placemark: userPlacemark)
+            request.destination = MKMapItem(placemark: destPlaceMark)
+            let directions = MKDirections(request: request)
+            
+            directions.calculate { response, error in
+                if let error = error {
+                    print("DEBUG: Failed to get directions woth error \(error.localizedDescription)")
+                    return
+                }
+                guard let route = response?.routes.first else { return }
+                completion(route)
+            }
+        }
+        func clearMapViewAndRecenterUserLocation() {
+            parent.mapView.removeAnnotations(parent.mapView.annotations)
+            parent.mapView.removeOverlays(parent.mapView.overlays)
+            
+            if let currentRegion = currentRegion {
+                parent.mapView.setRegion(currentRegion, animated: true)
+            }
+        }
     }
 }
-    
-//    class RouteCalculator {
-//
-//        func calculateRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, completion: @escaping (MKRoute?, Error?) -> Void) {
-//
-//            let sourcePlacemark = MKPlacemark(coordinate: source)
-//            let destinationPlacemark = MKPlacemark(coordinate: destination)
-//
-//            let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
-//            let destinationMapItem = MKMapItem(placemark: destinationPlacemark)
-//
-//            let request = MKDirections.Request()
-//            request.source = sourceMapItem
-//            request.destination = destinationMapItem
-//            request.transportType = .automobile
-//
-//            let directions = MKDirections(request: request)
-//            directions.calculate { (response, error) in
-//                completion(response?.routes.first, error)
-//            }
-//        }
-//    }
-//
-//     func calculateRoute() {
-//        guard let userLocation = userLocation else {
-//            // Handle when user location is not available
-//            return
-//        }
-//
-//        let routeCalculator = RouteCalculator()
-//        routeCalculator.calculateRoute(from: userLocation, to: destination) { (route, error) in
-//            if let error = error {
-//                // Handle route calculation error
-//                print("Error calculating route: \(error.localizedDescription)")
-//            } else if let route = route {
-//                // Handle the route, e.g., display it on the map
-//                displayRoute(route)
-//            }
-//        }
-//    }
-//
-//    private func displayRoute(_ route: MKRoute) {
-//        // Add code to display the route on the map
-//    }
-//}
-
-    
-    
-//    @Binding var userLocation: CLLocationCoordinate2D?
-//
-//    func updateUIView(_ uiView: MKMapView, context: Context) {
-//        //
-//    }
-//
-//    typealias UIViewType = MKMapView
-//
-//    func makeUIView(context: Context) -> MKMapView {
-//        let mapView = MKMapView()
-//        mapView.showsUserLocation = true
-//        mapView.delegate = context.coordinator
-//        return mapView
-//    }
-//
-//        func route() -> MKMapView {
-//            let mapView = MKMapView()
-//
-//            // Stockholm PLACEMARK
-//            let p1 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 59.329, longitude: 18.068))
-//
-//            // Göteborg PLACEMARK
-//            let p2 = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 57.708, longitude: 11.974))
-//
-//            let request = MKDirections.Request()
-//            request.source = MKMapItem(placemark: p1)
-//            request.source = MKMapItem(placemark: p2)
-//            request.transportType = .automobile
-//
-//            let directions = MKDirections(request: request)
-//            directions.calculate { response, error in
-//                guard let route = response?.routes.first else { return }
-//                mapView.addAnnotation([p1,p2] as! MKAnnotation)
-//                mapView.addOverlay(route.polyline)
-//                mapView.setVisibleMapRect(route.polyline.boundingMapRect,
-//                                          edgePadding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20),
-//                                          animated: true)
-//            }
-//            return mapView
-//        }
-//
-//
-//        func updateUIView(_ uiView: MKMapView, context: Context) {
-//            //
-//        }
-//        return mapView
-//    }
-

@@ -10,70 +10,76 @@ import SwiftUI
 struct LocationSearchView: View {
     
     @State private var startLocationText = ""
-    @Binding var showLocationSearchView: Bool
+    @Binding var mapState: MapViewState
     @EnvironmentObject var queryLocation : LocationSearchViewModel
     
     var body: some View {
-            VStack {
-                // header view
+        VStack {
+            // header view
+            HStack {
                 HStack {
-                    VStack {
-                        
-                        Button {
-                            withAnimation(.spring()) {
-                                showLocationSearchView.toggle()
-                            }
-                        } label: {
-                            Image(systemName: "arrow.left")
-                                .font(.title2)
-                                .foregroundColor(.black)
-                                .padding()
-                                .background(.white)
-                                .clipShape(Circle())
-                                .shadow(color: Color.black.opacity(0.3),
-                                        radius: 3,x: 3,y: 3)
+                    Button {
+                        withAnimation(.spring()) {
+                            actionForState(mapState)
                         }
-                    }
-                    
-                    VStack {
-                        TextField("Current location", text: $startLocationText)
-                            .frame(height: 32)
-                            .background(Color(
-                                .systemGroupedBackground))
-                            .padding(.trailing)
-                        
-                        TextField("Order address", text: $queryLocation.queryFragment)
-                            .frame(height: 32)
-                            .background(Color(.systemGray4))
-                            .padding(.trailing)
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.title2)
+                            .foregroundColor(.black)
+                            .padding()
+                            .background(.white)
+                            .clipShape(Circle())
                     }
                 }
-                .padding(.horizontal)
-                .padding(.top, 64)
-                
-                Divider()
-                    .padding(.vertical)
-                
-                // list view
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        ForEach(queryLocation.results, id: \.self) { result in
-                            LocationSearchResultCell(title: result.title, subtitle: result.subtitle)
-                                .onTapGesture {
-                                    queryLocation.selectedLocation(result)
-                                    showLocationSearchView.toggle()
-                                }
-                            
-                        }
+                VStack {
+                    TextField("Current location", text: $startLocationText)
+                        .frame(height: 32)
+                        .background(Color(
+                            .systemGroupedBackground))
+                        .padding(.trailing)
+                    
+                    TextField("Order address", text: $queryLocation.queryFragment)
+                        .frame(height: 32)
+                        .background(Color(.systemGray4))
+                        .padding(.trailing)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 64)
+            
+            Divider()
+                .padding(.vertical)
+            
+            // list view
+            ScrollView {
+                VStack(alignment: .leading) {
+                    ForEach(queryLocation.results, id: \.self) { result in
+                        LocationSearchResultCell(title: result.title, subtitle: result.subtitle)
+                            .onTapGesture {
+                                queryLocation.selectedLocation(result)
+                                mapState = .locationSelected
+                            }
                     }
                 }
             }
+        }
         .background(.white)
+    }
+    
+    func actionForState(_ state: MapViewState) {
+        switch state {
+        case .noInput:
+            print("DEBUG: No Input")
+        case .searchingForLocation:
+            mapState = .noInput
+        case .locationSelected:
+            print("DEBUG: Clear map view..")
+        }
     }
 }
 
 struct LocationSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        LocationSearchView(showLocationSearchView: .constant(true))
+        LocationSearchView(mapState: .constant(.searchingForLocation))
     }
 }

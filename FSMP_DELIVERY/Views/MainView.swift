@@ -19,6 +19,8 @@ struct MainView: View {
     @State private var orderActivationChange: Bool = false
     @State private var listOfOrdersIsShowing:Bool = true
     @State var currentOrder:Order?
+    @State private var mapState = MapViewState.noInput
+
     
     
     var body: some View {
@@ -167,8 +169,9 @@ struct MainView: View {
     }
     
     var mapviewButton: some View{
-        NavigationLink(destination: MapView()){
-            Image(systemName: "map")
+        NavigationLink(destination: MapView(showMap: ShowMap(mapState: $mapState))){
+            Text(Image(systemName: "map"))
+                .font(.largeTitle)
         }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(!orderIsActivated)
