@@ -44,7 +44,6 @@ struct MainView: View {
             .fontWeight(.regular)
             .toolbar {
                 Button {
-                    print("show menu")
                     withAnimation(.easeInOut){
                         showSideMenu.toggle()
                     }
@@ -74,7 +73,7 @@ struct MainView: View {
     
     var sideMenu: some View{
         GeometryReader { _ in
-            SideMenuView(){ firestoreVM.releaseData() }
+            SideMenuView(closeMenuOnDissapear:$showSideMenu){ firestoreVM.releaseData() }
             .offset(x: showSideMenu ? 0 : -300, y: 0)
             Spacer()
         }

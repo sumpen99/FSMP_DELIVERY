@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SideMenuView: View {
     @EnvironmentObject var firebaseAuth: FirebaseAuth
+    @Binding var closeMenuOnDissapear:Bool
     var releaseFirebaseData: (() -> Void)? = nil
     var body: some View {
         
@@ -65,11 +66,15 @@ struct SideMenuView: View {
             .edgesIgnoringSafeArea(.bottom)
             
         }
+        .onDisappear{
+            closeMenuOnDissapear.toggle()
+        }
     }
     
     struct SideMenuView_Previews: PreviewProvider {
+        @State static var c:Bool = false
         static var previews: some View {
-            SideMenuView()
+            SideMenuView(closeMenuOnDissapear:SideMenuView_Previews.$c)
                 .environmentObject(FirebaseAuth())
         }
     }

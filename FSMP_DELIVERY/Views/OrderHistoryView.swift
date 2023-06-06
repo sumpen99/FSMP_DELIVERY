@@ -60,6 +60,7 @@ struct OrderHistoryView: View{
     var body: some View{
         NavigationView {
             VStack{
+                searchButton
                 searchRange
                 categories
                 clearAndResetButton
@@ -96,11 +97,19 @@ struct OrderHistoryView: View{
         }
     }
     
+    var searchButton:some View{
+        Button(action: {executeNewSearchQuery()}, label: {
+            Text("Sök")
+        })
+        .buttonStyle(.bordered)
+        .hLeading()
+        .padding(.leading)
+    }
+    
     var clearAndResetButton: some View{
         HStack{
-            //Text("Återställ").foregroundColor(Color.systemGray)
             Spacer()
-            Button(action: { print("återställ") }, label: {
+            Button(action: { clearPreviousSearchResult() }, label: {
                 Text("Rensa").foregroundColor(Color.systemBlue)
             })
         }
@@ -123,6 +132,12 @@ struct OrderHistoryView: View{
                     getHeaderSubHeaderWithClearOption("Slut datum: ",
                                                       subHeader: queryOrderVar.getEndDateString()){
                         queryOrderVar.clearEndDate()
+                    }
+                    if getPreviousDateResultsIsPossible(){
+                        getHeaderSubHeaderWithClearOption("Sök på datum: ",
+                                                          subHeader: ""){
+                            executeNewSearchQuery()
+                        }
                     }
                 }
             }
@@ -214,23 +229,54 @@ struct OrderHistoryView: View{
         return categoriesIsShowing ? 200.0 : 50.0
     }
     
+    func clearPreviousSearchResult(){
+        firestoreVM.closeAndReleaseOrderSignedData()
+    }
+    
     func closeAndRelaseData(){
         firestoreVM.closeAndReleaseOrderSignedData()
         dismiss()
     }
     
+    func getPreviousDateResultsIsPossible() -> Bool{
+        return queryOrderVar.userHaveSelectedDates() && firestoreVM.ordersSigned.count == 0
+    }
+    
     func executeNewSearchQuery(){
         let dateQuery = queryOrderVar.getDateQuery()
+        if searchIsAccepted(dateQuery: dateQuery){
+            let queryOptions = [dateQuery,queryOrderVar.queryOption,.QUERY_SORT_BY_DATE_COMPLETION]
+            firestoreVM.closeAndReleaseOrderSignedData()
+            firestoreVM.listenToOrdersSignedWithOptions(
+                queryOptions: queryOptions,
+                queryOrderVar: queryOrderVar)
+        }
+    }
+    
+    func wildcard(_ string: String, pattern: String) -> Bool {
+        let pred = NSPredicate(format: "self LIKE %@", pattern)
+        return !NSArray(object: string).filtered(using: pred).isEmpty
+    }
+    
+    func searchIsAccepted(dateQuery:QueryOptions) -> Bool{
+        print(wildcard("a12b34c", pattern: "?/?-?"))
+        print(wildcard("3/5-2023", pattern: "*/*-*"))
+        print(wildcard("3/5-23", pattern: "*/*-*"))
+        print(wildcard("3/5-23", pattern: "*/*-*"))
+        print(wildcard("3/5-23", pattern: "*/*-*"))
         if dateQuery == .QUERY_ALL_DATES && queryOrderVar.queryOption == .QUERY_NONE{
             setQueryAlertMessage(title: "Sökning avbruten",
                                  message: "Välj kategori eller en tidsintervall")
-            return
+            return false
         }
-        let queryOptions = [dateQuery,queryOrderVar.queryOption,.QUERY_SORT_BY_DATE_COMPLETION]
-        firestoreVM.closeAndReleaseQueryData()
-        firestoreVM.listenToOrdersSignedWithOptions(
-            queryOptions: queryOptions,
-            queryOrderVar: queryOrderVar)
+        if queryOrderVar.queryOption == .QUERY_ORDER_CREATED{
+            return queryOrderVar.tryBuildSearchTextAsDate()
+        }
+        if queryOrderVar.queryOption == .QUERY_CUSTOMER_PHONENUMBER{
+            return queryOrderVar.tryBuildSearchTextAsPhoneNumber()
+        }
+        return true
+        
     }
     
     private func setQueryAlertMessage(title:String,message:String){
