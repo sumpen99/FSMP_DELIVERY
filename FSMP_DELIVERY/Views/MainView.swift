@@ -56,17 +56,12 @@ struct MainView: View {
         }
         .alert(isPresented: $orderActivationChange, content: {
             onConditionalAlert(actionPrimary: {
-                withAnimation{
-                    orderIsActivated.toggle()
-                }
+                animateOrderIsActive(value: !orderIsActivated)
             },
                 actionSecondary: { })
         })
         .onChange(of: orderIsActivated){ isActivated in
             callFirebaseAndTooggleOrderActivation(shouldActivate: isActivated)
-            if !isActivated {
-                
-            }
         }
         .onAppear() {
             firestoreVM.initializeListenerOrdersInProcess()
@@ -210,14 +205,14 @@ struct MainView: View {
         })
         else{
             guard let firstOrder = orders.first else { return }
-            orderIsActivated = false
+            animateOrderIsActive(value: false)
             currentOrder = firstOrder
             updatePdfViewWithOrder(firstOrder);
             return
         }
         
         SIMULATED_QR_CODE = orders[index].orderId
-        orderIsActivated = true
+        animateOrderIsActive(value: true)
         currentOrder = orders[index]
         updatePdfViewWithOrder(orders[index])
     }
@@ -259,6 +254,12 @@ struct MainView: View {
         ALERT_TITLE = "Avsluta Order"
         ALERT_MESSAGE = "Vill ni ta bort aktiverad \nOrder: \(currentOrder?.orderId ?? "")?"
         orderActivationChange.toggle()
+    }
+    
+    private func animateOrderIsActive(value:Bool){
+        withAnimation{
+            orderIsActivated = value
+        }
     }
     
 }
