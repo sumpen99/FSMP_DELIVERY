@@ -251,14 +251,12 @@ struct MainView: View {
         ALERT_TITLE = "Aktivera Order"
         ALERT_MESSAGE = "Vill ni aktivera \nOrder: \(currentOrder?.orderId ?? "")?"
         orderActivationChange.toggle()
-        print(orderIsActivated)
     }
     
     private func setAlertDeActivateOrderMessage(){
         ALERT_TITLE = "Avsluta Order"
         ALERT_MESSAGE = "Vill ni ta bort aktiverad \nOrder: \(currentOrder?.orderId ?? "")?"
         orderActivationChange.toggle()
-        print(orderIsActivated)
     }
     
 }
