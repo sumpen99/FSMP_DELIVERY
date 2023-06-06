@@ -27,6 +27,7 @@ struct MainView: View {
                 VStack {
                     PDFKitView(url:$pdfUrl)
                     bottomButtons
+                    Divider().padding([.leading,.trailing])
                     Spacer()
                     if !orderIsActivated {
                         ToggleBox(toogleIsOn: $listOfOrdersIsShowing, label: "").padding(.bottom,-50.0)
@@ -192,9 +193,9 @@ struct MainView: View {
                                         "\(Calendar.numberOfDaysBetween(order.initDate, and: Date())) dagar")
                 }
                 Spacer()
-                Text(Image(systemName: "checkmark.circle.fill"))
+                Image(systemName: "checkmark.circle.fill")
                     .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
-                    .foregroundColor(orderIsActivated ? .green : .gray)
+                    .foregroundColor(.gray)
             }
             .foregroundColor(.white)
             .listRowBackground(
