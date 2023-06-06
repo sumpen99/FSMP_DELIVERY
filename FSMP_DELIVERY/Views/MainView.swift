@@ -23,7 +23,7 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack() {
-                backgroundColor
+                
                 VStack {
                     PDFKitView(url:$pdfUrl)
                     bottomButtons
@@ -38,7 +38,6 @@ struct MainView: View {
                 guard !orders.isEmpty else { return }
                 findActivatedOrderOrSetFirst(orders: orders)
             }
-            .navigationTitle("Available orders")
             .fontWeight(.regular)
             .toolbar {
                 Button {
@@ -73,11 +72,6 @@ struct MainView: View {
             firestoreVM.closeListenerOrdersInProcess()
         }
         
-    }
-    
-    var backgroundColor: some View{
-        Color(red: 70/256, green: 89/256, blue: 116/256).opacity(0.5)
-                .ignoresSafeArea()
     }
     
     var sideMenu: some View{

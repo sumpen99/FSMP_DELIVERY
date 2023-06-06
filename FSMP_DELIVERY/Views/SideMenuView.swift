@@ -15,12 +15,6 @@ struct SideMenuView: View {
         NavigationStack {
             
             VStack(alignment: .leading) {
-                Text("Menu")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding()
-                
                 
                 Button(action: {}){
                     NavigationLink(destination:LazyDestination(destination: { OrderHistoryView() })) {
