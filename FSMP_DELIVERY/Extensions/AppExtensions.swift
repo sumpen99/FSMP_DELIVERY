@@ -50,14 +50,12 @@ func removeAllOrdersFromFolder(){
     let fileManager = FileManager.default
     guard let ordersFolder = ordersFolder,
           let filePaths = try? fileManager.contentsOfDirectory(at: ordersFolder, includingPropertiesForKeys: nil, options: [])  else { return }
-    DispatchQueue.global(qos: .background).async {
-        for filePath in filePaths {
-            do{
-                try fileManager.removeItem(at: filePath)
-            }
-            catch{
-                print(error)
-            }
+    for filePath in filePaths {
+        do{
+            try fileManager.removeItem(at: filePath)
+        }
+        catch{
+            print(error)
         }
     }
 }
