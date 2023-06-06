@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MainView: View {
-    @Namespace var animationMain
     @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var pdfUrl:URL?
@@ -31,7 +30,6 @@ struct MainView: View {
                     Spacer()
                     if !orderIsActivated {
                         listOfOrders
-                        .matchedGeometryEffect(id: "ODERSTOCHOOSEFROM", in: animationMain)
                     }
                 }
                 sideMenu
@@ -226,6 +224,7 @@ struct MainView: View {
         currentOrder = orders[index]
         updatePdfViewWithOrder(orders[index])
     }
+    
     
     func callFirebaseAndTooggleOrderActivation(shouldActivate:Bool){
         guard let orderId = currentOrder?.orderId else { return }
