@@ -9,11 +9,8 @@ import FirebaseCore
 import Firebase
 
 struct ContentView: View {
- @EnvironmentObject var firebaseAuth: FirebaseAuth
- @EnvironmentObject var firestoreViewModel: FirestoreViewModel
- 
- @State var signedIn : Bool = true
- 
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
+  
     var body: some View {
          ZStack{
              //Color(red: 70/256, green: 89/256, blue: 116/256)
@@ -34,11 +31,11 @@ struct ContentView: View {
          }
      }
 
- struct ContentView_Previews: PreviewProvider {
-     static var previews: some View {
-        ContentView()
+     struct ContentView_Previews: PreviewProvider {
+         static var previews: some View {
+            ContentView()
+         }
      }
- }
  
 }
 

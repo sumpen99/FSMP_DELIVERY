@@ -297,14 +297,21 @@ extension Date{
     
     func getFirstWeekdayInMonth() -> Int{
         let calendar = Calendar.current
-        return calendar.component(.weekday, from: calendar.startOfMonth(self))
+         return calendar.component(.weekday, from: calendar.startOfMonth(self))
     }
     
     func toISO8601String() -> String{
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
-        
         return formatter.string(from: self)
+    }
+    
+    static func fromInputString(_ input:String) -> Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "GMT")
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        //dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+        return dateFormatter.date(from: input)
     }
     
     func formattedString() -> String{
@@ -317,6 +324,10 @@ extension Date{
         return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())" + " " + time()
     }
     
+    func addOneDay() -> Date?{
+        return Calendar.current.date(byAdding: .day, value: 1, to: self)
+    }
+    
     func time() -> String{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm:ss"
@@ -325,20 +336,17 @@ extension Date{
     }
     
     func year() -> Int {
-        let calendar = Calendar.current
-        return calendar.component(.year, from: self)
+        return Calendar.current.component(.year, from: self)
         
     }
     
     func month() -> Int {
-        let calendar = Calendar.current
-        return calendar.component(.month, from: self)
+        return Calendar.current.component(.month, from: self)
         
     }
     
     func day() -> Int {
-        let calendar = Calendar.current
-        return calendar.component(.day, from: self)
+        return Calendar.current.component(.day, from: self)
         
     }
     

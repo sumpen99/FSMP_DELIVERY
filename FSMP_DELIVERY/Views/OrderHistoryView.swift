@@ -93,7 +93,7 @@ struct OrderHistoryView: View{
         }
         .onChange(of: queryOrderVar.usertDidSelectDates){ value in
             showingCalendar.toggle()
-            executeNewSearchQuery()
+            collectSearchFromCalendar()
         }
     }
     
@@ -244,8 +244,9 @@ struct OrderHistoryView: View{
     
     func executeNewSearchQuery(){
         let dateQuery = queryOrderVar.getDateQuery()
+        queryOrderVar.removeWhiteSpace()
         if searchIsAccepted(dateQuery: dateQuery){
-            let queryOptions = [dateQuery,queryOrderVar.queryOption,.QUERY_SORT_BY_DATE_COMPLETION]
+            let queryOptions = [dateQuery,queryOrderVar.queryOption]
             firestoreVM.closeAndReleaseOrderSignedData()
             firestoreVM.listenToOrdersSignedWithOptions(
                 queryOptions: queryOptions,
@@ -253,27 +254,39 @@ struct OrderHistoryView: View{
         }
     }
     
-    func wildcard(_ string: String, pattern: String) -> Bool {
-        let pred = NSPredicate(format: "self LIKE %@", pattern)
-        return !NSArray(object: string).filtered(using: pred).isEmpty
+    func collectSearchFromCalendar(){
+        let dateQuery = queryOrderVar.getDateQuery()
+        let queryOptions = [dateQuery]
+        firestoreVM.closeAndReleaseOrderSignedData()
+        firestoreVM.listenToOrdersSignedWithOptions(
+            queryOptions: queryOptions,
+            queryOrderVar: queryOrderVar)
     }
     
     func searchIsAccepted(dateQuery:QueryOptions) -> Bool{
-        print(wildcard("a12b34c", pattern: "?/?-?"))
-        print(wildcard("3/5-2023", pattern: "*/*-*"))
-        print(wildcard("3/5-23", pattern: "*/*-*"))
-        print(wildcard("3/5-23", pattern: "*/*-*"))
-        print(wildcard("3/5-23", pattern: "*/*-*"))
         if dateQuery == .QUERY_ALL_DATES && queryOrderVar.queryOption == .QUERY_NONE{
             setQueryAlertMessage(title: "Sökning avbruten",
                                  message: "Välj kategori eller en tidsintervall")
             return false
         }
-        if queryOrderVar.queryOption == .QUERY_ORDER_CREATED{
-            return queryOrderVar.tryBuildSearchTextAsDate()
+        if dateQuery == .QUERY_ALL_DATES && queryOrderVar.searchText.isEmpty{
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Saknar söktext")
+            return false
         }
+        
+        if queryOrderVar.queryOption == .QUERY_ORDER_CREATED{
+            if queryOrderVar.tryBuildSearchTextAsDate(){ return true}
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Format för datum är:\n 1/1-2023")
+            return false
+        }
+        
         if queryOrderVar.queryOption == .QUERY_CUSTOMER_PHONENUMBER{
-            return queryOrderVar.tryBuildSearchTextAsPhoneNumber()
+            if queryOrderVar.tryBuildSearchTextAsPhoneNumber(){ return true}
+            setQueryAlertMessage(title: "Sökning avbruten",
+                                 message: "Använd enbart siffror\ntex. 701122333")
+            return false
         }
         return true
         

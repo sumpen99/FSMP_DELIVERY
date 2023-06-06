@@ -8,6 +8,8 @@ import SwiftUI
 struct QueryOrderVar{
     var startDate:Date?
     var endDate:Date?
+    var parsedDateOfCreation:Date?
+    var parsedPhoneNumber:Int = 0
     var queryOption:QueryOptions = QueryOptions.QUERY_NONE
     var searchText:String = ""
     var usertDidSelectDates:Bool = false
@@ -26,9 +28,29 @@ struct QueryOrderVar{
         usertDidSelectDates.toggle()
     }
     
-    func tryBuildSearchTextAsDate() -> Bool{
-        // accepted 3/5-2023
-        // accepted 3 maj 2023
+    mutating func tryBuildSearchTextAsDate() -> Bool{
+        // wildcard("3/5-2023, pattern: "*/*-*"")
+        // wildcard("3/5-2023, pattern: "?/?-????"")
+        if let _ = searchText.range(of: #"^\d{1}/\d{1}-\d{4}$"#, options: .regularExpression),
+           let searchDate = Date.fromInputString(searchText) {
+            parsedDateOfCreation = searchDate
+            return true
+        }
+        else if let _ = searchText.range(of: #"^\d{1}/\d{2}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                parsedDateOfCreation = searchDate
+                return true
+        }
+        else if let _ = searchText.range(of: #"^\d{2}/\d{1}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                parsedDateOfCreation = searchDate
+                return true
+        }
+        else if let _ = searchText.range(of: #"^\d{2}/\d{2}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                parsedDateOfCreation = searchDate
+                return true
+        }
         return false
     }
     
@@ -37,9 +59,10 @@ struct QueryOrderVar{
         return !NSArray(object: string).filtered(using: pred).isEmpty
     }
     
-    func tryBuildSearchTextAsPhoneNumber() -> Bool{
-        // accepted int
-        return false
+    mutating func tryBuildSearchTextAsPhoneNumber() -> Bool{
+        guard let parsedNumber = Int(searchText) else { return false }
+        parsedPhoneNumber = parsedNumber
+        return true
     }
     
     func getStartDateString() -> String{
@@ -58,6 +81,10 @@ struct QueryOrderVar{
     
     func userHaveSelectedDates() -> Bool{
         return startDate != nil || endDate != nil
+    }
+    
+    mutating func removeWhiteSpace(){
+        searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     mutating func clearStartDate(){

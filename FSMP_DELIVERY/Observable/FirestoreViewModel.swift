@@ -479,9 +479,9 @@ extension FirestoreViewModel{
                 case .QUERY_ORDER_TITLE:
                     q = getOrderTitleQuery(q,searchtext: queryOrderVar.searchText)
                 case .QUERY_ORDER_CREATED:
-                    q = getOrderCreatedQuery(q,searchtext: queryOrderVar.searchText)
+                    q = getOrderCreatedQuery(q,searchdate: queryOrderVar.parsedDateOfCreation)
                 case .QUERY_CUSTOMER_PHONENUMBER:
-                    q = getCustomerPhonenumberQuery(q,searchtext: queryOrderVar.searchText)
+                    q = getCustomerPhonenumberQuery(q,searchnumber: queryOrderVar.parsedPhoneNumber)
                 case .QUERY_SORT_BY_DATE_COMPLETION:
                     q = sortQueryByDate(q)
                 case .QUERY_NONE:
@@ -525,18 +525,19 @@ extension FirestoreViewModel{
         return q.whereField("customer.email", isEqualTo: searchtext)
     }
     
-    func getCustomerPhonenumberQuery(_ q:Query,searchtext:String) -> Query{
-        // CHANGE STRING TO INT
-        return q.whereField("customer.phoneNumber", isEqualTo: searchtext)
+    func getCustomerPhonenumberQuery(_ q:Query,searchnumber:Int) -> Query{
+        return q.whereField("customer.phoneNumber", isEqualTo: searchnumber)
     }
     
     func getOrderTitleQuery(_ q:Query,searchtext:String) -> Query{
         return q.whereField("ordername", isEqualTo: searchtext)
     }
     
-    func getOrderCreatedQuery(_ q:Query,searchtext:String) -> Query{
-        // CHANGE STRING TO DATE
-        return q
+    func getOrderCreatedQuery(_ q:Query,searchdate:Date?) -> Query{
+        guard let startDate = searchdate,let endDate = startDate.addOneDay() else { return q }
+        return repo.getOrderSignedCollection()
+            .whereField("initDate",isGreaterThanOrEqualTo: startDate)
+            .whereField("initDate", isLessThan: endDate)
     }
     
     func sortQueryByDate(_ q:Query) -> Query{
