@@ -303,8 +303,14 @@ extension Date{
     func toISO8601String() -> String{
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
-        
         return formatter.string(from: self)
+    }
+    
+    static func fromInputString(_ input:String) -> Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "GMT")
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        return dateFormatter.date(from: input)
     }
     
     func formattedString() -> String{

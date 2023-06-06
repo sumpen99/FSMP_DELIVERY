@@ -8,6 +8,7 @@ import SwiftUI
 struct QueryOrderVar{
     var startDate:Date?
     var endDate:Date?
+    var dateOfCreation:Date?
     var queryOption:QueryOptions = QueryOptions.QUERY_NONE
     var searchText:String = ""
     var usertDidSelectDates:Bool = false
@@ -26,9 +27,29 @@ struct QueryOrderVar{
         usertDidSelectDates.toggle()
     }
     
-    func tryBuildSearchTextAsDate() -> Bool{
-        // accepted 3/5-2023
-        // accepted 3 maj 2023
+    mutating func tryBuildSearchTextAsDate() -> Bool{
+        // wildcard("3/5-2023, pattern: "*/*-*"")
+        // wildcard("3/5-2023, pattern: "?/?-????"")
+        if let _ = searchText.range(of: #"^\d{1}/\d{1}-\d{4}$"#, options: .regularExpression),
+           let searchDate = Date.fromInputString(searchText) {
+            dateOfCreation = searchDate
+            return true
+        }
+        else if let _ = searchText.range(of: #"^\d{1}/\d{2}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                dateOfCreation = searchDate
+                return true
+        }
+        else if let _ = searchText.range(of: #"^\d{2}/\d{1}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                dateOfCreation = searchDate
+                return true
+        }
+        else if let _ = searchText.range(of: #"^\d{2}/\d{2}-\d{4}$"#, options: .regularExpression),
+                let searchDate = Date.fromInputString(searchText) {
+                dateOfCreation = searchDate
+                return true
+        }
         return false
     }
     
@@ -58,6 +79,10 @@ struct QueryOrderVar{
     
     func userHaveSelectedDates() -> Bool{
         return startDate != nil || endDate != nil
+    }
+    
+    mutating func removeWhiteSpace(){
+        searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     mutating func clearStartDate(){
