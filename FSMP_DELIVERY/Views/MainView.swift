@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
+    @Namespace var animationMain
     @EnvironmentObject var firebaseAuth: FirebaseAuth
     @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var pdfUrl:URL?
@@ -30,6 +31,7 @@ struct MainView: View {
                     Spacer()
                     if !orderIsActivated {
                         listOfOrders
+                        .matchedGeometryEffect(id: "ODERSTOCHOOSEFROM", in: animationMain)
                     }
                 }
                 sideMenu
@@ -54,7 +56,9 @@ struct MainView: View {
         }
         .alert(isPresented: $orderActivationChange, content: {
             onConditionalAlert(actionPrimary: {
-                orderIsActivated.toggle()
+                withAnimation{
+                    orderIsActivated.toggle()
+                }
             },
                 actionSecondary: { })
         })
