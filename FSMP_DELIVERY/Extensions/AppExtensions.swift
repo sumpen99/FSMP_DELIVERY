@@ -8,7 +8,7 @@ import SwiftUI
 
 var ALERT_TITLE = ""
 var ALERT_MESSAGE = ""
-
+let FSMP_RELEASE_YEAR = 2023
 var documentDirectory:URL? { FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first }
 
 var ordersFolder:URL? {
@@ -44,13 +44,6 @@ var ordersFolder:URL? {
     }*/
     
     return nil
-}
-
-func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
-    Binding(
-        get: { lhs.wrappedValue ?? rhs },
-        set: { lhs.wrappedValue = $0 }
-    )
 }
 
 func removeAllOrdersFromFolder(){
@@ -105,6 +98,58 @@ func generateQrCode(qrCodeStr:String) -> Data?{
     return uiimage.pngData()
 }
 
+func daysInCurrentMonth(monthNumber: Int,year: Int) -> Int {
+    var dateComponents = DateComponents()
+    dateComponents.year = year
+    dateComponents.month = monthNumber
+    guard let d = Calendar.current.date(from: dateComponents),
+          let interval = Calendar.current.dateInterval(of: .month, for: d),
+          let days = Calendar.current.dateComponents([.day], from: interval.start, to: interval.end).day
+    else{ return 0 }
+    return days
+}
+
+func getHeaderSubHeader(_ header:String,subHeader:String) -> some View{
+    HStack{
+        Text(header).font(.headline).bold()
+        Text(subHeader).font(.body)
+        Spacer()
+    }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    
+}
+
+func getHeaderSubHeaderWithClearOption(_ header:String,subHeader:String,action:(() -> Void)? = nil) -> some View{
+    HStack{
+        Text(header)
+        Text(subHeader).font(.body)
+        Spacer()
+        Button(action: { action?() },label: {
+            //Text("Rensa").foregroundColor(Color.systemBlue)
+            Image(systemName: "xmark.circle")
+        })
+        .padding(.trailing)
+    }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    
+}
+
+func getVertHeaderMessage(_ header:String,message:String) -> some View{
+    VStack(spacing:2){
+        Text(header)
+            .font(.headline).bold()
+            .hLeading()
+        Text(message).font(.body).hLeading()
+        //Spacer()
+   }
+    .foregroundColor(Color.systemGray)
+    .hLeading()
+    .padding([.leading,.bottom],5)
+    
+}
+
 extension ButtonStyle where Self == CustomButtonStyleGradient {
     static var gradient: CustomButtonStyleGradient { .init() }
 }
@@ -133,6 +178,61 @@ extension String{
     }
 }
 
+extension Color {
+     
+    // MARK: - Text Colors
+    static let lightText = Color(UIColor.lightText)
+    static let darkText = Color(UIColor.darkText)
+    static let placeholderText = Color(UIColor.placeholderText)
+
+    // MARK: - Label Colors
+    static let label = Color(UIColor.label)
+    static let secondaryLabel = Color(UIColor.secondaryLabel)
+    static let tertiaryLabel = Color(UIColor.tertiaryLabel)
+    static let quaternaryLabel = Color(UIColor.quaternaryLabel)
+
+    // MARK: - Background Colors
+    static let systemBackground = Color(UIColor.systemBackground)
+    static let secondarySystemBackground = Color(UIColor.secondarySystemBackground)
+    static let tertiarySystemBackground = Color(UIColor.tertiarySystemBackground)
+    
+    // MARK: - Fill Colors
+    static let systemFill = Color(UIColor.systemFill)
+    static let secondarySystemFill = Color(UIColor.secondarySystemFill)
+    static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
+    static let quaternarySystemFill = Color(UIColor.quaternarySystemFill)
+    
+    // MARK: - Grouped Background Colors
+    static let systemGroupedBackground = Color(UIColor.systemGroupedBackground)
+    static let secondarySystemGroupedBackground = Color(UIColor.secondarySystemGroupedBackground)
+    static let tertiarySystemGroupedBackground = Color(UIColor.tertiarySystemGroupedBackground)
+    
+    // MARK: - Gray Colors
+    static let systemGray = Color(UIColor.systemGray)
+    static let systemGray2 = Color(UIColor.systemGray2)
+    static let systemGray3 = Color(UIColor.systemGray3)
+    static let systemGray4 = Color(UIColor.systemGray4)
+    static let systemGray5 = Color(UIColor.systemGray5)
+    static let systemGray6 = Color(UIColor.systemGray6)
+    
+    // MARK: - Other Colors
+    static let separator = Color(UIColor.separator)
+    static let opaqueSeparator = Color(UIColor.opaqueSeparator)
+    static let link = Color(UIColor.link)
+    
+    // MARK: System Colors
+    static let systemBlue = Color(UIColor.systemBlue)
+    static let systemPurple = Color(UIColor.systemPurple)
+    static let systemGreen = Color(UIColor.systemGreen)
+    static let systemYellow = Color(UIColor.systemYellow)
+    static let systemOrange = Color(UIColor.systemOrange)
+    static let systemPink = Color(UIColor.systemPink)
+    static let systemRed = Color(UIColor.systemRed)
+    static let systemTeal = Color(UIColor.systemTeal)
+    static let systemIndigo = Color(UIColor.systemIndigo)
+
+}
+
 extension UIImage {
     
     func aspectFittedToHeight(_ newHeight: CGFloat) -> UIImage {
@@ -151,7 +251,43 @@ extension UIImage {
     }
 }
 
+extension Calendar {
+    func startOfMonth(_ date: Date) -> Date {
+        return self.date(from: self.dateComponents([.year, .month], from: date))!
+    }
+    
+    static func getSwedishWeekdayNames() -> [String]{
+        var calendar = Calendar(identifier: .gregorian)
+        //calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.locale = Locale(identifier: "sv")
+        return calendar.weekdaySymbols
+    }
+    
+    static func getSwedishShortWeekdayNames() -> [String]{
+        var calendar = Calendar(identifier: .gregorian)
+        //calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.locale = Locale(identifier: "sv")
+        return calendar.shortWeekdaySymbols
+    }
+    
+    static func getWeekdayName(_ weekday:Int) -> String{
+        return getSwedishWeekdayNames()[weekday-1]
+    }
+    
+    static func getShortWeekdayName(_ weekday:Int) -> String{
+        return getSwedishShortWeekdayNames()[weekday-1]
+    }
+}
+
+
 extension Date{
+    
+    static func from(_ year: Int, _ month: Int, _ day: Int) -> Date?{
+        let gregorianCalendar = Calendar(identifier: .gregorian)
+        var dateComponents = DateComponents(calendar: gregorianCalendar, year: year, month: month, day: day)
+        dateComponents.timeZone = .gmt
+        return gregorianCalendar.date(from: dateComponents)
+    }
     
     static func fromISO8601StringToDate(_ dateToProcess:String) -> Date?{
         let formatter = ISO8601DateFormatter()
@@ -159,12 +295,86 @@ extension Date{
         return formatter.date(from: dateToProcess)
     }
     
+    func getFirstWeekdayInMonth() -> Int{
+        let calendar = Calendar.current
+         return calendar.component(.weekday, from: calendar.startOfMonth(self))
+    }
+    
     func toISO8601String() -> String{
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
-        
         return formatter.string(from: self)
     }
+    
+    static func fromInputString(_ input:String) -> Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "GMT")
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        //dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+        return dateFormatter.date(from: input)
+    }
+    
+    func formattedString() -> String{
+        let weekday = dayName()
+        return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())"
+    }
+    
+    func formattedStringWithTime() -> String{
+        let weekday = dayName()
+        return "\(weekday)" + " " + "\(day())" + " " + monthName() + " " + "\(year())" + " " + time()
+    }
+    
+    func addOneDay() -> Date?{
+        return Calendar.current.date(byAdding: .day, value: 1, to: self)
+    }
+    
+    func time() -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+         
+        return dateFormatter.string(from: self)
+    }
+    
+    func year() -> Int {
+        return Calendar.current.component(.year, from: self)
+        
+    }
+    
+    func month() -> Int {
+        return Calendar.current.component(.month, from: self)
+        
+    }
+    
+    func day() -> Int {
+        return Calendar.current.component(.day, from: self)
+        
+    }
+    
+    func monthName() -> String{
+        if let monthInt = Calendar.current.dateComponents([.month], from: self).month {
+            return Calendar.current.shortMonthSymbols[monthInt-1]
+        }
+        return ""
+    }
+    
+    func dayName() -> String{
+        let df = DateFormatter()
+        df.setLocalizedDateFormatFromTemplate("EEEE")
+        return df.string(from: self)
+    }
+    
+    func getDaysInMonth() -> Int?{
+        let calendar = Calendar.current
+
+        let dateComponents = DateComponents(year: calendar.component(.year, from: self), month: calendar.component(.month, from: self))
+        guard let date = calendar.date(from: dateComponents),
+              let range = calendar.range(of: .day, in: .month, for: date)
+        else{
+            return nil
+        }
+        return range.count
+    }
+    
 }
 
 extension [[CGPoint]]{
@@ -231,6 +441,10 @@ extension View {
       .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
     
+    func fillSection() -> some View{
+        self.modifier(FillFormModifier())
+    }
+    
     func hLeading() -> some View{
         self.frame(maxWidth: .infinity,alignment: .leading)
     }
@@ -269,11 +483,11 @@ extension View {
         )
     }
     
-    func onResultAlert(action:@escaping (()-> Void)) -> Alert{
+    func onResultAlert(action:(()-> Void)? = nil) -> Alert{
         return Alert(
                 title: Text(ALERT_TITLE),
                 message: Text(ALERT_MESSAGE),
-                dismissButton: .cancel(Text("OK"), action: { action() } )
+                dismissButton: .cancel(Text("OK"), action: { action?() } )
         )
     }
     

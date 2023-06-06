@@ -9,24 +9,18 @@ import FirebaseCore
 import Firebase
 
 struct ContentView: View {
- 
- @EnvironmentObject var firebaseAuth: FirebaseAuth
- @EnvironmentObject var firestoreViewModel: FirestoreViewModel
- @State var isMemoryWarning: Bool = false
- private let memoryWarningPublisher = NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)
- 
- @State var signedIn : Bool = true
- 
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
+  
     var body: some View {
          ZStack{
-             Color(red: 70/256, green: 89/256, blue: 116/256)
-                 .ignoresSafeArea()
+             //Color(red: 70/256, green: 89/256, blue: 116/256)
+                 //.ignoresSafeArea()
              switch firebaseAuth.loggedInAs{
                  case .NOT_LOGGED_IN:
-                    SignInView(signedIn: $signedIn)
+                    SignInView()
                  case .ADMIN:
                       MainView()
-//                    AdminView()
+                      //AdminView()
                  case .EMPLOYEE:
                       MainView()
                  case .CUSTOMER:
@@ -35,36 +29,23 @@ struct ContentView: View {
                      MainView()
              }
          }
-         .onAppear{
-             removeAllOrdersFromFolder()
-         }
-         .onDisappear{
-             //removeAllOrdersFromFolder()
-         }
-         .onReceive(memoryWarningPublisher) { warn in
-             print(warn.debugDescription)
-         }
      }
 
- struct ContentView_Previews: PreviewProvider {
-     static var previews: some View {
-        ContentView()
+     struct ContentView_Previews: PreviewProvider {
+         static var previews: some View {
+            ContentView()
+         }
      }
- }
  
 }
 
 struct SignInView : View {
-    @Binding var signedIn : Bool
+    @EnvironmentObject var firebaseAuth: FirebaseAuth
     @State var showAlert : Bool = false
-    
-    var auth = Auth.auth()
-    
     @State private var email: String = ""
     @State private var password: String = ""
     
     var body: some View {
-    
         VStack{
             HStack{
                 Image(systemName: "wrench.and.screwdriver.fill")
@@ -77,16 +58,19 @@ struct SignInView : View {
                     .font(.largeTitle)
                     .bold()
             }
+            Spacer()
             Image ("delivery")
-                .resizable()
-                .padding(.leading, 20.0)
-                .scaledToFit()
+                    .resizable()
+                    .scaledToFill()
+                    .padding()
+                    .frame(width: 550, height: 350)
             HStack{
                 Image(systemName: "person.circle")
                     .foregroundColor(.black)
                     .font(.largeTitle)
                 TextField("Email", text: $email)
                     .font(.title)
+                    .frame(width: 280, height: 10) 
             }
             .padding()
             .overlay {
@@ -101,6 +85,7 @@ struct SignInView : View {
                     .font(.largeTitle)
                 SecureField("Password", text: $password)
                     .font(.title)
+                    .frame(width: 280, height: 10)
             }
             .padding()
             .overlay {
@@ -112,14 +97,10 @@ struct SignInView : View {
             Spacer()
             
             Button(action: {
-                auth.signIn(withEmail: email, password: password) { authResult, error in
+                firebaseAuth.loginWithEmail(email, password: password) { authResult, error in
                     if let _ = error {
-                        print("error signing in")
                         showAlert = true
-                    } else {
-                        print("signed in")
-                        signedIn = true
-                    }
+                    } 
                 }
             }){
                 Text("Sign in")
@@ -130,7 +111,6 @@ struct SignInView : View {
                     .background(Color(red: 239/256, green: 167/256, blue: 62/256))
                     .cornerRadius(40.0)
             }
-            Spacer()
             Spacer()
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Felaktig Login"),

@@ -44,7 +44,7 @@ struct PDFKitRepresentedView: UIViewRepresentable {
             }
         }
         else{
-            print("PDFKitView line 47 if uiView.window != nil, !uiView.isFirstResponder ")
+            uiView.document = document
         }
         //pdfView.autoScales = true
         /*guard let pdfView = uiView as? PDFView else { return }

@@ -29,7 +29,7 @@ struct AddOrderView: View {
                 VStack {
                     formSections
                 }
-                if prVar.isShowing{ LoadingView(loadingtext: "Laddar upp...") }
+                if prVar.isShowing{ LoadingView(loadingtext: $prVar.loadingText) }
             }
         }
         .opacity(prVar.closeOnTapped ? 0.0 : 1.0)
@@ -81,7 +81,7 @@ struct AddOrderView: View {
                     Image("delivery")
                         .resizable()
                         .frame(width:200,height:200)
-                    Text("FSMP - Delivery")
+                    Text("FSMP - SERVICE")
                     .font(.system(size: 40, weight: .heavy, design: .rounded))
                     .padding()
                     Section(
@@ -143,6 +143,7 @@ struct AddOrderView: View {
     private func sendMailVerificationToCustomer(fileUrl:URL,
                                                 fileName:String,
                                                 completion:@escaping (Bool)->Void){
+            prVar.setLoadingTextForMail()
             firestoreVM.getCredentials(){ credentials in
             guard let credentials = credentials else { completion(false);return }
             let manager = MailManager(credentials:credentials)
@@ -160,6 +161,7 @@ struct AddOrderView: View {
                      details: prVar.description,
                      customer: customer.lightVersion(),
                      orderId: qrCode.orderId ?? "",
+                     assignedUser: "",
                      initDate:prVar.currentDate)
     }
     

@@ -26,7 +26,7 @@ struct SignOfOrderView: View{
         NavigationStack {
             ZStack{
                 signedForm
-                if prVar.isShowing{ LoadingView(loadingtext: "Laddar upp...") }
+                if prVar.isShowing{ LoadingView(loadingtext: $prVar.loadingText) }
             }
         }
         .opacity(prVar.closeOnTapped ? 0.0 : 1.0)
@@ -137,7 +137,7 @@ struct SignOfOrderView: View{
                     Image("delivery")
                         .resizable()
                         .frame(width:200,height:200)
-                    Text("FSMP - Delivery")
+                    Text("FSMP - SERVICE")
                     .font(.system(size: 40, weight: .heavy, design: .rounded))
                     .padding()
                     Section(header: Text("Bekräftelse av mottagen service")){
@@ -163,10 +163,10 @@ struct SignOfOrderView: View{
     var uploadSignedOrderButton: some View{
         HStack{
             Button(action: uploadSignedForm ) {
-                Text("Spara")
+                Text("Sign")
             }
             Spacer()
-            Image(systemName: "chevron.right")
+            Image(systemName: "checkmark.shield")
                 .foregroundColor(prVar.isShowing ? .accentColor : .blue)
         }
         .disabled(prVar.isShowing)
@@ -201,6 +201,7 @@ struct SignOfOrderView: View{
                                                 fileUrl:URL,
                                                 fileName:String,
                                                 completion:@escaping (Bool)->Void){
+        prVar.setLoadingTextForMail()
         firestoreViewModel.getCredentials(){ credentials in
             guard let credentials = credentials else { completion(false);return }
             let manager = MailManager(credentials:credentials)

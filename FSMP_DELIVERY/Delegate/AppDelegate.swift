@@ -53,6 +53,10 @@ class AppDelegate: NSObject,UIApplicationDelegate{
         UNUserNotificationCenter.current().requestAuthorization(
           options: authOptions) { _, _ in }
     }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        removeAllOrdersFromFolder()
+    }
    
 }
 

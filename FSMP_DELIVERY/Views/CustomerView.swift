@@ -25,10 +25,14 @@ struct CustomerView: View {
                         HStack{
                             NavigationLink(destination:LazyDestination(destination: {
                                 AddOrderView(customer: Binding(get: { customer }, set: { _ in }))})){
-                                    Text("Add order")
+                                    Text("Create order \(Image(systemName: "square.and.pencil"))")
                             }
                             .buttonStyle(CustomButtonStyle1())
                             .padding(.leading, 20)
+                            
+                            NavigationLink(destination: LazyDestination(destination: {ManageCustomerView(customerToEdit: Binding(get: {customer}, set: { _ in }))})){
+                                Image(systemName: "gearshape")
+                            }
                         }
                     }
                     
@@ -53,7 +57,7 @@ struct CustomerView: View {
                     }
                     .alert(isPresented: $showAlertForDelete) {
                         let name = choosenCustomer?.name ?? "kunden"
-                        return Alert(title: Text("Ta bort Kunden"),
+                        return Alert(title: Text("Vill du ta bort \(name)?"),
                               message: Text("Allt information om \(name) kommer raderas!. Är du säker på att du vill fortsätta?"),
                               primaryButton: .destructive(Text("Ta bort")) {
                             if let indexSet = indexSetToDelete {

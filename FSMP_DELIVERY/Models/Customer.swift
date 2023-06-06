@@ -8,7 +8,7 @@ import FirebaseFirestoreSwift
 import SwiftUI
 import Foundation
 
-struct Customer : Codable,Identifiable {
+struct Customer : Codable,Identifiable,Hashable {
     @DocumentID var id : String?
     var customerId:String
     var name : String = ""

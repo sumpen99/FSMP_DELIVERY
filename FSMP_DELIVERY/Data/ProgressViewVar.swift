@@ -13,6 +13,7 @@ struct ProgressViewVar{
     var closeOnTapped = false
     var isFormSignedResult = false
     var scannedQrCode = ""
+    var loadingText = "Laddar upp..."
     var orderName = ""
     var description = ""
     var addNewPoint = true
@@ -21,5 +22,9 @@ struct ProgressViewVar{
     mutating func setEnabled(){
         isEnabled = true
         isShowing = true
+    }
+    
+    mutating func setLoadingTextForMail(){
+        loadingText = "Skickar Mail..."
     }
 }

@@ -17,6 +17,7 @@ struct MainView: View {
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
+    @State private var listOfOrdersIsShowing:Bool = true
     @State var currentOrder:Order?
     @State private var mapState = MapViewState.noInput
 
@@ -25,20 +26,26 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack() {
-                backgroundColor
                 VStack {
                     PDFKitView(url:$pdfUrl)
                     bottomButtons
                     Spacer()
-                    listOfOrders
+                    if !orderIsActivated {
+                        ToggleBox(toogleIsOn: $listOfOrdersIsShowing, label: "").padding(.bottom,-50.0)
+                        if listOfOrdersIsShowing {
+                            listOfOrders
+                        }
+                    }
                 }
                 sideMenu
             }
-            .navigationTitle("Available orders")
+            .onReceive(firestoreVM.$ordersInProcess) { (orders) in
+                guard !orders.isEmpty else { return }
+                findActivatedOrderOrSetFirst(orders: orders)
+            }
             .fontWeight(.regular)
             .toolbar {
                 Button {
-                    print("show menu")
                     withAnimation(.easeInOut){
                         showSideMenu.toggle()
                     }
@@ -50,7 +57,7 @@ struct MainView: View {
         }
         .alert(isPresented: $orderActivationChange, content: {
             onConditionalAlert(actionPrimary: {
-                orderIsActivated.toggle()
+                animateOrderIsActive(value: !orderIsActivated)
             },
                 actionSecondary: { })
         })
@@ -66,15 +73,10 @@ struct MainView: View {
         
     }
     
-    var backgroundColor: some View{
-        Color(red: 70/256, green: 89/256, blue: 116/256).opacity(0.5)
-                .ignoresSafeArea()
-    }
-    
     var sideMenu: some View{
         GeometryReader { _ in
-            SideMenuView()
-                .offset(x: showSideMenu ? 0 : -300, y: 0)
+            SideMenuView(closeMenuOnDissapear:$showSideMenu){ firestoreVM.releaseData() }
+            .offset(x: showSideMenu ? 0 : -300, y: 0)
             Spacer()
         }
     }
@@ -89,18 +91,15 @@ struct MainView: View {
                 self.indexSetToDelete = indexSet
             }
             .deleteDisabled(firebaseAuth.loggedInAs != .ADMIN)
-            .onReceive(firestoreVM.$ordersInProcess) { (orders) in
-                guard !orders.isEmpty else { return }
-                findActivatedOrderOrSetFirst(orders: orders)
-            }
             .alert(isPresented: $showAlertForDelete) {
-                Alert(title: Text("Ta bort Order"),
+                Alert(title: Text("Ta bort Order!"),
                       message: Text("Är du säker på att du vill ta bort beställningen?"),
                       primaryButton: .destructive(Text("Ta bort")) {
                     if let indexSet = indexSetToDelete {
                         for index in indexSet {
                             let orderToRemove = firestoreVM.ordersInProcess[index]
                             firestoreVM.removeOrderInProcess(orderToRemove.orderId)
+                            firestoreVM.removeOrderPdfFromStorage(orderType: .ORDER_IN_PROCESS,orderNumber: orderToRemove.orderId)
                         }
                     }
                 },
@@ -117,9 +116,10 @@ struct MainView: View {
 
             if let order = currentOrder {
                     HStack{
-                        NavigationLink(destination:LazyDestination(destination: {
-                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))})){
-                                Text("Yes")
+                        NavigationLink(destination: LazyDestination(destination: {
+                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))
+                        })) {
+                            Text("Yes")
                         }
                     }
                 }
@@ -138,25 +138,34 @@ struct MainView: View {
     
     var bottomButtons: some View{
         HStack(spacing:20){
-            activateOrderButton
+            Spacer()
+            deAndActivateOrderButton
             mapviewButton
+            Spacer()
             signOfOrderBtn
             Spacer()
-            if orderIsActivated{
-                deActivateOrderButton
-            }
         }
         .padding(.leading)
     }
     
-    var activateOrderButton: some View {
-        Button(action: {setAlertActivateOrderMessage()})
+    var deAndActivateOrderButton: some View {
+        
+        Button(action: {
+            if !orderIsActivated{
+                setAlertActivateOrderMessage()
+            } else {
+                setAlertDeActivateOrderMessage()
+            }})
         {
-            Text(Image(systemName: "hand.tap"))
-                .font(.largeTitle)
+            if !orderIsActivated{
+                Text("Activate \(Image(systemName: "checkmark.circle"))")
+            } else {
+                Text("Deactivate \(Image(systemName: "checkmark.circle.badge.xmark"))")
+            }
+            
         }
-        .buttonStyle(CustomButtonStyleDisabledable())
-        .disabled(orderIsActivated)
+        
+        .buttonStyle(CustomButtonStyleActivateDeactivate(isActivated: !orderIsActivated))
     }
     
     var mapviewButton: some View{
@@ -164,32 +173,17 @@ struct MainView: View {
             Text(Image(systemName: "map"))
                 .font(.largeTitle)
         }
-        .buttonStyle(CustomButtonStyle2())
-    }
-    
-    var signOfOrderBtn: some View {
-        NavigationLink(destination:LazyDestination(destination: { SignOfOrderView(currentOrder:currentOrder) })) {
-            Text(Image(systemName: "square.and.pencil"))
-                .font(.largeTitle)
-        }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(!orderIsActivated)
     }
     
-    var deActivateOrderButton: some View {
-        Button(action: {setAlertDeActivateOrderMessage()})
-        {
-            Text(Image(systemName: "hand.raised.slash"))
-                .font(.largeTitle)
+    var signOfOrderBtn: some View {
+        NavigationLink(destination:LazyDestination(destination: { SignOfOrderView(currentOrder:currentOrder) })) {
+            Text("Sign \(Image(systemName: "square.and.pencil"))")
         }
-        .buttonStyle(CustomButtonStyle1())
-        .padding(.trailing)
+        .buttonStyle(CustomButtonStyleDisabledable())
+        .disabled(!orderIsActivated)
     }
-    
-    // func for edit highlighted order on longpress
-//    func getListEditOrderButton(order:Order) -> some View{
-//        
-//    }
     
     func getListOrderButton(order:Order) -> some View{
         return HStack {
@@ -213,17 +207,18 @@ struct MainView: View {
         })
         else{
             guard let firstOrder = orders.first else { return }
-            orderIsActivated = false
+            animateOrderIsActive(value: false)
             currentOrder = firstOrder
             updatePdfViewWithOrder(firstOrder);
             return
         }
         
         SIMULATED_QR_CODE = orders[index].orderId
-        orderIsActivated = true
+        animateOrderIsActive(value: true)
         currentOrder = orders[index]
         updatePdfViewWithOrder(orders[index])
     }
+    
     
     func callFirebaseAndTooggleOrderActivation(shouldActivate:Bool){
         guard let orderId = currentOrder?.orderId else { return }
@@ -249,14 +244,6 @@ struct MainView: View {
                 pdfUrl = url
             }
         }
-        
-        /*
-            CLEAR ORDERS FOLDER AT SOME POINT
-            removeOneOrderFromFolder(fileName: order.orderId)
-            removeAllOrdersFromFolder()
-         
-         */
-        
     }
     
     private func setAlertActivateOrderMessage(){
@@ -269,6 +256,12 @@ struct MainView: View {
         ALERT_TITLE = "Avsluta Order"
         ALERT_MESSAGE = "Vill ni ta bort aktiverad \nOrder: \(currentOrder?.orderId ?? "")?"
         orderActivationChange.toggle()
+    }
+    
+    private func animateOrderIsActive(value:Bool){
+        withAnimation{
+            orderIsActivated = value
+        }
     }
     
 }
