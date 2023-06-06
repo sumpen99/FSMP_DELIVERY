@@ -17,19 +17,22 @@ struct MainView: View {
     @State private var showSideMenu: Bool = false
     @State private var orderIsActivated: Bool = false
     @State private var orderActivationChange: Bool = false
+    @State private var listOfOrdersIsShowing:Bool = true
     @State var currentOrder:Order?
     
     
     var body: some View {
         NavigationStack {
             ZStack() {
-                
                 VStack {
                     PDFKitView(url:$pdfUrl)
                     bottomButtons
                     Spacer()
                     if !orderIsActivated {
-                        listOfOrders
+                        ToggleBox(toogleIsOn: $listOfOrdersIsShowing, label: "").padding(.bottom,-50.0)
+                        if listOfOrdersIsShowing {
+                            listOfOrders
+                        }
                     }
                 }
                 sideMenu
