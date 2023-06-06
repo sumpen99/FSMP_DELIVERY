@@ -21,8 +21,6 @@ struct MainView: View {
     @State var currentOrder:Order?
     @State private var mapState = MapViewState.noInput
 
-    
-    
     var body: some View {
         NavigationStack {
             ZStack() {
@@ -170,8 +168,7 @@ struct MainView: View {
     
     var mapviewButton: some View{
         NavigationLink(destination: MapView(showMap: ShowMap(mapState: $mapState))){
-            Text(Image(systemName: "map"))
-                .font(.largeTitle)
+            Image(systemName: "map")
         }
         .buttonStyle(CustomButtonStyleDisabledable())
         .disabled(!orderIsActivated)
@@ -186,6 +183,38 @@ struct MainView: View {
     }
     
     func getListOrderButton(order:Order) -> some View{
+        return HStack{
+                VStack(spacing:10){
+                    getHeaderSubHeader("Kund: ", subHeader: order.customer.name)
+                    getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
+                    getHeaderSubHeader("Inkom: ", subHeader: order.initDate.formattedString())
+                    getHeaderSubHeader("Väntat: ", subHeader:
+                                        "\(Calendar.numberOfDaysBetween(order.initDate, and: Date())) dagar")
+                }
+                Spacer()
+                Text(Image(systemName: "checkmark.circle.fill"))
+                    .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
+                    .foregroundColor(orderIsActivated ? .green : .gray)
+            }
+            .foregroundColor(.white)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: 5)
+                    .background(.clear)
+                    .foregroundColor(.white)
+                    .padding([.top,.bottom],2.0)
+            )
+            .listRowSeparator(.hidden)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if orderIsActivated { return }
+                withAnimation{
+                    currentOrder = order
+                    updatePdfViewWithOrder(order)
+                }
+            }
+    }
+    
+    /*func getListOrderButton(order:Order) -> some View{
         return HStack {
             Button(action: {
                 if orderIsActivated { return }
@@ -199,7 +228,7 @@ struct MainView: View {
                 .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
                 .foregroundColor(orderIsActivated ? .green : .gray)
         }
-    }
+    }*/
     
     func findActivatedOrderOrSetFirst(orders:[Order]){
         guard let index = orders.firstIndex(where: {
