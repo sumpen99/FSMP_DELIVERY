@@ -161,6 +161,7 @@ struct AddOrderView: View {
                      details: prVar.description,
                      customer: customer.lightVersion(),
                      orderId: qrCode.orderId ?? "",
+                     assignedUser: "",
                      initDate:prVar.currentDate)
     }
     
