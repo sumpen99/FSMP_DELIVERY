@@ -143,8 +143,10 @@ struct MainView: View {
     
     var bottomButtons: some View{
         HStack(spacing:20){
+            Spacer()
             deAndActivateOrderButton
             mapviewButton
+            Spacer()
             signOfOrderBtn
             Spacer()
         }

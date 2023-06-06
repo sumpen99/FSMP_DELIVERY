@@ -21,10 +21,7 @@ struct SideMenuView: View {
                     .foregroundColor(.white)
                     .padding()
                 
-                Spacer()
                 
-                .buttonStyle(CustomButtonStyle1())
-                .padding()
                 Button(action: {}){
                     NavigationLink(destination:LazyDestination(destination: { OrderHistoryView() })) {
                         Image(systemName: "list.bullet.clipboard.fill")
@@ -52,6 +49,8 @@ struct SideMenuView: View {
                     .buttonStyle(CustomButtonStyle1())
                     .padding()
                 }
+                Spacer()
+
                 Button(action: {
                     releaseFirebaseData?()
                     firebaseAuth.signOut()
@@ -65,11 +64,12 @@ struct SideMenuView: View {
                 .cornerRadius(16)
                 .fontWeight(.semibold)
                 .padding()
-                Spacer()
+                
             }
             .padding(16)
             .background(Color.gray.opacity(0.95))
             .edgesIgnoringSafeArea(.bottom)
+            
         }
     }
     
