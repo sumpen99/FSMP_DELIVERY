@@ -67,7 +67,9 @@ struct SideMenuView: View {
             
         }
         .onDisappear{
-            closeMenuOnDissapear.toggle()
+            if closeMenuOnDissapear{
+                closeMenuOnDissapear.toggle()
+            }
         }
     }
     
