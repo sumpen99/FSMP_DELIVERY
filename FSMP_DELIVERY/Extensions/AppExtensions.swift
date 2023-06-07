@@ -170,6 +170,15 @@ extension String{
           return prefix(1).uppercased() + self.lowercased().dropFirst()
     }
     
+    func lowercaseFirstLetter() -> String {
+        return prefix(1).lowercased() + self.dropFirst()
+    }
+    
+    mutating func lowercaseFirst(){
+        if self.isEmpty { return }
+        self = self.lowercaseFirstLetter()
+    }
+    
     mutating func capitalizeFirst() {
         if self.isEmpty { return }
         self = self.capitalizingFirstLetter()

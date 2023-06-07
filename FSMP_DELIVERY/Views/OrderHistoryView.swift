@@ -133,12 +133,6 @@ struct OrderHistoryView: View{
                                                       subHeader: queryOrderVar.getEndDateString()){
                         queryOrderVar.clearEndDate()
                     }
-                    if getPreviousDateResultsIsPossible(){
-                        getHeaderSubHeaderWithClearOption("Sök på datum: ",
-                                                          subHeader: ""){
-                            executeNewSearchQuery()
-                        }
-                    }
                 }
             }
         }
@@ -246,7 +240,7 @@ struct OrderHistoryView: View{
         let dateQuery = queryOrderVar.getDateQuery()
         queryOrderVar.removeWhiteSpace()
         if searchIsAccepted(dateQuery: dateQuery){
-            let queryOptions = [dateQuery,queryOrderVar.queryOption]
+            let queryOptions = [dateQuery,queryOrderVar.queryOption,QueryOptions.QUERY_SORT_BY_DATE_COMPLETION]
             firestoreVM.closeAndReleaseOrderSignedData()
             firestoreVM.listenToOrdersSignedWithOptions(
                 queryOptions: queryOptions,

@@ -29,8 +29,9 @@ struct QueryOrderVar{
     }
     
     mutating func tryBuildSearchTextAsDate() -> Bool{
-        // wildcard("3/5-2023, pattern: "*/*-*"")
+        // wildcard("12/12-2023, pattern: "*/*-*"")
         // wildcard("3/5-2023, pattern: "?/?-????"")
+        if searchText.count < 8 || searchText.count > 10 { return false }
         if let _ = searchText.range(of: #"^\d{1}/\d{1}-\d{4}$"#, options: .regularExpression),
            let searchDate = Date.fromInputString(searchText) {
             parsedDateOfCreation = searchDate
