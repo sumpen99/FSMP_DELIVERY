@@ -107,29 +107,6 @@ struct MainView: View {
                 }
                 )
             }
-            .onTapGesture(count: 2) {
-                showAlert = true
-            }
-        }
-        .alert("Edit order?", isPresented: $showAlert) {
-
-            if let order = currentOrder {
-                    HStack{
-                        NavigationLink(destination: LazyDestination(destination: {
-                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))
-                        })) {
-                            Text("Yes")
-                        }
-                    }
-                }
-
-            else{
-                Spacer()
-            }
-
-            Button("no") {
-                print("no")
-            }
         }
         .cornerRadius(16)
         .padding()
@@ -184,14 +161,15 @@ struct MainView: View {
     }
     
     func getListOrderButton(order:Order) -> some View{
-        return HStack{
+        return ZStack {
+            HStack{
                 VStack(spacing:10){
                     getHeaderSubHeader("Kund: ", subHeader: order.customer.name)
                     getHeaderSubHeader("Adress: ", subHeader: order.customer.adress)
                     getHeaderSubHeader("Inkom: ", subHeader: order.initDate.formattedString())
                     getHeaderSubHeader("Väntat: ", subHeader:
                                         "\(Calendar.numberOfDaysBetween(order.initDate, and: Date())) dagar")
-                }
+                    }
                 Spacer()
                 Image(systemName: "checkmark.circle.fill")
                     .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
@@ -206,30 +184,41 @@ struct MainView: View {
             )
             .listRowSeparator(.hidden)
             .contentShape(Rectangle())
+            .onTapGesture(count: 2) {
+                showAlert.toggle()
+            }
             .onTapGesture {
                 if orderIsActivated { return }
                 withAnimation{
                     currentOrder = order
                     updatePdfViewWithOrder(order)
                 }
+                
             }
-    }
-    
-    /*func getListOrderButton(order:Order) -> some View{
-        return HStack {
-            Button(action: {
-                if orderIsActivated { return }
-                currentOrder = order
-                updatePdfViewWithOrder(order)
-            }){
-                Text("\(order.customer.name) - \(order.ordername)")
-            }
-            Spacer()
-            Image(systemName: "checkmark.circle.fill")
-                .opacity(currentOrder?.orderId == order.orderId ? 1.0 : 0.0)
-                .foregroundColor(orderIsActivated ? .green : .gray)
+            
         }
-    }*/
+        .alert("Edit order?", isPresented: $showAlert) {
+
+            if let order = currentOrder {
+                    HStack{
+                        NavigationLink(destination: LazyDestination(destination: {
+                            ManageOrdersView(choosenOrder: Binding(get: { order }, set: { _ in }))
+                        })) {
+                            Text("Yes")
+                        }
+                    }
+                }
+
+            else{
+                Spacer()
+            }
+
+            Button("no") {
+                print("no")
+            }
+        }
+        
+    }
     
     func findActivatedOrderOrSetFirst(orders:[Order]){
         guard let index = orders.firstIndex(where: {
