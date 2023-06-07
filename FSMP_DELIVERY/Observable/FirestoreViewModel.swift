@@ -479,7 +479,8 @@ extension FirestoreViewModel{
                 case .QUERY_ORDER_TITLE:
                     q = getOrderTitleQuery(q,searchtext: queryOrderVar.searchText)
                 case .QUERY_ORDER_CREATED:
-                    q = getOrderCreatedQuery(q,searchdate: queryOrderVar.parsedDateOfCreation)
+                    return getOrderCreatedQuery(q,searchdate: queryOrderVar.parsedDateOfCreation)
+                    // because we cant add sort
                 case .QUERY_CUSTOMER_PHONENUMBER:
                     q = getCustomerPhonenumberQuery(q,searchnumber: queryOrderVar.parsedPhoneNumber)
                 case .QUERY_SORT_BY_DATE_COMPLETION:
@@ -506,23 +507,23 @@ extension FirestoreViewModel{
     }
     
     func getIdEmployeeQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("assignedUser",isEqualTo: searchtext)
+        return q.whereField("assignedUser",in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getIdOrderQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("orderId",isEqualTo: searchtext)
+        return q.whereField("orderId",in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getCustomerNameQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("customer.name", isEqualTo: searchtext)
+        return q.whereField("customer.name",in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getCustomerAdressQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("customer.adress", isEqualTo: searchtext)
+        return q.whereField("customer.adress", in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getCustomerEmailQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("customer.email", isEqualTo: searchtext)
+        return q.whereField("customer.email", in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getCustomerPhonenumberQuery(_ q:Query,searchnumber:Int) -> Query{
@@ -530,7 +531,7 @@ extension FirestoreViewModel{
     }
     
     func getOrderTitleQuery(_ q:Query,searchtext:String) -> Query{
-        return q.whereField("ordername", isEqualTo: searchtext)
+        return q.whereField("ordername", in: coverMoreSearchCases(searchText: searchtext))
     }
     
     func getOrderCreatedQuery(_ q:Query,searchdate:Date?) -> Query{
@@ -558,6 +559,13 @@ extension FirestoreViewModel{
     
     func ordersFromThisDay(_ day:Int,month:Int,year:Int) -> [Order]? {
         return ordersSignedQuery["\(year)"]?["\(month)"]?["\(day)"]
+    }
+    
+    func coverMoreSearchCases(searchText:String) -> [Any]{
+        return [searchText,
+                searchText.capitalized,
+                searchText.uppercased(),
+                searchText.lowercased()]
     }
 }
 
