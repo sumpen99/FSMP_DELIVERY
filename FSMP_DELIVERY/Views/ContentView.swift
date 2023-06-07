@@ -13,6 +13,8 @@ struct ContentView: View {
   
     var body: some View {
          ZStack{
+             Color(red: 70/256, green: 89/256, blue: 116/256)
+                 .ignoresSafeArea()
              switch firebaseAuth.loggedInAs{
                  case .NOT_LOGGED_IN:
                     SignInView()
