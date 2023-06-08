@@ -51,7 +51,7 @@ struct ManageCustomerView: View {
                     print("walla fel")
                     return
                 } else {
-                    firestoreVM.editCustomer(customerToEdit, newName, newAdress, newPostcode, newEmail, newDescription, newPhoneNumber as! Int, newTaxnumber as! Int)
+                    firestoreVM.editCustomer(customerToEdit, newName, newAdress, newPostcode, newEmail, newDescription, newPhoneNumber as? Int ?? customerToEdit.phoneNumber, newTaxnumber as? Int ?? customerToEdit.taxnumber)
                     
                     dismiss()
                 }

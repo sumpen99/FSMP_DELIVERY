@@ -11,6 +11,8 @@ struct CreateCustomerView: View {
     let firestoreVM = FirestoreViewModel()
     @State var newCustomer:Customer = Customer(customerId:UUID().uuidString)
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State var phoneString = ""
     @State var taxString = ""
     
@@ -43,14 +45,16 @@ struct CreateCustomerView: View {
                     let phoneNumber = NumberFormatter().number(from: phoneString)
                     let taxNumber = NumberFormatter().number(from: taxString)
                     
-                    newCustomer.phoneNumber = phoneNumber as! Int
-                    newCustomer.phoneNumber = taxNumber as! Int
+                    newCustomer.phoneNumber = phoneNumber as? Int ?? 0
+                    newCustomer.phoneNumber = taxNumber as? Int ?? 0
                     if newCustomer.isNotValid(){
                         print("new customer is not valid, show dialog and tell people")
                         return
                     }
                     
                     firestoreVM.setCustomerDocument(newCustomer)
+                    
+                    dismiss()
                 } label: {
                     HStack {
                         Image(systemName: "square.and.arrow.up")
