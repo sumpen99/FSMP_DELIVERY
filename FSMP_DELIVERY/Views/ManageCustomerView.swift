@@ -40,7 +40,7 @@ struct ManageCustomerView: View {
                 }
             }
 
-            Button("update order \(Image(systemName: "square.and.arrow.up"))"){
+            Button("update customer \(Image(systemName: "square.and.arrow.up"))"){
                 
                 let newPhoneNumber = NumberFormatter().number(from: newPhoneNumberString)
                 let newTaxnumber = NumberFormatter().number(from: newTaxnumberString)
@@ -52,6 +52,7 @@ struct ManageCustomerView: View {
                     return
                 } else {
                     firestoreVM.editCustomer(customerToEdit, newName, newAdress, newPostcode, newEmail, newDescription, newPhoneNumber as! Int, newTaxnumber as! Int)
+                    
                     dismiss()
                 }
             }
@@ -70,10 +71,8 @@ struct ManageCustomerView: View {
             newPostcode = customerToEdit.postcode
             newEmail = customerToEdit.email
             newDescription = customerToEdit.description
-            var newPhoneNumber = NumberFormatter().number(from: newPhoneNumberString)
-            var newTaxnumber = NumberFormatter().number(from: newTaxnumberString)
-            newPhoneNumber = (customerToEdit.phoneNumber) as NSNumber
-            newTaxnumber = (customerToEdit.taxnumber) as NSNumber
+            newPhoneNumberString = String(customerToEdit.phoneNumber)
+            newTaxnumberString = String(customerToEdit.taxnumber)
         }
     }
 }

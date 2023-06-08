@@ -130,7 +130,7 @@ struct AddOrderView: View {
                         setFormResult(.FORM_SAVED_SUCCESFULLY)
                     }
                     else{
-                        setFormResult(.FORM_SIGNED_BUT_NO_MAIL_WAS_SENT)
+                        setFormResult(.FORM_SAVED_BUT_NO_MAIL_WAS_SENT)
                     }
                 }
             }
