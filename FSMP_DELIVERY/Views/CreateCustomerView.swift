@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CreateCustomerView: View {
-    let firestoreVM = FirestoreViewModel()
+    @EnvironmentObject var firestoreVM: FirestoreViewModel
     @State var newCustomer:Customer = Customer(customerId:UUID().uuidString)
     
     @Environment(\.dismiss) private var dismiss
