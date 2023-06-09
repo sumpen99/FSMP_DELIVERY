@@ -22,28 +22,12 @@ var ordersFolder:URL? {
                                                     attributes: nil)
         }
         catch{
-            print(error)
             return nil
         }
         return ordersFolder
     }
     
-    /*let subFolderInsideOrders = documentDirectory.appendingPathComponent("orders/\(String("newFolder"))")
-        
-    if !FileManager.default.fileExists(atPath: subFolderInsideOrders.absoluteString) {
-     do{
-         try FileManager.default.createDirectory(at: subFolderInsideOrders,
-                                                 withIntermediateDirectories: true,
-                                                 attributes: nil)
-     }
-     catch{
-         print(error)
-         return nil
-     }
-     return ordersFolder
-    }*/
-    
-    return nil
+    return ordersFolder
 }
 
 func removeAllOrdersFromFolder(){
