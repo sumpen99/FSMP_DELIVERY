@@ -24,9 +24,7 @@ var ordersFolder:URL? {
         catch{
             return nil
         }
-        return ordersFolder
     }
-    
     return ordersFolder
 }
 
