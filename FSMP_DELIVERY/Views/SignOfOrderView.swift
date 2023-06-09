@@ -21,7 +21,7 @@ struct SignOfOrderView: View{
     @State private var renderedImage:Image?
     @State var prVar = ProgressViewVar()
     let currentOrder:Order?
-   
+    
     var body: some View{
         NavigationStack {
             ZStack{
